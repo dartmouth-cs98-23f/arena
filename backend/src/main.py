@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import Depends, FastAPI
 
 from backend.src.routers import index
@@ -20,3 +21,6 @@ app = FastAPI(
 app.include_router(index.router,
                     prefix="",
                     tags=["index"])
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", port=5000, log_level="info")

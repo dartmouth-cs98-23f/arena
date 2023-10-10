@@ -1,2 +1,6 @@
 __pycache__
 **/__pycache__/
+bazel-arena
+bazel-bin
+bazel-out
+bazel-testlogs
