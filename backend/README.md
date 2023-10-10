@@ -1,11 +1,11 @@
 # Arena Backend
 
-## Installation
+## Adding a dependency
 ```
-pip3 install -r requirements.txt
+pip-compile --generate-hashes --output-file=requirements_lock.txt requirements.in
 ```
 
-## Running for testing
+## Running the app
 ```
-uvicorn backend.src.main:app --reload
+bazel run //backend:main
 ```
