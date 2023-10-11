@@ -7,4 +7,5 @@ router = APIRouter()
 @router.get("/")
 async def index() -> Success:
     return Success(ok=True,
-                   message = "Hello world")
+                   message = "Hello world",
+                   error = None)
