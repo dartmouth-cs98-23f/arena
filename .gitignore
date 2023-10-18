@@ -4,3 +4,4 @@ bazel-arena
 bazel-bin
 bazel-out
 bazel-testlogs
+**/.hypothesis
