@@ -10,3 +10,15 @@ py_library(
     deps = [requirement("fastapi"),
         requirement("pydantic")]
 )
+
+py_test(
+    name = "test_index",
+    srcs = ["test_index.py"],
+    deps = [
+        requirement("fastapi"),
+        requirement("pydantic"),
+        requirement("httpx"),
+        requirement("pytest"),
+        "//backend:main"
+    ]
+)
