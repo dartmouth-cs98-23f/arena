@@ -8,3 +8,5 @@ bazel-out
 bazel-testlogs
 dev.env.sh
 **/.hypothesis
+**/alembic
+**/alembic.ini
