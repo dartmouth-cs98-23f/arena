@@ -1,6 +1,7 @@
 from random import random
+from typing import List
 
-def modify_odds(last_yes, last_no, prob_history):
+def modify_odds(last_yes:int, last_no:int, prob_history:List[int]):
   if last_yes == None and last_no == None: # no bets
     if len(prob_history) < 2:
       return prob_history[-1] - (random() * 5)
