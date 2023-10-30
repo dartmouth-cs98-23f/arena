@@ -20,3 +20,34 @@ js_proto_library(
     name = "test_proto_js",
     protos = ["test_proto"]
 )
+
+proto_library(
+    name = "user_proto",
+    srcs = ["user.proto"]
+)
+
+py_proto_library(
+    name = "user_proto_py",
+    protos = ["test_proto"]
+)
+
+js_proto_library(
+    name = "user_proto_js",
+    protos = ["user_proto"]
+)
+
+proto_library(
+    name = "bets_proto",
+    srcs = ["bets.proto"],
+    deps = ["@com_google_protobuf//:timestamp_proto"]
+)
+
+py_proto_library(
+    name = "bets_proto_py",
+    protos = ["bets_proto"]
+)
+
+js_proto_library(
+    name = "bets_proto_js",
+    protos = ["bets_proto"]
+)
