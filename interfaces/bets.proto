@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 message Bet {
   string uuid = 1;
   string creator_uuid = 2;
@@ -19,6 +21,17 @@ message Odds {
 }
 
 message Comment{
+  google.protobuf.Timestamp timestamp = 7;
+}
+
+message odds {
+  string uuid = 1;
+  string bet_uuid = 2;
+  double odds = 3;
+  google.protobuf.Timestamp timestamp = 4;
+}
+
+message comment {
   string uuid = 1;
   string bet_uuid = 2;
   string parent_uuid = 3;
@@ -28,6 +41,10 @@ message Comment{
 }
 
 message Wager {
+  google.protobuf.Timestamp timestamp = 6;
+}
+
+message bet {
   string uuid = 1;
   string bet_uuid = 2;
   bool yes = 3;
@@ -35,4 +52,5 @@ message Wager {
   int32 tokens = 5;
   int64 timestamp = 6;
   double odds = 7;
+  google.protobuf.Timestamp timestamp = 6;
 }
