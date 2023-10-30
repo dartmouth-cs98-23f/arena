@@ -7,6 +7,8 @@ py_library(
     srcs = [
         "__init__.py",
         "database.py",
+        "keys.py",
+        "user.py"
     ],
     deps = [
         requirement("sqlalchemy"),
