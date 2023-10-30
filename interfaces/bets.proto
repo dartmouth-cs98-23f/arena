@@ -19,6 +19,17 @@ message odds {
   google.protobuf.Timestamp timestamp = 4;
 }
 
+message Comment{
+  google.protobuf.Timestamp timestamp = 7;
+}
+
+message odds {
+  string uuid = 1;
+  string bet_uuid = 2;
+  double odds = 3;
+  google.protobuf.Timestamp timestamp = 4;
+}
+
 message comment {
   string uuid = 1;
   string bet_uuid = 2;
@@ -28,11 +39,17 @@ message comment {
   google.protobuf.Timestamp timestamp = 6;
 }
 
+message Wager {
+  google.protobuf.Timestamp timestamp = 6;
+}
+
 message bet {
   string uuid = 1;
   string bet_uuid = 2;
   bool yes = 3;
   string user_uuid = 4;
   int32 tokens = 5;
+  int64 timestamp = 6;
+  double odds = 7;
   google.protobuf.Timestamp timestamp = 6;
 }
