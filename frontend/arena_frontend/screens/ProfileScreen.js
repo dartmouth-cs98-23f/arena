@@ -3,10 +3,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-function ProfileScreen() {
+function ProfileScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text>Profile Screen</Text>
+      <Text style={styles.title}>Profile</Text>
+      {/* Add your profile details and functionalities here */}
     </View>
   );
 }
@@ -16,6 +17,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'black',
+  },
+  title: {
+    color: 'white',
+    fontSize: 24,
   },
 });
 
