@@ -12,6 +12,7 @@ import WalletScreen from './screens/WalletScreen';
 import HomeScreen from './screens/HomeScreen';
 import BetDetailScreen from './screens/BetDetailScreen';
 import AddScreen from './screens/AddScreen';
+import BuyTokensScreen from './screens/BuyTokensScreen';
 
 import addIcon from './logos/addIcon.png';
 import homeIcon from './logos/homeIcon.png';
@@ -60,6 +61,7 @@ function App() {
         <Stack.Screen name="Wallet" component={WalletScreen} />
         <Stack.Screen name="BetDetail" component={BetDetailScreen} />
         <Stack.Screen name="Add" component={AddScreen} />
+        <Stack.Screen name="BuyTokens" component={BuyTokensScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
