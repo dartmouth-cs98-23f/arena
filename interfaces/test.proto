@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+message Example {
+    string name = 1;
+    google.protobuf.Empty payload = 2;
+}

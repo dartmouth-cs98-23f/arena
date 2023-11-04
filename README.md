@@ -10,8 +10,15 @@ TODO: short project description, some sample screenshots or mockups
 TODO:  descriptions of code organization and tools and libraries used
 
 ## Setup
+### Install bazel
+Bazel is required to build the backend.
+```bash
+# macos
+brew install bazelisk
 
-TODO: how to get the project dev environment up and running, npm install etc
+# windows
+choco install bazelisk
+```
 
 ## Deployment
 
