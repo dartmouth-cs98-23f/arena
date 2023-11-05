@@ -6,7 +6,8 @@ load("@python_deps//:requirements.bzl", "requirement")
 py_library(
     name = "schemas",
     srcs = ["__init__.py",
-            "index.py"],
+            "index.py",
+            "bets.py"],
     deps = [requirement("fastapi"),
         requirement("pydantic")]
 )

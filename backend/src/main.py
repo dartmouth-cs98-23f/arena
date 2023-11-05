@@ -2,6 +2,7 @@ import uvicorn
 from fastapi import Depends, FastAPI
 
 from backend.src.routers import index
+from backend.src.routers import bets
 
 __version__ = "0.0.1"
 
@@ -21,6 +22,9 @@ app = FastAPI(
 app.include_router(index.router,
                     prefix="",
                     tags=["index"])
+app.include_router(bets.router,
+                   prefix="/bets",
+                   tags=["bets"])
 
 if __name__ == "__main__":
     uvicorn.run("main:app", port=5000, log_level="info")
