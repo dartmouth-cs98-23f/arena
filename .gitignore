@@ -1,3 +1,5 @@
+
+bazel-testlogs/
 .clwb
 **/.hypothesis
 __pycache__
