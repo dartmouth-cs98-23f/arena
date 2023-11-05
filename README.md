@@ -11,7 +11,7 @@ TODO:  descriptions of code organization and tools and libraries used
 
 ## Setup
 ### Install bazel
-Bazel is required to build the backend.
+Bazel is required to build the backend. Some change
 ```bash
 # macos
 brew install bazelisk
