@@ -92,6 +92,8 @@ class User(Base):
     email = Column(String(256))
     google_id = Column(String(1024))
     api_token = Column(String(1024))
+    balance = Column(Integer, default=500)
+
 
 def get_user(api_key, db) -> Optional[User]:
     api_key = db.query(Key).filter(Key.key == api_key).first()
