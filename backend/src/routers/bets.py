@@ -1,14 +1,15 @@
+import random
 from uuid import uuid4
 from fastapi import APIRouter, Depends
 from fastapi.security.api_key import APIKey
 from pymongo import DESCENDING
 
 from backend.src.models.database import get_mongo, get_db, DB_BETS, DB_ODDS, get_user
-from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetContext, OddsResponse, OddsScheme
+from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetContext, OddsResponse, OddsScheme, WagerCreateContext
 from backend.src.schemas.index import Success
 from backend.src.auth import get_api_key
 
-from interfaces.bets_pb2 import Bet, Odds
+from interfaces.bets_pb2 import Bet, Odds, Wager
 
 from datetime import timezone 
 import datetime 
@@ -17,6 +18,110 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from bson.json_util import dumps
 
 router = APIRouter()
+
+@router.post("/wager")
+async def create_wager(context:WagerCreateContext,
+                       db=Depends(get_db),
+                       mongo=Depends(get_mongo),
+                       api_key:APIKey = Depends(get_api_key)) -> Success:
+    # find the current user
+    user = get_user(api_key, db)
+
+    # find the bet the user is wagering on
+    cursor = mongo[DB_ODDS]\
+            .find({"betUuid": context.bet_uuid})\
+            .sort("timestamp", DESCENDING)\
+            .limit(1)
+    documents = await cursor.to_list(length=1)
+    odds_collection = [OddsScheme(odds=float(doc["odds"]), timestamp=int(doc["timestamp"])) for doc in documents]
+        
+    if len(odds_collection) == 0:
+        return Success(ok=False, error="This bet does not exist", message="") 
+
+    # subtract the balance from user
+    if not user.balance or user.balance < context.amount:
+        return Success(ok=False, error="User does not have enough money", message="")
+    user.balance -= context.amount
+    db.commit()
+
+    dt = datetime.datetime.now(timezone.utc) 
+    utc_time = dt.replace(tzinfo=timezone.utc) 
+    utc_timestamp = utc_time.timestamp() 
+
+    # create a bet
+    wager = Wager(
+        uuid = str(uuid4()),
+        bet_uuid = context.bet_uuid,
+        yes = context.yes,
+        user_uuid = str(user.id),
+        tokens = context.amount,
+        timestamp = int(utc_timestamp),
+        odds = odds_collection[0].odds,
+    )
+
+    try:
+        wager_json = MessageToDict(wager)
+
+        # these don't get translated properly
+        wager_json["timestamp"] = int(utc_timestamp)
+        wager_json["yes"] = context.yes
+
+        wager_results = await mongo[DB_BETS].insert_one(wager_json)
+    except Exception as ex:
+        return Success(ok=False, error=str(ex), message="Failed to create wager") 
+
+    # get the last yes bet
+    cursor = mongo[DB_ODDS]\
+            .find({"betUuid": context.bet_uuid, "yes": True})\
+            .sort("timestamp", DESCENDING)\
+            .limit(1)
+    documents = await cursor.to_list(length=1)
+    last_yes = None
+    if(len(documents) != 0):
+        last_yes = [OddsScheme(odds=float(doc["odds"]), timestamp=int(doc["timestamp"])) for doc in documents][0]
+
+    # get the last no bet
+    cursor = mongo[DB_ODDS]\
+            .find({"betUuid": context.bet_uuid, "yes": False})\
+            .sort("timestamp", DESCENDING)\
+            .limit(1)
+    documents = await cursor.to_list(length=1)
+    last_no = None
+    if(len(documents) != 0):
+        last_no = [OddsScheme(odds=float(doc["odds"]), timestamp=int(doc["timestamp"])) for doc in documents][0]
+
+    updated_odds = 0.0
+    min_adjust = 0.01
+    max_adjust = 0.05
+    if not last_yes and last_no:
+        updated_odds = (last_no.odds / 2) + (random.uniform(min_adjust, max_adjust))
+    elif not last_no and last_yes:
+        updated_odds = (last_yes.odds + 1 / 2) - (random.uniform(min_adjust, max_adjust))
+    elif last_no and last_yes:
+        updated_odds = ((last_yes.odds + last_no.odds) / 2) + random.uniform(-max_adjust, max_adjust)
+    else: # no bets exist
+        updated_odds = odds_collection[0].odds + random.uniform(-max_adjust, max_adjust)
+    
+    updated_odds = min(max(0.01, updated_odds), 0.99)
+    
+    # update the odds
+    # for implementation look at experiments/adjust_odds
+    odds = Odds(
+        uuid = str(uuid4()),
+        bet_uuid = context.bet_uuid,
+        odds = updated_odds,
+        timestamp = int(utc_timestamp),
+    )
+    
+    odds_json = MessageToDict(odds)
+    odds_json["timestamp"] = int(utc_timestamp)
+
+    try:
+        odds_result = await mongo[DB_ODDS].insert_one(odds_json)
+        return Success(ok=True, error=None, message=str(odds_result.inserted_id))
+    except Exception as ex:
+        return Success(ok=False, error=str(ex), message="Failed to update odds") 
+
 
 @router.post("/create")
 async def create_bet(context:BetCreateContext,
@@ -28,7 +133,6 @@ async def create_bet(context:BetCreateContext,
         return Success(ok=False, error="Cannot find the user associated with the API key", message="")
 
     dt = datetime.datetime.now(timezone.utc) 
-    
     utc_time = dt.replace(tzinfo=timezone.utc) 
     utc_timestamp = utc_time.timestamp() 
 
@@ -107,7 +211,10 @@ async def get_odds(uid:str,
     if limit <= 0:
         limit = 1
 
-    cursor = mongo[DB_ODDS].find({"betUuid": uid}).limit(limit)
+    cursor = mongo[DB_ODDS]\
+            .find({"betUuid": uid})\
+            .sort("timestamp", DESCENDING)\
+            .limit(limit)
     documents = await cursor.to_list(length=limit)
     odds_collection = [OddsScheme(odds=float(doc["odds"]), timestamp=int(doc["timestamp"])) for doc in documents]
     return OddsResponse(success=Success(ok=True, error=None, message=""),

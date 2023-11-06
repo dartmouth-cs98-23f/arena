@@ -1,11 +1,22 @@
-FROM python:3.10
+# Use an official Bazel image as the base image
+FROM bazel:latest
 
-WORKDIR /code
+# Set the working directory inside the container
+WORKDIR /app
 
-COPY /requirements.in /code/requirements.txt
+# Copy your Bazel BUILD files and WORKSPACE file into the container
+COPY WORKSPACE .
+COPY BUILD .
 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+# Copy the rest of your application source code into the container
+COPY . .
 
-COPY /src /code/backend/src
+# Build your application using Bazel
+RUN bazel build //path/to:your_bazel_target  # Replace with your actual Bazel target
 
-CMD ["uvicorn", "backend.src.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Expose any necessary ports
+EXPOSE 8080
+
+# Define the command to run your application
+CMD ["./bazel-bin/path/to/your/binary"]  # Replace with the path to your built binary
+
