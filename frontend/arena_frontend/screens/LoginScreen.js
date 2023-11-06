@@ -1,12 +1,33 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
 import logo from '../logos/ArenaLogo.png';
+import * as WebBrowser from 'expo-web-browser';
+import * as AuthSession from 'expo-auth-session';
 
 function LoginScreen({ navigation }) {
-  const handleLogin = () => {
+  const handleLogin = async () => {
     // Here you can add any login logic.
     // After successful login, navigate to BetsListScreen:
-    navigation.navigate('Home');
+    // You need to replace 'yourAuthUrl' with your actual authentication URL
+    const authUrl = 'https://google.com';
+    const returnUrl = AuthSession.makeRedirectUri();
+
+    try {
+      const result = await AuthSession.startAsync({
+        authUrl: `${authUrl}?redirect_uri=${encodeURIComponent(returnUrl)}`,
+      });
+
+      if (result.type === 'success') {
+        // Handle the success response here, such as token storage and navigation
+        navigation.navigate('HomeScreen');
+      } else {
+        // Handle other cases, such as cancel
+      }
+    } catch (error) {
+      // Handle the error
+      console.error(error);
+    }
+    // navigation.navigate('HomeScreen');
   };
   
   return (
