@@ -31,8 +31,8 @@ SessionLocal = sessionmaker(autocommit=False,
 
 def get_mongo():
     try:
-        db = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DATABASE_URL)[ARENA_DATABASE]
-        yield db
+        db = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DATABASE_URL)
+        yield db[ARENA_DATABASE]
     finally:
         db.close()
 
