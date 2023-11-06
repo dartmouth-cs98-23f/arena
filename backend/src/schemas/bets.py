@@ -35,3 +35,10 @@ class OddsScheme(BaseModel):
 class OddsResponse(BaseModel):
     success: Success
     odds: List[OddsScheme]
+
+
+class WagerCreateContext(BaseModel):
+    amount: int
+    yes: bool
+    bet_uuid: str
+    
