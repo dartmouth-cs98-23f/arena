@@ -6,6 +6,7 @@ import { LineChart } from 'react-native-chart-kit';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
+import coinIcon from '../logos/coinIcon.png';
 
 function BetDetailScreen({ navigation }) {
   // Sample data for the graph
@@ -33,14 +34,18 @@ function BetDetailScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={{ flex: 1 }}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Text style={styles.backIcon}>🔙</Text>
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Bet Details</Text>
-          <Text style={styles.coinBalance}>💰 50</Text>
-        </View>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Text style={styles.backIcon}>🔙</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Bet Details</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('BuyTokens')}
+          style={styles.tokenButton}>
+          <Image source={coinIcon} style={styles.coinIcon} />
+          <Text style={styles.coinBalance}> 50</Text>
+        </TouchableOpacity>
+      </View>
 
         <Text style={styles.questionTitle}>
           Will any students fail COSC 98 in Fall 2023?
@@ -63,14 +68,13 @@ function BetDetailScreen({ navigation }) {
         <Text style={styles.additionalInfo}>
           This bet settles to Yes if at least one student enrolled in COSC 98 does not pass the class. Settles to No otherwise.
         </Text>
-      </View>
       {/* Footer Section */}
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => navigation.navigate('Add')}>
-          <Image source={addIcon} style={styles.footerIcon} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <Image source={homeIcon} style={styles.footerIcon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Question')}>
+          <Image source={addIcon} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
           <Image source={profileIcon} style={styles.footerIcon} />
@@ -92,6 +96,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10, // Add padding on the sides
     paddingTop: 10, // Add padding at the top
     height: 60, // You might need to adjust this based on your design
+  },
+  tokenButton: {
+    flexDirection: 'row', // Positions the coin icon and balance text in a row
+    alignItems: 'center',
   },
   mainContent: {
     flex: 1, // This will ensure this view takes up all space between header and footer

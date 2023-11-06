@@ -1,11 +1,12 @@
 // HomeScreen.js
 
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import logo from '../logos/ArenaLogo.png';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
+import coinIcon from '../logos/coinIcon.png';
 
 function HomeScreen({ navigation }) {
 
@@ -36,12 +37,15 @@ function HomeScreen({ navigation }) {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Image source={logo} style={styles.headerLogo} />
-        <Text style={styles.headerText}>ARENA</Text>
-        {/* Add dropdown icon here if needed */}
-      </View>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Image source={logo} style={styles.headerLogo} />
+          <Text style={styles.headerTitle}>ARENA</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('BuyTokens')} style={styles.coinButton}>
+            <Image source={coinIcon} style={styles.coinIcon} />
+          </TouchableOpacity>
+        </View>
 
       <FlatList
         data={feedData}
@@ -51,32 +55,50 @@ function HomeScreen({ navigation }) {
 
       <View style={styles.footer}>
         {/* Add footer navigation icons here */}
-        <TouchableOpacity onPress={() => navigation.navigate('Add')}>
-          <Image source={addIcon} style={styles.footerIcon} />
-        </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <Image source={homeIcon} style={styles.footerIcon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Question')}>
+          <Image source={addIcon} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
           <Image source={profileIcon} style={styles.footerIcon} />
         </TouchableOpacity>
       </View>
     </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: 'black',
   },
+  container: {
+    flex: 1,
+  },
   header: {
-    flexDirection: 'row', // added for horizontal arrangement
-    alignItems: 'center', // align items vertically center
-    paddingTop: 50,
-    paddingBottom: 10,
-    paddingHorizontal: 15, // added padding for the logo and text
-    backgroundColor: 'black',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between', // This ensures the logo and the coin icon are on opposite sides
+    padding: 15,
+  },
+  headerLogo: {
+    width: 40,
+    height: 40,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  coinButton: {
+    // Styles for the coin icon button
+  },
+  coinIcon: {
+    width: 25,
+    height: 25,
   },
   headerLogo: {
     width: 30,
@@ -85,7 +107,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: 'white',
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold', // made the text bold
   },
   itemContainer: {
@@ -111,6 +133,13 @@ const styles = StyleSheet.create({
     color: '#34D399',
     fontSize: 30,
     fontWeight: 'bold',
+  },
+  buyTokensButton: {
+    // You may not need additional styling if your layout is already as desired.
+    // Add padding if you want the touchable area to be larger:
+    justifyContent: 'right',
+    alignItems: 'right',
+    padding: 8,
   },
   footer: {
     flexDirection: 'row',
