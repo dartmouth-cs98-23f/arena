@@ -1,12 +1,38 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Image, Alert } from 'react-native';
 import logo from '../logos/ArenaLogo.png';
+import { InAppBrowser } from 'react-native-inappbrowser-reborn';
 
 function LoginScreen({ navigation }) {
-  const handleLogin = () => {
-    // Here you can add any login logic.
-    // After successful login, navigate to BetsListScreen:
-    navigation.navigate('Home');
+  const handleLogin = async () => {
+    try {
+      const url = '/login';
+      if (await InAppBrowser.isAvailable()) {
+        const response = await InAppBrowser.openAuth(url, 'io.example.app', {
+          // iOS Properties
+          dismissButtonStyle: 'cancel',
+          preferredBarTintColor: 'gray',
+          preferredControlTintColor: 'white',
+          readerMode: false,
+          animations: {
+            startEnter: 'slide_in_right',
+            startExit: 'slide_out_left',
+            endEnter: 'slide_in_left',
+            endExit: 'slide_out_right',
+          },
+        });
+
+        if (response.type === 'success' && response.url) {
+          // go to homescreen if sucess
+          navigation.navigate('HomeScreen');
+        }
+      } else {
+        Alert.alert('InAppBrowser is not supported :(');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      Alert.alert('Something went wrong', error.message);
+    }
   };
   
   return (
