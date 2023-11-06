@@ -7,6 +7,7 @@ from authlib.integrations.starlette_client import OAuth
 from backend.src.schemas.index import Success
 from backend.src.models.database import Base, SessionLocal, engine, Key, User
 import secrets
+import datetime
 
 router = APIRouter()
 
@@ -72,6 +73,15 @@ async def auth(request: Request):
         db.add(user)
         db.commit()
         db.refresh(user)
+
+        key = Key(
+                name="Key",
+                key=api_key,
+                created=datetime.datetime.now(),
+                user_id = user.id)
+
+        db.add(key)
+        db.commit()
     else:
         # If user exists, retrieve the API key
         api_key = user.api_token
