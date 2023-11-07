@@ -219,3 +219,30 @@ async def get_odds(uid:str,
     odds_collection = [OddsScheme(odds=float(doc["odds"]), timestamp=int(doc["timestamp"])) for doc in documents]
     return OddsResponse(success=Success(ok=True, error=None, message=""),
                         odds=odds_collection)
+
+@router.post("/settle")
+async def settle_bet(settlement: BetSettlement, db=Depends(get_db), mongo=Depends(get_mongo)) -> Success:
+    # Retrieve all wagers for the given bet_uuid
+    wagers_cursor = mongo[DB_BETS].find({"bet_uuid": settlement.bet_uuid})
+    wagers = await wagers_cursor.to_list()  # Adjust the length as needed
+
+    # Iterate through each wager to calculate and update user balance
+    for wager in wagers:
+        user = get_user(wager['user_uuid'], db)
+        if not user:
+            return Success(ok=False, error=str(), message="Failed to create bet") 
+
+        # Calculate payout based on the odds and whether the user bet Yes or No
+        odds = wager['odds']
+        if (wager['yes'] and settlement.outcome):
+            payout = wager['tokens'] / odds
+        elif (not wager['yes'] and not settlement.outcome):
+            payout = wager['tokens'] / (1- odds)
+        else:
+            payout = 0
+
+        # Update the user balance
+        user.balance += payout
+        db.commit()
+
+    return Success(ok=True, message="All bets settled and balances updated.")
