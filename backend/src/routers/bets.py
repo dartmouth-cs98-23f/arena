@@ -224,7 +224,7 @@ async def get_odds(uid:str,
 async def settle_bet(settlement: BetSettlement, db=Depends(get_db), mongo=Depends(get_mongo)) -> Success:
     # Retrieve all wagers for the given bet_uuid
     wagers_cursor = mongo[DB_BETS].find({"bet_uuid": settlement.bet_uuid})
-    wagers = await wagers_cursor.to_list()  # Adjust the length as needed
+    wagers = await wagers_cursor.to_list()
 
     # Iterate through each wager to calculate and update user balance
     for wager in wagers:
