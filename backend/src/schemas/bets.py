@@ -12,8 +12,6 @@ class Bets(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-   
-
 class BetCreateContext(BaseModel):
     title: str
     description: str

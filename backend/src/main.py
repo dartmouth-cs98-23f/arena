@@ -26,12 +26,15 @@ app.include_router(index.router,
 app.include_router(bets.router,
                    prefix="/bets",
                    tags=["bets"])
-
 app.add_middleware(
     SessionMiddleware,
     secret_key=os.getenv("SECRET_KEY"),
     session_cookie="session",
 )
+
+app.include_router(users.router,
+                   prefix="/user",
+                   tags=["user"])
 
 app.add_middleware(
     SessionMiddleware,
