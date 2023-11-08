@@ -33,5 +33,11 @@ app.add_middleware(
     session_cookie="session",
 )
 
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("SECRET_KEY"),
+    session_cookie="session",
+)
+
 if __name__ == "__main__":
     uvicorn.run("main:app", port=5000, log_level="info")
