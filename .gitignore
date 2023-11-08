@@ -12,3 +12,4 @@ dev.env.sh
 **/alembic
 backend/alembic
 **/alembic.ini
+.DS_Store
