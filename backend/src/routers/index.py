@@ -21,6 +21,18 @@ oauth.register(
     }
 )
 
+@router.get("/logout")
+async def logout(request: Request):
+    request.session.pop('user', None)
+    return RedirectResponse(url='/')
+
+
+@router.get("/")
+async def index() -> Success:
+    return Success(ok=True,
+                   message = "Hello world",
+                   error = None)
+
 @router.get("/auth")
 async def auth(request: Request):
     token = await oauth.google.authorize_access_token(request)
@@ -28,12 +40,3 @@ async def auth(request: Request):
     # You can now create a user session or a JWT token
     # and redirect the user to the internal page with the token
     return RedirectResponse(url='/')
-
-@router.get("/logout")
-async def logout(request: Request):
-    request.session.pop('user', None)
-    return RedirectResponse(url='/')
-async def index() -> Success:
-    return Success(ok=True,
-                   message = "Hello world",
-                   error = None)
