@@ -35,6 +35,8 @@ def get_mongo():
         yield db
         db = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DATABASE_URL)
         yield db
+        db = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DATABASE_URL)
+        yield db[ARENA_DATABASE]
     finally:
         db.close()
 
