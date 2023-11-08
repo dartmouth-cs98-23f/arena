@@ -21,19 +21,6 @@ oauth.register(
     }
 )
 
-@router.get("/")
-async def index(request: Request):
-    user = request.session.get('user')
-    if user:
-        name = user.get('name')
-        return HTMLResponse(f'<p>Hello {name}!</p><a href=/logout>Logout</a>')
-    return HTMLResponse('<a href=/login>Login</a>')
-
-@router.get("/login")
-async def login(request: Request):
-    redirect_uri = request.url_for('auth')
-    return await oauth.google.authorize_redirect(request, redirect_uri)
-
 @router.get("/auth")
 async def auth(request: Request):
     token = await oauth.google.authorize_access_token(request)
@@ -46,3 +33,7 @@ async def auth(request: Request):
 async def logout(request: Request):
     request.session.pop('user', None)
     return RedirectResponse(url='/')
+async def index() -> Success:
+    return Success(ok=True,
+                   message = "Hello world",
+                   error = None)
