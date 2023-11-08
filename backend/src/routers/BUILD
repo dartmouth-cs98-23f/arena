@@ -15,6 +15,7 @@ py_library(
         "//interfaces:bets_proto_py",
         "//backend/src/models",
         "//backend/src:auth"]
+        requirement("authlib"), requirement("httpx"), requirement("itsdangerous")]
 )
 
 py_test(
