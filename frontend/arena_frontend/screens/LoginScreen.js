@@ -3,9 +3,23 @@ import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
 import logo from '../logos/ArenaLogo.png';
 
 function LoginScreen({ navigation }) {
-  const handleLogin = () => {
+  const handleLogin = async () => {
     // Here you can add any login logic.
     // After successful login, navigate to BetsListScreen:
+    // try {
+    //   const response = await fetch('arena-backend.fly.dev/login');
+    //   if (response.status === 200) {
+    //     // The request was successful, you can handle the response or redirection here.
+    //     // You might want to navigate to the Home screen or display a success message.
+    //     navigation.navigate('Home');
+    //   } else {
+    //     // Handle authentication error or failure here.
+    //     navigation.navigate('Home');
+    //   }
+    // } catch (error) {
+    //   // Handle network errors here.
+    //   pass;
+    // }
     navigation.navigate('Home');
   };
   
@@ -14,7 +28,6 @@ function LoginScreen({ navigation }) {
       <View style={styles.logoContainer}>
     <Image source={logo} style={styles.logo} />
       </View>
-
       <Text style={styles.title}>ARENA</Text>
       <Text style={styles.subtitle}>Enter. Bet. Win.</Text>
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
