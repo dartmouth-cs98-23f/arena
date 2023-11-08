@@ -7,6 +7,7 @@ import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
 import coinIcon from '../logos/coinIcon.png';
+import backArrowIcon from '../logos/backArrowIcon.png';
 
 function BetDetailScreen({ navigation }) {
   // Sample data for the graph
@@ -35,8 +36,8 @@ function BetDetailScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.backIcon}>🔙</Text>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Image source={backArrowIcon} style={styles.backIcon} /> 
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Bet Details</Text>
         <TouchableOpacity
@@ -94,8 +95,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between', // Space items evenly
     paddingHorizontal: 10, // Add padding on the sides
-    paddingTop: 10, // Add padding at the top
-    height: 60, // You might need to adjust this based on your design
+    height: 60, 
   },
   tokenButton: {
     flexDirection: 'row', // Positions the coin icon and balance text in a row
@@ -109,8 +109,9 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   backIcon: {
-    fontSize: 25,
-    color: 'white',
+    width: 25, // Adjust the size as needed
+    height: 25, // Adjust the size as needed
+  resizeMode: 'contain',
   },
   headerTitle: {
     color: 'white',
