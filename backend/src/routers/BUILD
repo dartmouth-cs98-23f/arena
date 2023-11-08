@@ -6,9 +6,15 @@ load("@python_deps//:requirements.bzl", "requirement")
 py_library(
     name = "routers",
     srcs = ["__init__.py",
-            "index.py"],
+            "index.py",
+            "bets.py",
+            "users.py"],
     deps = [requirement("fastapi"),
-        requirement("pydantic")]
+        requirement("pydantic"),
+        requirement("psycopg2-binary"),
+        "//interfaces:bets_proto_py",
+        "//backend/src/models",
+        "//backend/src:auth"]
 )
 
 py_test(

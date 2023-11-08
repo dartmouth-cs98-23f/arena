@@ -6,7 +6,7 @@ from starlette.status import HTTP_403_FORBIDDEN
 
 from sqlalchemy.orm import Session
 from backend.src.models.database import SessionLocal, engine, get_db
-from backend.src.model.keys import Key, KeyUse
+from backend.src.models.database import Key, KeyUse
 
 from datetime import datetime
 

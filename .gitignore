@@ -10,4 +10,5 @@ bazel-testlogs
 dev.env.sh
 **/.hypothesis
 **/alembic
+backend/alembic
 **/alembic.ini

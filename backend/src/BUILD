@@ -12,3 +12,12 @@ py_library(
         requirement("pydantic")
     ]
 )
+
+py_binary(
+    name = "add_api_key",
+    srcs = ["add_api_key.py"],
+    deps = [
+        requirement("psycopg2-binary"),
+        "//backend/src/models",
+    ]
+)
