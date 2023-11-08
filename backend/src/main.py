@@ -27,12 +27,9 @@ app.include_router(index.router,
 app.include_router(bets.router,
                    prefix="/bets",
                    tags=["bets"])
-<<<<<<< HEAD
 app.include_router(users.router,
                    prefix="/user",
                    tags=["user"])
-=======
->>>>>>> 40f3c88 (Ability to create bet (#46))
 
 app.add_middleware(
     SessionMiddleware,
