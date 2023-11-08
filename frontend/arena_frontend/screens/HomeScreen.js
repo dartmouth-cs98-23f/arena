@@ -15,9 +15,18 @@ function HomeScreen({ navigation }) {
     { id: '2', question: 'Will Psi Upsilon get suspended before Janurary 4, 2024?', percentage: '48%' },
     { id: '3', question: 'Will any students fail COSC 98 in Fall 2023', percentage: '64%' },
     { id: '4', question: 'Will any stduents fail COSC 1 in Fall 2023', percentage: '97%' }
-
     // ...
   ];
+
+  fetch('https://arena-backend.fly.dev/docs#/bets/get_bets_bets_get__get')
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
