@@ -13,9 +13,6 @@ import HomeScreen from './screens/HomeScreen';
 import BetDetailScreen from './screens/BetDetailScreen';
 import AddScreen from './screens/AddScreen';
 import BuyTokensScreen from './screens/BuyTokensScreen';
-import QuestionScreen from './screens/QuestionScreen';
-import DescriptionScreen from './screens/DescriptionScreen';
-import OddsScreen from './screens/OddsScreen';
 
 import addIcon from './logos/addIcon.png';
 import homeIcon from './logos/homeIcon.png';
@@ -65,9 +62,6 @@ function App() {
         <Stack.Screen name="BetDetail" component={BetDetailScreen} />
         <Stack.Screen name="Add" component={AddScreen} />
         <Stack.Screen name="BuyTokens" component={BuyTokensScreen} />
-        <Stack.Screen name="Question" component={QuestionScreen} />
-        <Stack.Screen name="Description" component={DescriptionScreen} />
-        <Stack.Screen name="Odds" component={OddsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

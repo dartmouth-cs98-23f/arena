@@ -19,7 +19,6 @@ Base = declarative_base()
 
 ARENA_DATABASE = "arena-mongo"
 DB_BETS = "bets"
-DB_WAGERS = "wagers"
 DB_ODDS = "odds"
 
 SQLALCHEMY_DATABASE_URL = os.getenv("DB_CONN")
@@ -32,8 +31,8 @@ SessionLocal = sessionmaker(autocommit=False,
 
 def get_mongo():
     try:
-        db = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DATABASE_URL)
-        yield db[ARENA_DATABASE]
+        db = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DATABASE_URL)[ARENA_DATABASE]
+        yield db
     finally:
         db.close()
 
@@ -93,8 +92,6 @@ class User(Base):
     email = Column(String(256))
     google_id = Column(String(1024))
     api_token = Column(String(1024))
-    balance = Column(Integer, default=500)
-
 
 def get_user(api_key, db) -> Optional[User]:
     api_key = db.query(Key).filter(Key.key == api_key).first()
