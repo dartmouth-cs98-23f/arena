@@ -31,13 +31,10 @@ SessionLocal = sessionmaker(autocommit=False,
 
 def get_mongo():
     try:
-<<<<<<< HEAD
-        db = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DATABASE_URL)
-        yield db[ARENA_DATABASE]
-=======
         db = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DATABASE_URL)[ARENA_DATABASE]
         yield db
->>>>>>> 40f3c88 (Ability to create bet (#46))
+        db = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DATABASE_URL)
+        yield db[ARENA_DATABASE]
     finally:
         db.close()
 
@@ -97,11 +94,7 @@ class User(Base):
     email = Column(String(256))
     google_id = Column(String(1024))
     api_token = Column(String(1024))
-<<<<<<< HEAD
     balance = Column(Integer, default=500)
-
-=======
->>>>>>> 40f3c88 (Ability to create bet (#46))
 
 def get_user(api_key, db) -> Optional[User]:
     api_key = db.query(Key).filter(Key.key == api_key).first()

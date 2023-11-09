@@ -4,7 +4,6 @@ from starlette.middleware.sessions import SessionMiddleware
 import os
 from backend.src.routers import index
 from backend.src.routers import bets
-from backend.src.routers import users
 
 __version__ = "0.0.1"
 
@@ -27,6 +26,12 @@ app.include_router(index.router,
 app.include_router(bets.router,
                    prefix="/bets",
                    tags=["bets"])
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("SECRET_KEY"),
+    session_cookie="session",
+)
+
 app.include_router(users.router,
                    prefix="/user",
                    tags=["user"])

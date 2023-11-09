@@ -16,8 +16,8 @@ oauth = OAuth()
 CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
 oauth.register(
     name='google',
-    client_id="988417806604-ggnkhrhere0el8b4r3ehko3ncmt8181r.apps.googleusercontent.com",
-    client_secret="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",
+    client_id=os.getenv("CLIENT_ID"),
+    client_secret=os.getenv("CLIENT_SECRET"),
     server_metadata_url=CONF_URL,
     client_kwargs={
         'scope': "openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
@@ -50,10 +50,7 @@ async def auth(request: Request):
     # Check if the email ends with @dartmouth.edu
     if not userinfo['email'].endswith("@dartmouth.edu"):
         # If it doesn't, return an error response.
-        return JSONResponse(
-            status_code=400,
-            content={"ok": False, "error": "Invalid email domain. Only @dartmouth.edu emails are allowed."},
-        )
+        return Success(ok=False, error = "Must be Dartmouth email", message = "")
 
     # Connect to the database
     db = SessionLocal()
@@ -88,5 +85,4 @@ async def auth(request: Request):
 
     # Assuming you want to redirect to a page that uses the API key
     response = RedirectResponse(url=f'/?api_key={api_key}')
-    response.set_cookie(key="api_key", value=api_key, httponly=True)
     return response
