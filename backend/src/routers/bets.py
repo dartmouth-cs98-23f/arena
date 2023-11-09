@@ -4,8 +4,13 @@ from fastapi import APIRouter, Depends
 from fastapi.security.api_key import APIKey
 from pymongo import DESCENDING
 
+<<<<<<< HEAD
 from backend.src.models.database import get_mongo, get_db,  get_user, DB_BETS, DB_ODDS, DB_WAGERS
 from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetContext, OddsResponse, OddsScheme, WagerCreateContext
+=======
+from backend.src.models.database import get_mongo, get_db, DB_BETS, DB_ODDS, get_user, User
+from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetContext, OddsResponse, OddsScheme, WagerCreateContext, BetSettlement
+>>>>>>> 4473741 (intermediate for merge)
 from backend.src.schemas.index import Success
 from backend.src.auth import get_api_key
 
@@ -221,16 +226,23 @@ async def get_odds(uid:str,
                         odds=odds_collection)
 
 @router.post("/settle")
-async def settle_bet(settlement: BetSettlement, db=Depends(get_db), mongo=Depends(get_mongo)) -> Success:
+async def settle_bet(settlement: BetSettlement, 
+                    db=Depends(get_db),
+                    mongo=Depends(get_mongo),
+                    api_key:APIKey = Depends(get_api_key)) -> Success:
+
     # Retrieve all wagers for the given bet_uuid
-    wagers_cursor = mongo[DB_BETS].find({"bet_uuid": settlement.bet_uuid})
-    wagers = await wagers_cursor.to_list()
+    wagers_cursor = mongo[DB_BETS].find({"uuid": settlement.bet_uuid})
+    wagers = await wagers_cursor.to_list(length=1)
 
     # Iterate through each wager to calculate and update user balance
     for wager in wagers:
-        user = get_user(wager['user_uuid'], db)
-        if not user:
-            return Success(ok=False, error=str(), message="Failed to create bet") 
+        try:
+            print("USER UUID")
+            print(wager['userUuid'])
+            user = db.query(User).filter(User.id == wager['userUuid']).first()
+        except Exception as ex:
+            return Success(ok=False, error=str(ex), message="User not found") 
 
         # Calculate payout based on the odds and whether the user bet Yes or No
         odds = wager['odds']
@@ -245,4 +257,4 @@ async def settle_bet(settlement: BetSettlement, db=Depends(get_db), mongo=Depend
         user.balance += payout
         db.commit()
 
-    return Success(ok=True, message="All bets settled and balances updated.")
+    return Success(ok=True, error=None, message="All bets settled and balances updated.")

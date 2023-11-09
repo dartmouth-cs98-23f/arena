@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Betting Platform</title>
+<style>
+  /* Add your CSS styling here */
+</style>
+<script>
+// Function to load bets from the backend
+async function loadBets() {
+  try {
+    const url = 'http://127.0.0.1:5000/bets/get/?limit=10&page=1';
+    const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        'access_token': '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d' // Use the correct header name
+        },
+        credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(data)
+    displayBets(data.bets);
+  } catch (error) {
+    console.error('Error loading bets:', error);
+  }
+}
+
+// Function to display bets on the page
+function displayBets(bets) {
+  const betsContainer = document.getElementById('betsContainer');
+  betsContainer.innerHTML = ''; // Clear existing bets
+
+  bets.forEach(bet => {
+    const betElement = document.createElement('div');
+    betElement.innerHTML = `
+      <h3>${bet.title}</h3>
+      <h4>${bet.uuid}</h4>
+      <p>${bet.description}<p>
+      <button onclick="settleBet('${bet.uuid}', true)">Yes</button>
+      <button onclick="settleBet('${bet.uuid}', false)">No</button>
+    `;
+    betsContainer.appendChild(betElement);
+  });
+}
+
+// Function to settle a bet
+async function settleBet(betUuid, outcome) {
+  try {
+    const url = 'http://127.0.0.1:5000/bets/settle/';
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d'
+      },
+      body: JSON.stringify({ bet_uuid: betUuid, outcome: outcome })
+    });
+    const result = await response.json();
+    alert(result.message); // Display a message to the user
+    loadBets(); // Reload bets to reflect any changes
+  } catch (error) {
+    console.error('Error settling bet:', error);
+  }
+}
+
+// Load bets when the page loads
+window.onload = loadBets;
+</script>
+</head>
+<body>
+<div id="betsContainer">
+  <!-- Bets will be loaded here -->
+</div>
+</body>
+</html>
