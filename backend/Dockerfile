@@ -3,7 +3,6 @@ FROM python:3.10
 WORKDIR /code
 
 COPY /requirements.in /code/requirements.txt
-COPY /interfaces /code/interfaces
 
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 

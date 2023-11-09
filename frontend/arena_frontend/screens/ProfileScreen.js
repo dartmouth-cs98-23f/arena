@@ -5,7 +5,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, SafeAreaView, Image
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
-
+// Mock data for the positions
 const positionsData = [
   {
     id: '1',
@@ -36,21 +36,20 @@ function ProfileScreen({ navigation }) {
     const textColor = item.trend === 'Up' ? '#34D399' : '#FF4500'; // Green for Up, Red for Down
     
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('BetDetail', { itemId: item.id })}>
-        <View style={styles.positionItem}>
-          <View style={styles.questionContainer}>
-            <Text style={styles.positionQuestion}>{item.question}</Text>
-          </View>
-          <View style={styles.oddsContainer}>
-            <Text style={[styles.oddsPercentage, { color: textColor }]}>
-              {item.odds}
-            </Text>
-            <Text style={[styles.trend, { color: textColor }]}>
-              {item.trend} {item.count}
-            </Text>
-          </View>
+      <View style={styles.positionItem}>
+        <View style={styles.questionContainer}>
+          <Text style={styles.positionQuestion}>{item.question}</Text>
         </View>
-      </TouchableOpacity>
+        <View style={styles.oddsContainer}>
+          <Text style={styles.oddsText}>Current odds</Text>
+          <Text style={[styles.oddsPercentage, { color: textColor }]}>
+            {item.odds}
+          </Text>
+          <Text style={[styles.trend, { color: textColor }]}>
+            {item.trend} {item.count}
+          </Text>
+        </View>
+      </View>
     );
   };
 
@@ -65,7 +64,7 @@ function ProfileScreen({ navigation }) {
           style={styles.buyTokensButton}
           onPress={() => navigation.navigate('BuyTokens')} // Add navigation here
         >
-
+          
           <Text style={styles.buyTokensText}>Buy Tokens</Text>
         </TouchableOpacity>
       </View>
@@ -77,11 +76,11 @@ function ProfileScreen({ navigation }) {
 
       {/* Footer Section */}
       <View style={styles.footer}>
-      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-          <Image source={homeIcon} style={styles.footerIcon} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Question')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Add')}>
           <Image source={addIcon} style={styles.footerIcon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          <Image source={homeIcon} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
           <Image source={profileIcon} style={styles.footerIcon} />
