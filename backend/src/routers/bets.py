@@ -1,16 +1,11 @@
 import random
-from uuid import uuid4
+from uuid import uuid4, UUID
 from fastapi import APIRouter, Depends
 from fastapi.security.api_key import APIKey
 from pymongo import DESCENDING
 
-<<<<<<< HEAD
 from backend.src.models.database import get_mongo, get_db,  get_user, DB_BETS, DB_ODDS, DB_WAGERS
-from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetContext, OddsResponse, OddsScheme, WagerCreateContext
-=======
-from backend.src.models.database import get_mongo, get_db, DB_BETS, DB_ODDS, get_user, User
 from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetContext, OddsResponse, OddsScheme, WagerCreateContext, BetSettlement
->>>>>>> 4473741 (intermediate for merge)
 from backend.src.schemas.index import Success
 from backend.src.auth import get_api_key
 
@@ -232,15 +227,16 @@ async def settle_bet(settlement: BetSettlement,
                     api_key:APIKey = Depends(get_api_key)) -> Success:
 
     # Retrieve all wagers for the given bet_uuid
-    wagers_cursor = mongo[DB_BETS].find({"uuid": settlement.bet_uuid})
-    wagers = await wagers_cursor.to_list(length=1)
-
+    print(settlement.bet_uuid)
+    wagers_cursor = mongo[DB_WAGERS].find({"betUuid": settlement.bet_uuid})
+    wagers = await wagers_cursor.to_list(length=100000)
+    print(wagers)
     # Iterate through each wager to calculate and update user balance
     for wager in wagers:
         try:
             print("USER UUID")
-            print(wager['userUuid'])
-            user = db.query(User).filter(User.id == wager['userUuid']).first()
+            print(UUID(wager['userUuid']))
+            user = db.query(User).filter(User.id == UUID(wager['userUuid'])).first()
         except Exception as ex:
             return Success(ok=False, error=str(ex), message="User not found") 
 

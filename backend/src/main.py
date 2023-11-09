@@ -1,6 +1,10 @@
 import uvicorn
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+
 
 from backend.src.routers import index
 from backend.src.routers import bets
@@ -20,6 +24,16 @@ app = FastAPI(
         "name": "Ian Kim",
         "email": "ian@iankim.dev"
     })
+
+env = Environment(
+    loader=FileSystemLoader('templates/'),
+    autoescape=select_autoescape()
+)
+
+@app.get("/admin")
+async def admin(request: Request):
+    template = env.get_template("index.html")
+    return template.render()
 
 app.add_middleware(
     CORSMiddleware,
