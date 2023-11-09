@@ -9,6 +9,20 @@ message Bet {
   string description = 4;
   string win_justification = 5;
   string verifier_uuid = 6;
+<<<<<<< HEAD
+  google.protobuf.Timestamp timestamp = 7;
+}
+
+message odds {
+  string uuid = 1;
+  string bet_uuid = 2;
+  double odds = 3;
+  google.protobuf.Timestamp timestamp = 4;
+}
+
+message Comment{
+=======
+>>>>>>> 38404b5 (first commit)
   google.protobuf.Timestamp timestamp = 7;
 }
 
@@ -21,13 +35,6 @@ message odds {
 
 message Comment{
   google.protobuf.Timestamp timestamp = 7;
-}
-
-message odds {
-  string uuid = 1;
-  string bet_uuid = 2;
-  double odds = 3;
-  google.protobuf.Timestamp timestamp = 4;
 }
 
 message comment {
