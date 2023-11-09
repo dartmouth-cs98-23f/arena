@@ -3,9 +3,10 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends
 from fastapi.security.api_key import APIKey
 from pymongo import DESCENDING
+from bson import ObjectId
 
 from backend.src.models.database import get_mongo, get_db,  get_user, DB_BETS, DB_ODDS, DB_WAGERS
-from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetContext, OddsResponse, OddsScheme, WagerCreateContext
+from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetContext, OddsResponse, OddsScheme, WagerCreateContext, BetResponse
 from backend.src.schemas.index import Success
 from backend.src.auth import get_api_key
 
@@ -168,6 +169,29 @@ async def create_bet(context:BetCreateContext,
     except Exception as ex:
         return Success(ok=False, error=str(ex), message="Failed to create bet") 
 
+
+@router.get("/get_single_bet")
+async def get_bet(uuid:str, mongo = Depends(get_mongo), api_key:APIKey = Depends(get_api_key)) -> BetResponse:
+    cursor = mongo[DB_BETS].find({"uuid": uuid}).limit(1)
+    documents = await cursor.to_list(length=1)
+    if len(documents) != 1:
+        return BetResponse(success=Success(ok=False, error="Cannot find a bet", message=""), bet=None)
+
+    # Specify the update operation
+    update_data = {
+        "$set": {
+            "timesViewed": int(documents[0]["timesViewed"]) + 1
+        }
+    }
+    
+    # Update the document
+    result = await mongo[DB_BETS].update_one({"_id": ObjectId(documents[0]["_id"])}, update_data)
+    if not result:
+        return BetResponse(success=Success(ok=False, error="Could not update the view count of the bet", message=""), bet=None)
+
+    return BetResponse(success = Success(ok=True, error=None, message=""),
+                       bet=str(dumps(documents[0])))
+    
 
 @router.get("/get/")
 async def get_bets(limit:int=10,
