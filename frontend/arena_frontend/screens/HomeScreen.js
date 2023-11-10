@@ -16,18 +16,14 @@ function HomeScreen({ navigation }) {
     'Content-Type': 'application/json',
   };
 
-  console.log('hello');
   const fetchBets = async () => {
     try {
       const response = await fetch('https://arena-backend.fly.dev/bets/get/', {
         method: 'GET',
         headers: headers,
       });
-      console.log('response', response);
-      console.log('hello2');
       const data = await response.json();
       const bets = data.bets;
-      console.log('bets', bets);
       const oddsPromises = bets.map(async (bet) => {
         const oddsURL = `https://arena-backend.fly.dev/bets/odds/?uid=${bet.uuid}`;
         const oddsResponse = await fetch(oddsURL, {
