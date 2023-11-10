@@ -7,8 +7,7 @@ py_library(
     name = "schemas",
     srcs = ["__init__.py",
             "index.py",
-            "bets.py",
-            "users.py"],
+            "bets.py"],
     deps = [requirement("fastapi"),
         requirement("pydantic")]
 )

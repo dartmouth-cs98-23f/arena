@@ -104,4 +104,3 @@ def get_user(api_key, db) -> Optional[User]:
     if not user:
         return None
     return user
-

@@ -54,4 +54,3 @@ if __name__ == "__main__":
     db.add(record)
     db.commit()
     db.close()
-
