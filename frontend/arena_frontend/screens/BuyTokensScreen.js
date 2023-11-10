@@ -14,6 +14,7 @@ const tokenPackages = [
 ];
 
 function BuyTokensScreen({ route, navigation }) {
+<<<<<<< HEAD
     const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
 
 
@@ -43,6 +44,15 @@ function BuyTokensScreen({ route, navigation }) {
         } catch (error) {
             console.error('Error during token purchase:', error);
         }
+=======
+    const { myTokens } = route.params;
+
+    const handleTokenPurchase = (tokens, price) => {
+        console.log(`Purchased ${tokens} tokens for ${price}.`);
+        const newTokens = myTokens + tokens;
+        console.log('currentTokens', newTokens);
+        navigation.navigate('Profile', { newTokens });
+>>>>>>> 24412f0 (added token updating on purchase)
     };
 
     async function fetchBalance() {

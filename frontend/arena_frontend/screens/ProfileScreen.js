@@ -32,38 +32,8 @@ const positionsData = [
 ];
 
 function ProfileScreen({ route, navigation }) {
-  const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
-
-
-  async function fetchBalance() {
-    try {
-        const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
-        const headers = {
-            'access_token': apiToken,
-            'Content-Type': 'application/json',
-        };
-        const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
-        const requestOptions = {
-            method: 'GET',
-            headers: headers,
-          };
-        const response = await fetch(apiEndpoint, requestOptions);
-        if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}`);
-        }
-        const data = await response.json();
-        console.log('Balance fetched successfully!');
-        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-        console.log('myTokens', myTokens);
-    } catch (error) {
-        console.error('An error occurred:', error);
-    }
-}
-
-// Call fetchBalance inside your useEffect hook
-useEffect(() => {
-    fetchBalance();
-}, []); // The empty dependency array ensures this effect runs only once after the initial render
+  var { newTokens } = route.params || {};
+  const myTokens = newTokens || 50;;
 
   const renderPosition = ({ item }) => {
     const textColor = item.trend === 'Up' ? '#34D399' : '#FF4500'; // Green for Up, Red for Down
