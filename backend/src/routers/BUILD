@@ -16,12 +16,7 @@ py_library(
         requirement("psycopg2-binary"),
         "//interfaces:bets_proto_py",
         "//backend/src/models",
-        "//backend/src:auth", 
-        requirement("pydantic"), 
-        requirement("authlib"), 
-        requirement("httpx"), 
-        requirement("itsdangerous")]
-)
+        "//backend/src:auth"]
 
 py_test(
     name = "test_index",
