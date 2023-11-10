@@ -19,7 +19,6 @@ Base = declarative_base()
 
 ARENA_DATABASE = "arena-mongo"
 DB_BETS = "bets"
-DB_WAGERS = "wagers"
 DB_ODDS = "odds"
 
 SQLALCHEMY_DATABASE_URL = os.getenv("DB_CONN")
