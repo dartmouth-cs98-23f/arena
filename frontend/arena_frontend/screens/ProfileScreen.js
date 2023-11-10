@@ -31,7 +31,10 @@ const positionsData = [
   // Add more positions as needed
 ];
 
-function ProfileScreen({ navigation }) {
+function ProfileScreen({ route, navigation }) {
+  var { newTokens } = route.params || {};
+  const myTokens = newTokens || 50;;
+
   const renderPosition = ({ item }) => {
     const textColor = item.trend === 'Up' ? '#34D399' : '#FF4500'; // Green for Up, Red for Down
     
@@ -54,16 +57,17 @@ function ProfileScreen({ navigation }) {
     );
   };
 
+  console.log('myTokens', myTokens);
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>My Positions</Text>
       </View>
       <View style={styles.tokenSection}>
-        <Text style={styles.tokenCount}>{'50' /* Convert number to string here */}</Text>
+        <Text style={styles.tokenCount}>{myTokens}</Text>
         <TouchableOpacity
           style={styles.buyTokensButton}
-          onPress={() => navigation.navigate('BuyTokens')} // Add navigation here
+          onPress={() => navigation.navigate('BuyTokens', { myTokens })} // Add navigation here
         >
 
           <Text style={styles.buyTokensText}>Buy Tokens</Text>

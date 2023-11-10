@@ -13,9 +13,14 @@ const tokenPackages = [
     { id: '4', tokens: 6500, price: '$49.99' },
 ];
 
-function BuyTokensScreen({ navigation }) {
+function BuyTokensScreen({ route, navigation }) {
+    const { myTokens } = route.params;
+
     const handleTokenPurchase = (tokens, price) => {
         console.log(`Purchased ${tokens} tokens for ${price}.`);
+        const newTokens = myTokens + tokens;
+        console.log('currentTokens', newTokens);
+        navigation.navigate('Profile', { newTokens });
     };
 
     const renderTokenPackage = ({ item }) => (
