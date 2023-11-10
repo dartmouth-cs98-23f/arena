@@ -29,8 +29,4 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _globals['_COMMENT']._serialized_end=380
   _globals['_WAGER']._serialized_start=382
   _globals['_WAGER']._serialized_end=502
-<<<<<<< HEAD
 # @@protoc_insertion_point(module_scope)
-=======
-# @@protoc_insertion_point(module_scope)
->>>>>>> parent of 3845a6e (Ravin frontend (#56))
