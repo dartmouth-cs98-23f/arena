@@ -40,7 +40,7 @@ function BuyTokensScreen({ route, navigation }) {
                     <Text style={styles.backIcon}>🔙</Text>
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Buy Tokens</Text>
-                <Text style={styles.coinBalance}>50</Text>
+                <Text style={styles.coinBalance}>{myTokens}</Text>
             </View>
             <FlatList
                 data={tokenPackages}
