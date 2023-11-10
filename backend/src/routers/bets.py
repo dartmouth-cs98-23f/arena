@@ -9,7 +9,7 @@ from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetCont
 from backend.src.schemas.index import Success
 from backend.src.auth import get_api_key
 
-from interfaces.bets_pb2 import Bet, Odds, Wager
+from backend.interfaces.bets_pb2 import Bet, Odds, Wager
 
 from datetime import timezone 
 import datetime 
