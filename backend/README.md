@@ -9,3 +9,13 @@ pip-compile --generate-hashes --output-file=requirements_lock.txt requirements.i
 ```
 bazel run //backend:main
 ```
+
+## Database Migrations
+```
+alembic revision --autogenerate -m "Some comment here"
+```
+
+```
+alembic upgrace head
+```
+

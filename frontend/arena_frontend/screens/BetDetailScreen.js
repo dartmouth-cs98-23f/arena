@@ -1,177 +1,179 @@
 // BetDetailScreen.js
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import betDetailGraph from '../logos/betDetailGraph.png';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image, SafeAreaView } from 'react-native';
+import { LineChart } from 'react-native-chart-kit';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
+import coinIcon from '../logos/coinIcon.png';
+import backArrowIcon from '../logos/backArrowIcon.png';
 
 function BetDetailScreen({ navigation }) {
-  return (
-    <View style={styles.container}>
-      <View style={styles.flexContainer}>
-        {/* Header Section */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            {/* Replace with your actual icon */}
-            <Text style={styles.iconPlaceholder}>🔙</Text>
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Bet Details</Text>
-          {/* Replace with your actual icon */}
-          <Text style={styles.iconPlaceholder}>💰50</Text>
-        </View>
+  // Sample data for the graph
+  const data = {
+    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    datasets: [
+      {
+        data: [20, 45, 28, 80, 99, 43, 50],
+        strokeWidth: 2,
+      },
+    ],
+  };
 
-        {/* Bet Details Section */}
-        <Text style={styles.questionTitle}>Will any students fail COSC 98 in Fall 2023?</Text>
+  // Chart configuration
+  const chartConfig = {
+    backgroundColor: '#000000',
+    color: (opacity = 1) => `rgba(52, 211, 153, ${opacity})`,
+    strokeWidth: 2,
+    propsForDots: {
+      r: "6",
+      strokeWidth: "2",
+      stroke: "#ffa726"
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.header}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Image source={backArrowIcon} style={styles.backIcon} /> 
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Bet Details</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('BuyTokens')}
+          style={styles.tokenButton}>
+          <Image source={coinIcon} style={styles.coinIcon} />
+          <Text style={styles.coinBalance}> 50</Text>
+        </TouchableOpacity>
+      </View>
+
+        <Text style={styles.questionTitle}>
+          Will any students fail COSC 98 in Fall 2023?
+        </Text>
         <Text style={styles.oddsTitle}>Current odds</Text>
         <Text style={styles.percentage}>64%</Text>
 
-        {/* Buttons Section */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.yesButton}>
-            <Text style={styles.buttonTextYesNo}>Yes</Text>
-            <Text style={styles.buttonText}>💰 10</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.noButton}>
-            <Text style={styles.buttonTextYesNo}>No</Text>
-            <Text style={styles.buttonText}>💰 10</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Graph */}
+        {/* Graph Section */}
         <View style={styles.graphContainer}>
-          <Image source={betDetailGraph} style={styles.graph} />
+          <LineChart
+            data={data}
+            width={Dimensions.get('window').width - 30} // from react-native
+            height={220}
+            chartConfig={chartConfig}
+            bezier
+          />
         </View>
 
         {/* Additional Info */}
-        <Text style={styles.additionalInfo}>This bet settles to Yes if at least one student enrolled in COSC 98 does not pass the class. Settles to No otherwise.</Text>
-      </View>
+        <Text style={styles.additionalInfo}>
+          This bet settles to Yes if at least one student enrolled in COSC 98 does not pass the class. Settles to No otherwise.
+        </Text>
       {/* Footer Section */}
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => navigation.navigate('Add')}>
-          <Image source={addIcon} style={styles.footerIcon} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <Image source={homeIcon} style={styles.footerIcon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Question')}>
+          <Image source={addIcon} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
           <Image source={profileIcon} style={styles.footerIcon} />
         </TouchableOpacity>
       </View>
-    </View>
-
-
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: 'black',
-    padding: 15,
-  },
-  flexContainer: {
-    flex: 1,
   },
   header: {
-    flexDirection: 'row',
+    flexDirection: 'row', // Align items horizontally
     alignItems: 'center',
-    marginBottom: 20,
-    marginTop: 30, // added some top margin to lower the header
+    justifyContent: 'space-between', // Space items evenly
+    paddingHorizontal: 10, // Add padding on the sides
+    height: 60, 
+  },
+  tokenButton: {
+    flexDirection: 'row', // Positions the coin icon and balance text in a row
+    alignItems: 'center',
+  },
+  mainContent: {
+    flex: 1, // This will ensure this view takes up all space between header and footer
+    // Other styling as needed
   },
   backButton: {
-    marginRight: 20, // added some margin for better spacing
+    padding: 10,
+  },
+  backIcon: {
+    width: 25, // Adjust the size as needed
+    height: 25, // Adjust the size as needed
+  resizeMode: 'contain',
   },
   headerTitle: {
     color: 'white',
     fontSize: 20,
     fontWeight: 'bold',
-    flex: 1,
     textAlign: 'center',
   },
-  iconPlaceholder: {
+  coinBalance: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   questionTitle: {
     color: 'white',
-    fontSize: 22,
-    fontWeight: 'bold', // Make the question title bold
-    marginBottom: 5,
+    fontSize: 18,
+    fontWeight: 'bold',
+    padding: 10,
     textAlign: 'center',
   },
   oddsTitle: {
     color: 'white',
-    fontSize: 18,
-    marginBottom: 5,
+    fontSize: 16,
     textAlign: 'center',
+    padding: 10,
   },
   percentage: {
     color: '#34D399',
-    fontSize: 40, // Increase the font size of the percentage
-    marginBottom: 20,
+    fontSize: 30,
+    fontWeight: 'bold',
     textAlign: 'center',
-    fontWeight: 'bold'
+    padding: 10,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  yesButton: {
-    backgroundColor: '#34D399',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    flex: 1,
-    marginRight: 10,
-  },
-  noButton: {
-    backgroundColor: '#34D399',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    flex: 1,
-    marginLeft: 10,
-  },
-  buttonTextYesNo: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: 'bold', // Made the text bold as per your request
-  },
-  buttonText: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: 16,
-  },
-  graph: {
-    height: 200,
-    backgroundColor: 'black',
-    justifyContent: 'center',
+  graphContainer: {
     alignItems: 'center',
-    marginBottom: 20,
-    width: 392,
-    height: 256,
+    justifyContent: 'center',
+    marginVertical: 20,
   },
   additionalInfo: {
     color: 'white',
     fontSize: 16,
-    marginTop: 20,
+    textAlign: 'center',
+    padding: 10,
+  },
+  flexContainer: {
+    flex: 1, // This will ensure that the container takes up all available space
   },
   footer: {
+    position: 'absolute', // Ensures footer sticks to the bottom
+    bottom: 0, // Align to the bottom
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     justifyContent: 'space-around',
-    padding: 20,
-    backgroundColor: 'black', // Adjust the background color as needed
+    backgroundColor: 'black',
+    borderTopWidth: 1, // Add a border top if needed for design
+    paddingVertical: 10, // Padding inside the footer
   },
   footerIcon: {
-    width: 30, // Adjust the width as needed
-    height: 30, // Adjust the height as needed
+    width: 30,
+    height: 30,
   },
+  // Add any additional styles you may need here
 });
 
 export default BetDetailScreen;
-
-

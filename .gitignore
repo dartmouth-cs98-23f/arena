@@ -1,4 +1,4 @@
-
+**/.DS_Store
 bazel-testlogs/
 .clwb
 **/.hypothesis
@@ -13,4 +13,3 @@ dev.env.sh
 **/alembic
 backend/alembic
 **/alembic.ini
-.DS_Store

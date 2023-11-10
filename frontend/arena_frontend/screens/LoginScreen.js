@@ -1,19 +1,11 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
 import logo from '../logos/ArenaLogo.png';
-import { Linking } from 'react-native';
-
 
 function LoginScreen({ navigation }) {
-  const handleLogin = async () => {
-    // try {
-    //   const loginUrl = 'https://arena-backend.fly.dev/login';
-    //   Linking.openURL(loginUrl).catch(err => console.error('An error occurred', err));
-    //   navigation.navigate('Home');
-    // }
-    // catch (error) {
-    //   console.log(error);
-    // }
+  const handleLogin = () => {
+    // Here you can add any login logic.
+    // After successful login, navigate to BetsListScreen:
     navigation.navigate('Home');
   };
   
@@ -22,6 +14,7 @@ function LoginScreen({ navigation }) {
       <View style={styles.logoContainer}>
     <Image source={logo} style={styles.logo} />
       </View>
+
       <Text style={styles.title}>ARENA</Text>
       <Text style={styles.subtitle}>Enter. Bet. Win.</Text>
       <TouchableOpacity style={styles.button} onPress={handleLogin}>

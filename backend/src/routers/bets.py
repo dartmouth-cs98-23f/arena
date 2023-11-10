@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from fastapi.security.api_key import APIKey
 from pymongo import DESCENDING
 
-from backend.src.models.database import get_mongo, get_db, DB_BETS, DB_ODDS, get_user
+from backend.src.models.database import get_mongo, get_db,  get_user, DB_BETS, DB_ODDS, DB_WAGERS
 from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetContext, OddsResponse, OddsScheme, WagerCreateContext
 from backend.src.schemas.index import Success
 from backend.src.auth import get_api_key
@@ -66,7 +66,7 @@ async def create_wager(context:WagerCreateContext,
         wager_json["timestamp"] = int(utc_timestamp)
         wager_json["yes"] = context.yes
 
-        wager_results = await mongo[DB_BETS].insert_one(wager_json)
+        wager_results = await mongo[DB_WAGERS].insert_one(wager_json)
     except Exception as ex:
         return Success(ok=False, error=str(ex), message="Failed to create wager") 
 
