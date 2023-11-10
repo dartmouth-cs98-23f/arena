@@ -7,16 +7,15 @@ py_library(
     name = "routers",
     srcs = ["__init__.py",
             "index.py",
-            "bets.py"],
+            "bets.py",
+            "users.py"],
     deps = [requirement("fastapi"),
-        requirement("authlib"), 
-        requirement("httpx"), 
-        requirement("itsdangerous"),
         requirement("pydantic"),
         requirement("psycopg2-binary"),
         "//interfaces:bets_proto_py",
         "//backend/src/models",
-        "//backend/src:auth"])
+        "//backend/src:auth"]
+)
 
 py_test(
     name = "test_index",
