@@ -6,14 +6,15 @@ import { Linking } from 'react-native';
 
 function LoginScreen({ navigation }) {
   const handleLogin = async () => {
-    try {
-      const loginUrl = 'https://arena-backend.fly.dev/login';
-      Linking.openURL(loginUrl).catch(err => console.error('An error occurred', err));
-      navigation.navigate('Home');
-    }
-    catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   const loginUrl = 'https://arena-backend.fly.dev/login';
+    //   Linking.openURL(loginUrl).catch(err => console.error('An error occurred', err));
+    //   navigation.navigate('Home');
+    // }
+    // catch (error) {
+    //   console.log(error);
+    // }
+    navigation.navigate('Home');
   };
   
   return (
