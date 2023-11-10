@@ -1,12 +1,5 @@
-<<<<<<< HEAD
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, RefreshControl } from 'react-native';
-=======
-// HomeScreen.js
-
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
->>>>>>> 38404b5 (first commit)
 import logo from '../logos/ArenaLogo.png';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
@@ -80,10 +73,6 @@ function HomeScreen({ navigation }) {
       <View style={styles.header}>
         <Image source={logo} style={styles.headerLogo} />
         <Text style={styles.headerText}>ARENA</Text>
-<<<<<<< HEAD
-=======
-        {/* Add dropdown icon here if needed */}
->>>>>>> 38404b5 (first commit)
       </View>
 
       <FlatList
@@ -96,10 +85,6 @@ function HomeScreen({ navigation }) {
       />
 
       <View style={styles.footer}>
-<<<<<<< HEAD
-=======
-        {/* Add footer navigation icons here */}
->>>>>>> 38404b5 (first commit)
         <TouchableOpacity onPress={() => navigation.navigate('Add')}>
           <Image source={addIcon} style={styles.footerIcon} />
         </TouchableOpacity>
