@@ -8,6 +8,7 @@ from backend.src.schemas.index import Success
 from backend.src.models.database import Base, SessionLocal, engine, Key, User
 import secrets
 import datetime
+import os
 
 router = APIRouter()
 
