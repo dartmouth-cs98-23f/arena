@@ -1,26 +1,19 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
 import logo from '../logos/ArenaLogo.png';
+import { Linking } from 'react-native';
+
 
 function LoginScreen({ navigation }) {
   const handleLogin = async () => {
-    // Here you can add any login logic.
-    // After successful login, navigate to BetsListScreen:
-    // try {
-    //   const response = await fetch('arena-backend.fly.dev/login');
-    //   if (response.status === 200) {
-    //     // The request was successful, you can handle the response or redirection here.
-    //     // You might want to navigate to the Home screen or display a success message.
-    //     navigation.navigate('Home');
-    //   } else {
-    //     // Handle authentication error or failure here.
-    //     navigation.navigate('Home');
-    //   }
-    // } catch (error) {
-    //   // Handle network errors here.
-    //   pass;
-    // }
-    navigation.navigate('Home');
+    try {
+      const loginUrl = 'https://arena-backend.fly.dev/login';
+      Linking.openURL(loginUrl).catch(err => console.error('An error occurred', err));
+      navigation.navigate('Home');
+    }
+    catch (error) {
+      console.log(error);
+    }
   };
   
   return (
