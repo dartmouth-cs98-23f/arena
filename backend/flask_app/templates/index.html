@@ -16,9 +16,9 @@ async function loadBets() {
     method: 'GET',
     headers: {
         'Content-Type': 'application/json',
-        'access_token': '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d' // Use the correct header name
+        'access_token': '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d'
       },
-      credentials: 'same-origin'  // or 'same-origin' if your requests are same-origin
+      credentials: 'include' 
     });
 
     if (!response.ok) {
