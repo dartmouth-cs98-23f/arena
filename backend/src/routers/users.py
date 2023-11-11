@@ -4,7 +4,7 @@ from fastapi.security.api_key import APIKey
 from backend.src.auth import get_api_key
 from backend.src.models.database import get_db, get_user
 
-from backend.src.schemas.users import BalanceResponse
+from backend.src.schemas.users import BalanceResponse, BalanceAddContext
 from backend.src.schemas.index import Success
 
 router = APIRouter() 
@@ -27,4 +27,27 @@ async def user_balance(
         balance=user.balance)
     
     
+
+@router.post("/balance")
+async def user_balance_add(
+    balanceAddContext:BalanceAddContext,
+    db = Depends(get_db),
+    api_key: APIKey = Depends(get_api_key)) -> BalanceResponse:
+    user = get_user(api_key, db)
+    if not user:
+        return BalanceResponse(
+            success = Success(ok=False,
+                              error="Could not find the user",
+                              message=""),
+            balance=0.0)
+
+    user.balance += balanceAddContext.additional_balance
+    db.commit()
+
+    return BalanceResponse(
+        success = Success(ok=True,
+                          error=None,
+                          message=f"Added {balanceAddContext.additional_balance} to user balance"),
+        balance = user.balance,
+    )
 
