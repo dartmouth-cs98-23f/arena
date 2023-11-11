@@ -1,6 +1,6 @@
 // ProfileScreen.js
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, SafeAreaView, Image } from 'react-native';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
@@ -33,7 +33,36 @@ const positionsData = [
 
 function ProfileScreen({ route, navigation }) {
   var { newTokens } = route.params || {};
-  const myTokens = newTokens || 50;;
+  const [myTokens, setMyTokens] = useState(newTokens || 50); // Initialize myTokens state
+
+
+    useEffect(() => {
+    const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+    const headers = {
+      'access_token': apiToken,
+      'Content-Type': 'application/json',
+    };
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+    const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+
+    fetch(apiEndpoint, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Balance fetched successfully!');
+        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+      })
+      .catch(error => {
+        console.error('An error occurred:', error);
+      });
+  }, []); // The empty dependency array ensures this effect runs only once after the initial render
 
   const renderPosition = ({ item }) => {
     const textColor = item.trend === 'Up' ? '#34D399' : '#FF4500'; // Green for Up, Red for Down
