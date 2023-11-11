@@ -56,6 +56,7 @@ function HomeScreen({ navigation }) {
     setRefreshing(false);
   };
 
+<<<<<<< HEAD
   useEffect(() => {
     onRefresh(); // Call onRefresh instead of fetchBets directly
   }, []);
@@ -83,6 +84,8 @@ function HomeScreen({ navigation }) {
     });
   }, []); // The empty dependency array ensures this effect runs only once after the initial render
 
+=======
+>>>>>>> 04ce91c (tokens linked to the screens)
   const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
 
 
@@ -129,7 +132,8 @@ function HomeScreen({ navigation }) {
         <Image source={logo} style={styles.headerLogo} />
         <Text style={styles.headerText}>ARENA</Text>
         <TouchableOpacity onPress={() => navigation.navigate('BuyTokens')} style={styles.coinButton}>
-          <Image source={coinIcon} style={styles.coinIcon} />
+          <Image source={coinIcon} style={styles.coinIcon}/>
+          {/* <Text>{myTokens}</Text> */}
         </TouchableOpacity>
       </View>
 
