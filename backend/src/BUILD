@@ -19,5 +19,5 @@ py_binary(
     deps = [
         requirement("psycopg2-binary"),
         "//backend/src/models",
-    ]
+    ],
 )

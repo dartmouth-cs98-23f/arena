@@ -41,4 +41,7 @@ class WagerCreateContext(BaseModel):
     amount: int
     yes: bool
     bet_uuid: str
-    
+
+class BetSettlement(BaseModel):
+    bet_uuid: str
+    outcome: bool
