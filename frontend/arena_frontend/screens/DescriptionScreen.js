@@ -11,7 +11,7 @@ function DescriptionScreen({ route, navigation }) {
 
   const goToNextStep = () => {
     // Pass the question state to the next screen
-    navigation.navigate('Odds', { question, details });
+    navigation.navigate('Odds', { details });
     
   };
 

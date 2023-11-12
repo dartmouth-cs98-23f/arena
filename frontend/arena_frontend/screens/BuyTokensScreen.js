@@ -1,6 +1,6 @@
 // BuyTokensScreen.js
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView, FlatList, Image} from 'react-native';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
@@ -13,42 +13,9 @@ const tokenPackages = [
     { id: '4', tokens: 6500, price: '$49.99' },
 ];
 
-function BuyTokensScreen({ route, navigation }) {
-    const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
-
-    useEffect(() => {
-    const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
-    const headers = {
-      'access_token': apiToken,
-      'Content-Type': 'application/json',
-    };
-    const requestOptions = {
-      method: 'GET',
-      headers: headers,
-    };
-    const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
-
-    fetch(apiEndpoint, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Balance fetched successfully!');
-        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-      })
-      .catch(error => {
-        console.error('An error occurred:', error);
-      });
-  }, []); // The empty dependency array ensures this effect runs only once after the initial render
-
+function BuyTokensScreen({ navigation }) {
     const handleTokenPurchase = (tokens, price) => {
         console.log(`Purchased ${tokens} tokens for ${price}.`);
-        const newTokens = myTokens + tokens;
-        console.log('currentTokens', newTokens);
-        navigation.navigate('Profile', { newTokens });
     };
 
     const renderTokenPackage = ({ item }) => (
@@ -68,7 +35,7 @@ function BuyTokensScreen({ route, navigation }) {
                     <Text style={styles.backIcon}>🔙</Text>
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Buy Tokens</Text>
-                <Text style={styles.coinBalance}>{myTokens}</Text>
+                <Text style={styles.coinBalance}>50</Text>
             </View>
             <FlatList
                 data={tokenPackages}

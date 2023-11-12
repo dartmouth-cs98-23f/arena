@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, RefreshControl, SafeAreaView} from 'react-native';
+// HomeScreen.js
+
+import React from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import logo from '../logos/ArenaLogo.png';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
@@ -7,128 +9,63 @@ import profileIcon from '../logos/profileIcon.png';
 import coinIcon from '../logos/coinIcon.png';
 
 function HomeScreen({ navigation }) {
-  const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
-  const [feedData, setFeedData] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
 
-  // Set the headers for the request
-  const headers = {
-    'access_token': apiToken,
-    'Content-Type': 'application/json',
-  };
+  const feedData = [
+    // Add more bet items here
+    { id: '1', question: 'Will Hanover, NH get more than 12 inches of snow before January 4, 2024', percentage: '4%' },
+    { id: '2', question: 'Will Psi Upsilon get suspended before Janurary 4, 2024?', percentage: '48%' },
+    { id: '3', question: 'Will any students fail COSC 98 in Fall 2023', percentage: '64%' },
+    { id: '4', question: 'Will any stduents fail COSC 1 in Fall 2023', percentage: '97%' }
 
-  const fetchBets = async () => {
-    try {
-      const response = await fetch('https://arena-backend.fly.dev/bets/get/', {
-        method: 'GET',
-        headers: headers,
-      });
-      const data = await response.json();
-      const bets = data.bets;
-      const oddsPromises = bets.map(async (bet) => {
-        const oddsURL = `https://arena-backend.fly.dev/bets/odds/?uid=${bet.uuid}`;
-        const oddsResponse = await fetch(oddsURL, {
-          method: 'GET',
-          headers: headers,
-        });
-        const oddsData = await oddsResponse.json();
-        const computedOdds = (oddsData.odds[0].odds * 100).toFixed(0) + '%';
-        return {
-          id: bet._id.$oid,
-          question: bet.title,
-          percentage: computedOdds,
-        };
-      });
-      const oddsResults = await Promise.all(oddsPromises);
-      setFeedData(oddsResults);
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchBets();
-  }, []);
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await fetchBets();
-    setRefreshing(false);
-  };
-
-  const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
-
-
-  useEffect(() => {
-  const requestOptions = {
-    method: 'GET',
-    headers: headers,
-  };
-  const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
-
-  fetch(apiEndpoint, requestOptions)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Balance fetched successfully!');
-      setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-    })
-    .catch(error => {
-      console.error('An error occurred:', error);
-    });
-  }, []); // The empty dependency array ensures this effect runs only once after the initial render
+    // ...
+  ];
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.itemContainer}
       onPress={() => navigation.navigate('BetDetail', { itemId: item.id })}>
+
       <View style={styles.textContainer}>
         <Text style={styles.questionText}>{item.question}</Text>
       </View>
+
       <View style={styles.percentageContainer}>
         <Text style={styles.percentageText}>{item.percentage}</Text>
       </View>
+
     </TouchableOpacity>
   );
 
   return (
     <SafeAreaView style={styles.safeArea}>
-       <View style={styles.container}>
-      <View style={styles.header}>
-        <Image source={logo} style={styles.headerLogo} />
-        <Text style={styles.headerText}>ARENA</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('BuyTokens')} style={styles.coinButton}>
-          <Image source={coinIcon} style={styles.coinIcon}/>
-          {/* <Text>{myTokens}</Text> */}
-        </TouchableOpacity>
-      </View>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Image source={logo} style={styles.headerLogo} />
+          <Text style={styles.headerTitle}>ARENA</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('BuyTokens')} style={styles.coinButton}>
+            <Image source={coinIcon} style={styles.coinIcon} />
+          </TouchableOpacity>
+        </View>
 
       <FlatList
         data={feedData}
         renderItem={renderItem}
         keyExtractor={item => item.id}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
       />
 
-<View style={styles.footer}>
-             {/* Add footer navigation icons here */}
-             <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-               <Image source={homeIcon} style={styles.footerIcon} />
-             </TouchableOpacity>
-             <TouchableOpacity onPress={() => navigation.navigate('Question')}>
-               <Image source={addIcon} style={styles.footerIcon} />
-            </TouchableOpacity>
-             <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-              <Image source={profileIcon} style={styles.footerIcon} />
-             </TouchableOpacity>
-           </View>
-         </View>
+      <View style={styles.footer}>
+        {/* Add footer navigation icons here */}
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          <Image source={homeIcon} style={styles.footerIcon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Question')}>
+          <Image source={addIcon} style={styles.footerIcon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <Image source={profileIcon} style={styles.footerIcon} />
+        </TouchableOpacity>
+      </View>
+    </View>
     </SafeAreaView>
   );
 }
@@ -194,7 +131,7 @@ const styles = StyleSheet.create({
   },
   percentageText: {
     color: '#34D399',
-    fontSize: 27,
+    fontSize: 30,
     fontWeight: 'bold',
   },
   buyTokensButton: {
