@@ -52,9 +52,8 @@ function ProfileScreen({ route, navigation }) {
             throw new Error(`Request failed with status ${response.status}`);
         }
         const data = await response.json();
-        console.log('Balance fetched successfully!');
         setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-        console.log('myTokens', myTokens);
+        console.log('myTokens on token purchase screen', myTokens);
     } catch (error) {
         console.error('An error occurred:', error);
     }
@@ -63,7 +62,7 @@ function ProfileScreen({ route, navigation }) {
 // Call fetchBalance inside your useEffect hook
 useEffect(() => {
     fetchBalance();
-}, []); // The empty dependency array ensures this effect runs only once after the initial render
+}); // The empty dependency array ensures this effect runs only once after the initial render
 
   const renderPosition = ({ item }) => {
     const textColor = item.trend === 'Up' ? '#34D399' : '#FF4500'; // Green for Up, Red for Down
@@ -87,7 +86,6 @@ useEffect(() => {
     );
   };
 
-  console.log('myTokens', myTokens);
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
