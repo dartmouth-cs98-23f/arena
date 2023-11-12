@@ -17,6 +17,13 @@ function HomeScreen({ navigation }) {
     'Content-Type': 'application/json',
   };
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+    // ...
+  ];
+=======
+>>>>>>> 2bdc27b (home refresh)
   const fetchBets = async () => {
     try {
       const response = await fetch('https://arena-backend.fly.dev/bets/get/', {
@@ -45,6 +52,20 @@ function HomeScreen({ navigation }) {
       console.error('Error:', error);
     }
   };
+<<<<<<< HEAD
+=======
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchBets();
+    setRefreshing(false);
+  };
+>>>>>>> 7b2f12d (home refresh)
+
+  useEffect(() => {
+    onRefresh(); // Call onRefresh instead of fetchBets directly
+  }, []);
+>>>>>>> 2bdc27b (home refresh)
 
   useEffect(() => {
     fetchBets();
