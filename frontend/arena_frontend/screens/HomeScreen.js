@@ -56,6 +56,32 @@ function HomeScreen({ navigation }) {
     setRefreshing(false);
   };
 
+  const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
+
+
+  useEffect(() => {
+  const requestOptions = {
+    method: 'GET',
+    headers: headers,
+  };
+  const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+
+  fetch(apiEndpoint, requestOptions)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Balance fetched successfully!');
+      setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+    })
+    .catch(error => {
+      console.error('An error occurred:', error);
+    });
+  }, []); // The empty dependency array ensures this effect runs only once after the initial render
+
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.itemContainer}
@@ -76,7 +102,8 @@ function HomeScreen({ navigation }) {
         <Image source={logo} style={styles.headerLogo} />
         <Text style={styles.headerText}>ARENA</Text>
         <TouchableOpacity onPress={() => navigation.navigate('BuyTokens')} style={styles.coinButton}>
-          <Image source={coinIcon} style={styles.coinIcon} />
+          <Image source={coinIcon} style={styles.coinIcon}/>
+          {/* <Text>{myTokens}</Text> */}
         </TouchableOpacity>
       </View>
 
