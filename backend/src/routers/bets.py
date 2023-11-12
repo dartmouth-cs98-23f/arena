@@ -204,6 +204,38 @@ async def get_bets(limit:int=10,
     return BetsResponse(success = Success(ok=True, error=None, message=""),
                         bets=str(dumps(documents)))
 
+@router.get("/positions/")
+async def get_positions(
+        limit: int = 10,
+        page: int = 1,
+        timestamp: int = 0,
+        db=Depends(get_db),
+        mongo=Depends(get_mongo),
+        api_key: APIKey = Depends(get_api_key)) -> BetsResponse:
+    user = get_user(api_key, db)
+    user_uuid_call = str(user.id)
+
+    if page <= 0:
+        return BetsResponse(success=Success(ok=False, error="Page must be at least one", message=""), bets=None)
+
+    skip = (page - 1) * limit
+    if skip < 0:
+        return BetsResponse(success=Success(ok=False, error="Invalid limit. limit must be at least one", message=""), bets=None)
+
+    # Retrieve all wagers for the given user_uuid
+    wagers_cursor = mongo[DB_WAGERS].find({"userUuid": user_uuid_call})
+    wagers = await wagers_cursor.to_list(length=100000)
+
+    # Extract unique betUuids from wagers
+    unique_bet_uuids = {wager['betUuid'] for wager in wagers}
+
+    # Retrieve bets from DB_BETS matching the unique betUuids
+    bets_cursor = mongo[DB_BETS].find({"uuid": {"$in": list(unique_bet_uuids)}, "resolved": False})
+    bets = await bets_cursor.to_list(length=limit)
+
+    # Convert the cursor result to a list of documents
+    return BetsResponse(success=Success(ok=True, error=None, message=""), bets=str(dumps(bets)))
+
 
 @router.get("/odds/")
 async def get_odds(uid:str,
