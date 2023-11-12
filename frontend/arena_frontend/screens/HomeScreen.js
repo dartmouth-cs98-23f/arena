@@ -10,17 +10,8 @@ import coinIcon from '../logos/coinIcon.png';
 
 function HomeScreen({ navigation }) {
 
-  const feedData = [
-    // Add more bet items here
-    { id: '1', question: 'Will Hanover, NH get more than 12 inches of snow before January 4, 2024', percentage: '4%' },
-    { id: '2', question: 'Will Psi Upsilon get suspended before Janurary 4, 2024?', percentage: '48%' },
-    { id: '3', question: 'Will any students fail COSC 98 in Fall 2023', percentage: '64%' },
-    { id: '4', question: 'Will any stduents fail COSC 1 in Fall 2023', percentage: '97%' }
+  const feedData = []
 
-<<<<<<< HEAD
-    // ...
-  ];
-=======
   const fetchBets = async () => {
     try {
       const response = await fetch('https://arena-backend.fly.dev/bets/get/', {
@@ -55,7 +46,6 @@ function HomeScreen({ navigation }) {
     await fetchBets();
     setRefreshing(false);
   };
->>>>>>> 7b2f12d (home refresh)
 
   useEffect(() => {
     onRefresh(); // Call onRefresh instead of fetchBets directly
