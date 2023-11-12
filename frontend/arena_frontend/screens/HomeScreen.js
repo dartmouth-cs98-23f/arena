@@ -11,30 +11,12 @@ function HomeScreen({ navigation }) {
   const [feedData, setFeedData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 018bd38 (restored)
   // Set the headers for the request
   const headers = {
     'access_token': apiToken,
     'Content-Type': 'application/json',
   };
-<<<<<<< HEAD
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-    // ...
-  ];
-=======
->>>>>>> 2bdc27b (home refresh)
-=======
-  const feedData = []
-=======
->>>>>>> 018bd38 (restored)
-
->>>>>>> 6ffeddf (small fix)
   const fetchBets = async () => {
     try {
       const response = await fetch('https://arena-backend.fly.dev/bets/get/', {
@@ -63,8 +45,6 @@ function HomeScreen({ navigation }) {
       console.error('Error:', error);
     }
   };
-<<<<<<< HEAD
-=======
 
   useEffect(() => {
     fetchBets();
@@ -76,23 +56,6 @@ function HomeScreen({ navigation }) {
     setRefreshing(false);
   };
 
-<<<<<<< HEAD
-  useEffect(() => {
-    onRefresh(); // Call onRefresh instead of fetchBets directly
-  }, []);
->>>>>>> 2bdc27b (home refresh)
-
-  useEffect(() => {
-    fetchBets();
-  }, []);
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await fetchBets();
-    setRefreshing(false);
-  };
-
-<<<<<<< HEAD
   useEffect(() => {
     onRefresh(); // Call onRefresh instead of fetchBets directly
   }, []);
@@ -120,10 +83,6 @@ function HomeScreen({ navigation }) {
     });
   }, []); // The empty dependency array ensures this effect runs only once after the initial render
 
-=======
->>>>>>> 04ce91c (tokens linked to the screens)
-=======
->>>>>>> 018bd38 (restored)
   const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
 
 
