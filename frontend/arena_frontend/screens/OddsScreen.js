@@ -10,48 +10,9 @@ function DescriptionScreen({ route, navigation }) {
   const { question, description } = route.params;
   const [odds, setOdds] = useState(50);
 
-  const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
     const submitBet = () => {
         // Pass the question state to the next screen
         console.log('Bet Submitted:', { question, description, odds });
-        payload = {
-            "title": question.toString(),
-            "description": "...",
-            "win_justification": "...",
-            "verifier_uuid": "...",
-            "odds": odds / 100
-        };
-
-        // Set the headers for the request
-        const headers = {
-            'access_token': apiToken,
-            'Content-Type': 'application/json',
-        };
-
-        const requestOptions = {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(payload),
-          };
-
-        const apiEndpoint = 'https://arena-backend.fly.dev/bets/create';
-
-        fetch(apiEndpoint, requestOptions)
-            .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Request failed with status ${response.status}`);
-            }
-            return response.json();
-            })
-            .then((data) => {
-            console.log('POST request successful!');
-            // Handle the response data here if needed
-            console.log(data);
-            })
-            .catch((error) => {
-            console.error('An error occurred:', error);
-        });
-
         navigation.navigate('Home');
     };
 
