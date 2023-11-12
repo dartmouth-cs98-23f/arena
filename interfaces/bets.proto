@@ -9,6 +9,7 @@ message Bet {
   string verifier_uuid = 6;
   int64 timestamp = 7;
   int64 times_viewed = 8;
+  bool resolved = 9;
 }
 
 message Odds {
