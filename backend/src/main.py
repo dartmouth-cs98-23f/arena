@@ -1,5 +1,9 @@
 import uvicorn
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+
+import os
+
 
 from backend.src.routers import index
 from backend.src.routers import bets
@@ -19,6 +23,14 @@ app = FastAPI(
         "name": "Ian Kim",
         "email": "ian@iankim.dev"
     })
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins, for development only, adjust for production
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 app.include_router(index.router,
                     prefix="",

@@ -72,4 +72,3 @@ pip_parse(
 load("@python_deps//:requirements.bzl", "install_deps")
 # Call it to define repos for your requirements.
 install_deps()
-
