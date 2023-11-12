@@ -11,7 +11,7 @@
 // Function to load bets from the backend
 async function loadBets() {
   try {
-    const url = 'http://127.0.0.1:5000/bets/get/?limit=10&page=1';
+    const url = 'https://arena-backend.fly.dev/bets/get/?limit=10&page=1';
     const response = await fetch(url, {
     method: 'GET',
     headers: {
@@ -54,7 +54,7 @@ function displayBets(bets) {
 // Function to settle a bet
 async function settleBet(betUuid, outcome) {
   try {
-    const url = 'http://127.0.0.1:5000/bets/settle/';
+    const url = 'https://arena-backend.fly.dev/bets/settle/';
     const response = await fetch(url, {
       method: 'POST',
       headers: {
