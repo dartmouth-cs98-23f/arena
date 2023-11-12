@@ -12,11 +12,15 @@ function HomeScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 018bd38 (restored)
   // Set the headers for the request
   const headers = {
     'access_token': apiToken,
     'Content-Type': 'application/json',
   };
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 =======
@@ -27,6 +31,8 @@ function HomeScreen({ navigation }) {
 >>>>>>> 2bdc27b (home refresh)
 =======
   const feedData = []
+=======
+>>>>>>> 018bd38 (restored)
 
 >>>>>>> 6ffeddf (small fix)
   const fetchBets = async () => {
@@ -60,12 +66,17 @@ function HomeScreen({ navigation }) {
 <<<<<<< HEAD
 =======
 
+  useEffect(() => {
+    fetchBets();
+  }, []);
+
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchBets();
     setRefreshing(false);
   };
 
+<<<<<<< HEAD
   useEffect(() => {
     onRefresh(); // Call onRefresh instead of fetchBets directly
   }, []);
@@ -111,6 +122,8 @@ function HomeScreen({ navigation }) {
 
 =======
 >>>>>>> 04ce91c (tokens linked to the screens)
+=======
+>>>>>>> 018bd38 (restored)
   const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
 
 
