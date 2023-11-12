@@ -5,12 +5,14 @@ import Slider from '@react-native-community/slider';
 import homeIcon from '../logos/homeIcon.png';
 import addIcon from '../logos/addIcon.png';
 import profileIcon from '../logos/profileIcon.png';
+import backArrowIcon from '../logos/backArrowIcon.png';
+
 
 function DescriptionScreen({ route, navigation }) {
-  const { question, description } = route.params;
-  const [odds, setOdds] = useState(50);
+    const { question, description } = route.params;
+    const [odds, setOdds] = useState(50);
 
-  const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+    const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
     const submitBet = () => {
         // Pass the question state to the next screen
         console.log('Bet Submitted:', { question, description, odds });
@@ -32,25 +34,25 @@ function DescriptionScreen({ route, navigation }) {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(payload),
-          };
+        };
 
         const apiEndpoint = 'https://arena-backend.fly.dev/bets/create';
 
         fetch(apiEndpoint, requestOptions)
             .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Request failed with status ${response.status}`);
-            }
-            return response.json();
+                if (!response.ok) {
+                    throw new Error(`Request failed with status ${response.status}`);
+                }
+                return response.json();
             })
             .then((data) => {
-            console.log('POST request successful!');
-            // Handle the response data here if needed
-            console.log(data);
+                console.log('POST request successful!');
+                // Handle the response data here if needed
+                console.log(data);
             })
             .catch((error) => {
-            console.error('An error occurred:', error);
-        });
+                console.error('An error occurred:', error);
+            });
 
         navigation.navigate('Home');
     };
@@ -59,7 +61,10 @@ function DescriptionScreen({ route, navigation }) {
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
-                    <Text style={styles.header}>           Create Bet</Text>
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                        <Image source={backArrowIcon} style={styles.backIcon} />
+                    </TouchableOpacity>
+                    <Text style={styles.header}>Create Bet</Text>
                     <TouchableOpacity style={styles.submitButton} onPress={submitBet}>
                         <Text style={styles.submitButtonText}>Submit</Text>
                     </TouchableOpacity>
@@ -109,6 +114,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         flex: 1, // makes sure it takes up the space between the button and the edge
+    },
+    backButton: {
+        padding: 10,
+    },
+    backIcon: {
+        width: 25, // Adjust the size as needed
+        height: 25, // Adjust the size as needed
+        resizeMode: 'contain',
     },
     submitButton: {
         backgroundColor: '#34D399', // Theme color for the button

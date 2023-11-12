@@ -5,6 +5,8 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, SafeAreaView, Image
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
+import backArrowIcon from '../logos/backArrowIcon.png';
+
 
 const positionsData = [
   {
@@ -36,7 +38,7 @@ function ProfileScreen({ route, navigation }) {
   const [myTokens, setMyTokens] = useState(newTokens || 50); // Initialize myTokens state
 
 
-    useEffect(() => {
+  useEffect(() => {
     const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
     const headers = {
       'access_token': apiToken,
@@ -66,7 +68,7 @@ function ProfileScreen({ route, navigation }) {
 
   const renderPosition = ({ item }) => {
     const textColor = item.trend === 'Up' ? '#34D399' : '#FF4500'; // Green for Up, Red for Down
-    
+
     return (
       <TouchableOpacity onPress={() => navigation.navigate('BetDetail', { itemId: item.id })}>
         <View style={styles.positionItem}>
@@ -90,6 +92,9 @@ function ProfileScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Image source={backArrowIcon} style={styles.backIcon} />
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>My Positions</Text>
       </View>
       <View style={styles.tokenSection}>
@@ -110,7 +115,7 @@ function ProfileScreen({ route, navigation }) {
 
       {/* Footer Section */}
       <View style={styles.footer}>
-      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <Image source={homeIcon} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Question')}>
@@ -134,7 +139,16 @@ const styles = StyleSheet.create({
   header: {
     justifyContent: 'center', // Center the title
     alignItems: 'center', // Align items in the center for the cross-axis
-    paddingVertical: 10,
+    paddingVertical: 5,
+  },
+  backButton: {
+    position: 'absolute', // Position absolutely to overlap the header container
+    left: 20, // Distance from the left
+    zIndex: 20, // Ensure it's clickable by placing it above other elements
+  },
+  backIcon: {
+    // height: 15, something wrong here, when I size it right, the icon gets cut off
+    // width: 10,
   },
   headerTitle: {
     color: 'white',
