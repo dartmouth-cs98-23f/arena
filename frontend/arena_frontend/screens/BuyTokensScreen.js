@@ -50,18 +50,8 @@ function BuyTokensScreen({ route, navigation }) {
 =======
     const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
 
-    useEffect(() => {
-    const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
-    const headers = {
-      'access_token': apiToken,
-      'Content-Type': 'application/json',
-    };
-    const requestOptions = {
-      method: 'GET',
-      headers: headers,
-    };
-    const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
 
+<<<<<<< HEAD
     fetch(apiEndpoint, requestOptions)
       .then(response => {
         if (!response.ok) {
@@ -78,13 +68,41 @@ function BuyTokensScreen({ route, navigation }) {
       });
   }, []); // The empty dependency array ensures this effect runs only once after the initial render
 >>>>>>> 04ce91c (tokens linked to the screens)
+=======
+    const handleTokenPurchase = async (tokens, price) => {
+        const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+        const headers = {
+            'access_token': apiToken,
+            'Content-Type': 'application/json',
+        };
+        const apiEndpointPost = 'https://arena-backend.fly.dev/user/balance';
 
-    const handleTokenPurchase = (tokens, price) => {
+        const payload = {
+            "additional_balance": tokens,
+        };
+
+        const requestOptions = {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(payload),
+        };
+>>>>>>> fd9ea1b (finished token integration)
+
         console.log(`Purchased ${tokens} tokens for ${price}.`);
+<<<<<<< HEAD
         const newTokens = myTokens + tokens;
         console.log('currentTokens', newTokens);
         navigation.navigate('Profile', { newTokens });
 >>>>>>> 24412f0 (added token updating on purchase)
+=======
+
+        try {
+            await fetch(apiEndpointPost, requestOptions);
+            navigation.navigate('Profile');
+        } catch (error) {
+            console.error('Error during token purchase:', error);
+        }
+>>>>>>> fd9ea1b (finished token integration)
     };
 
     async function fetchBalance() {
