@@ -144,7 +144,7 @@ async def create_bet(context:BetCreateContext,
         verifier_uuid = "None",
         timestamp = int(utc_timestamp),
         times_viewed = 1,
-        verified = False,
+        resolved = False,
     )
 
     # clamp the odds to between 0.01 and 0.99
@@ -159,7 +159,7 @@ async def create_bet(context:BetCreateContext,
     bet_json = MessageToDict(bet)
     odds_json = MessageToDict(odds)
     bet_json["timestamp"] = int(utc_timestamp)
-    bet_json["verified"] = False
+    bet_json["resolved"] = False
     odds_json["timestamp"] = int(utc_timestamp)
 
     try:
@@ -194,7 +194,7 @@ async def get_bets(limit:int=10,
                                 message=""), 
             bets=None)
     # Query the MongoDB collection with sorting
-    cursor = mongo[DB_BETS].find({"timestamp": {"$gt": timestamp}, "verified": False})\
+    cursor = mongo[DB_BETS].find({"timestamp": {"$gt": timestamp}, "resolved": False})\
         .sort("timestamp", DESCENDING)\
         .skip(skip)\
         .limit(limit)
