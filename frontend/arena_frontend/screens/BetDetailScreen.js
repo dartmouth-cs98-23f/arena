@@ -1,6 +1,6 @@
 // BetDetailScreen.js
 
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image, SafeAreaView } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import addIcon from '../logos/addIcon.png';
@@ -10,6 +10,31 @@ import coinIcon from '../logos/coinIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
 
 function BetDetailScreen({ navigation }) {
+
+  const [ownedYes, setOwnedYes] = useState(0);
+  const [ownedNo, setOwnedNo] = useState(0);
+  const [tokenBalance, setTokenBalance] = useState(50);
+  const betCost = 10;
+
+  const purchaseYes = () => {
+    if (tokenBalance >= betCost) {
+      setOwnedYes(ownedYes + 1);
+      setTokenBalance(tokenBalance - betCost);
+    } else {
+      alert('Not enough tokens!');
+    }
+  };
+
+  // Function to handle purchasing "No" bets
+  const purchaseNo = () => {
+    if (tokenBalance >= betCost) {
+      setOwnedNo(ownedNo + 1);
+      setTokenBalance(tokenBalance - betCost);
+    } else {
+      alert('Not enough tokens!');
+    }
+  };
+
   // Sample data for the graph
   const data = {
     labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -32,9 +57,6 @@ function BetDetailScreen({ navigation }) {
       stroke: "#ffa726"
     }
   };
-
-  const ownedYes = 5;
-  const ownedNo = 6;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -59,19 +81,19 @@ function BetDetailScreen({ navigation }) {
 
       {/* Buttons Section */}
       <View style={styles.buttonContainer}>
-          <View style={styles.buttonWrapper}>
-            <TouchableOpacity style={styles.choiceButton}>
-              <Text style={styles.buttonText}>Yes 10</Text>
-            </TouchableOpacity>
-            <Text style={styles.ownedText}>Owned: {ownedYes}</Text>
-          </View>
-          <View style={styles.buttonWrapper}>
-            <TouchableOpacity style={styles.choiceButton}>
-              <Text style={styles.buttonText}>No 10</Text>
-            </TouchableOpacity>
-            <Text style={styles.ownedText}>Owned: {ownedNo}</Text>
-          </View>
+        <View style={styles.buttonWrapper}>
+          <TouchableOpacity onPress={purchaseYes} style={styles.choiceButton}>
+            <Text style={styles.buttonText}>Yes {betCost}</Text>
+          </TouchableOpacity>
+          <Text style={styles.ownedText}>Owned: {ownedYes}</Text>
         </View>
+        <View style={styles.buttonWrapper}>
+          <TouchableOpacity onPress={purchaseNo} style={styles.choiceButton}>
+            <Text style={styles.buttonText}>No {betCost}</Text>
+          </TouchableOpacity>
+          <Text style={styles.ownedText}>Owned: {ownedNo}</Text>
+        </View>
+      </View>
 
       {/* Graph Section */}
       <View style={styles.graphContainer}>
@@ -204,7 +226,7 @@ const styles = StyleSheet.create({
   choiceButton: {
     backgroundColor: '#34D399', // Your button background color
     paddingVertical: 10,
-    paddingHorizontal: 30, 
+    paddingHorizontal: 30,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
