@@ -1,6 +1,6 @@
 // BuyTokensScreen.js
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView, FlatList, Image} from 'react-native';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
@@ -13,10 +13,69 @@ const tokenPackages = [
     { id: '4', tokens: 6500, price: '$49.99' },
 ];
 
-function BuyTokensScreen({ navigation }) {
-    const handleTokenPurchase = (tokens, price) => {
+function BuyTokensScreen({ route, navigation }) {
+    const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
+
+
+    const handleTokenPurchase = async (tokens, price) => {
+        const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+        const headers = {
+            'access_token': apiToken,
+            'Content-Type': 'application/json',
+        };
+        const apiEndpointPost = 'https://arena-backend.fly.dev/user/balance';
+
+        const payload = {
+            "additional_balance": tokens,
+        };
+
+        const requestOptions = {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(payload),
+        };
+
         console.log(`Purchased ${tokens} tokens for ${price}.`);
+
+        try {
+            await fetch(apiEndpointPost, requestOptions);
+            navigation.navigate('Profile');
+        } catch (error) {
+            console.error('Error during token purchase:', error);
+        }
     };
+
+    async function fetchBalance() {
+        try {
+            const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+            const headers = {
+                'access_token': apiToken,
+                'Content-Type': 'application/json',
+            };
+            const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+            const requestOptions = {
+                method: 'GET',
+                headers: headers,
+              };
+            const response = await fetch(apiEndpoint, requestOptions);
+            if (!response.ok) {
+                throw new Error(`Request failed with status ${response.status}`);
+            }
+            const data = await response.json();
+            console.log('Buy Tokens Screen Balance fetched successfully!', data.balance);
+            setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+            console.log('myTokens', myTokens);
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
+    }
+    
+    // Call fetchBalance inside your useEffect hook
+    useEffect(() => {
+        fetchBalance();
+    }); // The empty dependency array ensures this effect runs only once after the initial render
+    
+
 
     const renderTokenPackage = ({ item }) => (
         <TouchableOpacity
