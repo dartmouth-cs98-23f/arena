@@ -11,6 +11,7 @@ function HomeScreen({ navigation }) {
   const [feedData, setFeedData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
+<<<<<<< HEAD
   // Set the headers for the request
   const headers = {
     'access_token': apiToken,
@@ -24,6 +25,10 @@ function HomeScreen({ navigation }) {
   ];
 =======
 >>>>>>> 2bdc27b (home refresh)
+=======
+  const feedData = []
+
+>>>>>>> 6ffeddf (small fix)
   const fetchBets = async () => {
     try {
       const response = await fetch('https://arena-backend.fly.dev/bets/get/', {
@@ -60,7 +65,6 @@ function HomeScreen({ navigation }) {
     await fetchBets();
     setRefreshing(false);
   };
->>>>>>> 7b2f12d (home refresh)
 
   useEffect(() => {
     onRefresh(); // Call onRefresh instead of fetchBets directly
