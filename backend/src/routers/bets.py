@@ -228,11 +228,16 @@ async def settle_bet(settlement: BetSettlement,
                     mongo=Depends(get_mongo),
                     api_key:APIKey = Depends(get_api_key)) -> Success:
 
+    bet_query = {"uuid": settlement.bet_uuid}
+    bets_cursor = mongo[DB_BETS].find(bet_query)
+    bets = await bets_cursor.to_list(length=1)
+    if len(bets) != 1:
+        return Success(ok=False, error="No such bets found, cannot resolve", message="")
+    
     # Retrieve all wagers for the given bet_uuid
-    print(settlement.bet_uuid)
     wagers_cursor = mongo[DB_WAGERS].find({"betUuid": settlement.bet_uuid})
     wagers = await wagers_cursor.to_list(length=100000)
-    print(wagers)
+
     # Iterate through each wager to calculate and update user balance
     for wager in wagers:
         try:
@@ -255,4 +260,6 @@ async def settle_bet(settlement: BetSettlement,
         user.balance += payout
         db.commit()
 
+    # mark a bet as resolved
+    mongo[DB_BETS].replace_one(bet_query, {"resolved": True})
     return Success(ok=True, error=None, message="All bets settled and balances updated.")
