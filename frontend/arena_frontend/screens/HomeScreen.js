@@ -11,7 +11,6 @@ import coinIcon from '../logos/coinIcon.png';
 function HomeScreen({ navigation }) {
 
   const feedData = []
-
   const fetchBets = async () => {
     try {
       const response = await fetch('https://arena-backend.fly.dev/bets/get/', {
