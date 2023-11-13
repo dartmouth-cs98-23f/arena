@@ -28,6 +28,8 @@ py_test(
         requirement("pydantic"),
         requirement("httpx"),
         requirement("pytest"),
+        requirement("authlib"),  
+        requirement("itsdangerous"),
         "//backend:main"
     ]
 )
