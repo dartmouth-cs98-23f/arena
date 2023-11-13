@@ -205,9 +205,9 @@ async def get_holdings(betUuid:str, mongo = Depends(get_mongo), db = Depends(get
     owned_no = 0
     for wager in wagers:
         if wager['yes'] == True:
-            owned_yes += wager['amount']
+            owned_yes += wager['tokens']
         else:
-            owned_no += wager['amount']
+            owned_no += wager['tokens']
     return Holdings(success = Success(ok=True, error=None, message=""), yes = owned_yes, no =owned_no)
 
 
