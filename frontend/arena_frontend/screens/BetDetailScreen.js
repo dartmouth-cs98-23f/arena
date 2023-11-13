@@ -1,6 +1,6 @@
 // BetDetailScreen.js
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image, SafeAreaView } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import addIcon from '../logos/addIcon.png';
@@ -9,12 +9,79 @@ import profileIcon from '../logos/profileIcon.png';
 import coinIcon from '../logos/coinIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
 
-function BetDetailScreen({ navigation }) {
+function BetDetailScreen({ route, navigation }) {
 
+  // const itemId = route.params?.itemId || 'default_bet_id'; 
+  // console.log("Received item ID:", route.params?.itemId);
+
+  const betUuid = route.params?.betUuid;
+
+  const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+  const [betDetails, setBetDetails] = useState(null);
   const [ownedYes, setOwnedYes] = useState(0);
   const [ownedNo, setOwnedNo] = useState(0);
-  const [tokenBalance, setTokenBalance] = useState(50);
+  const [myTokens, setMyTokens] = useState(50);
+  const [betTitle, setBetTitle] = useState('');
   const betCost = 10;
+
+  useEffect(() => {
+    const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d'; // Replace with actual API token
+    const headers = {
+      'access_token': apiToken,
+      'Content-Type': 'application/json',
+    };
+    const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+
+    const fetchBetDetails = async () => {
+      try {
+        const response = await fetch(`https://arena-backend.fly.dev/bets/details/${betUuid}`, {
+          method: 'GET',
+          headers: headers,
+        });
+        const data = await response.json();
+        if (data.success && data.success.ok) {
+          // Assuming the response structure matches your data
+          setBetDetails(data.bets[0]); // Store the bet details in state
+        } else {
+          console.error('Failed to fetch bet details:', data.success.error);
+        }
+      } catch (error) {
+        console.error('Error fetching bet details:', error);
+      }
+    };
+    
+
+    if (betUuid) {
+      fetchBetDetails();
+    }
+  
+    const fetchBalance = async () => {
+      try {
+        const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+        const headers = {
+            'access_token': apiToken,
+            'Content-Type': 'application/json',
+        };
+        const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+        const requestOptions = {
+            method: 'GET',
+            headers: headers,
+          };
+        const response = await fetch(apiEndpoint, requestOptions);
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('Balance fetched successfully!');
+        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+        console.log('myTokens', myTokens);
+    } catch (error) {
+        console.error('An error occurred:', error);
+    }
+}
+    fetchBalance();
+  }, [betUuid]);
+
 
   const purchaseYes = () => {
     if (tokenBalance >= betCost) {
@@ -69,15 +136,17 @@ function BetDetailScreen({ navigation }) {
           onPress={() => navigation.navigate('BuyTokens')}
           style={styles.tokenButton}>
           <Image source={coinIcon} style={styles.coinIcon} />
-          <Text style={styles.coinBalance}> 50</Text>
+          <Text style={styles.coinBalance}>{myTokens}</Text>
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.questionTitle}>
+
+      <Text style={styles.questionTitle}>{betDetails?.title || 'Loading...'}</Text>
+      {/* <Text style={styles.questionTitle}>
         Will any students fail COSC 98 in Fall 2023?
       </Text>
       <Text style={styles.oddsTitle}>Current odds</Text>
-      <Text style={styles.percentage}>64%</Text>
+      <Text style={styles.percentage}>64%</Text> */}
 
       {/* Buttons Section */}
       <View style={styles.buttonContainer}>

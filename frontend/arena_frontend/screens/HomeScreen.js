@@ -34,7 +34,8 @@ function HomeScreen({ navigation }) {
         const oddsData = await oddsResponse.json();
         const computedOdds = (oddsData.odds[0].odds * 100).toFixed(0) + '%';
         return {
-          id: bet._id.$oid,
+          id: bet._id.$oid, // MongoDB's ObjectID
+          uuid: bet.uuid, // The UUID needed for detail view
           question: bet.title,
           percentage: computedOdds,
         };
@@ -45,6 +46,7 @@ function HomeScreen({ navigation }) {
       console.error('Error:', error);
     }
   };
+  
 
   useEffect(() => {
     fetchBets();
@@ -83,9 +85,19 @@ function HomeScreen({ navigation }) {
   }, []); // The empty dependency array ensures this effect runs only once after the initial render
 
   const renderItem = ({ item }) => (
+    // <TouchableOpacity
+    //   style={styles.itemContainer}
+    //   onPress={() => navigation.navigate('BetDetail', { itemId: item.id })}>
+    //   <View style={styles.textContainer}>
+    //     <Text style={styles.questionText}>{item.question}</Text>
+    //   </View>
+    //   <View style={styles.percentageContainer}>
+    //     <Text style={styles.percentageText}>{item.percentage}</Text>
+    //   </View>
+    // </TouchableOpacity>
     <TouchableOpacity
       style={styles.itemContainer}
-      onPress={() => navigation.navigate('BetDetail', { itemId: item.id })}>
+      onPress={() => navigation.navigate('BetDetail', { betUuid: item.uuid })}>
       <View style={styles.textContainer}>
         <Text style={styles.questionText}>{item.question}</Text>
       </View>
