@@ -17,8 +17,7 @@ async function loadBets() {
     headers: {
         'Content-Type': 'application/json',
         'access_token': '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d'
-      },
-      credentials: 'include' 
+      }
     });
 
     if (!response.ok) {
@@ -54,7 +53,7 @@ function displayBets(bets) {
 // Function to settle a bet
 async function settleBet(betUuid, outcome) {
   try {
-    const url = 'https://arena-backend.fly.dev/bets/settle/';
+    const url = 'https://arena-backend.fly.dev/bets/settle';
     const response = await fetch(url, {
       method: 'POST',
       headers: {
