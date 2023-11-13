@@ -174,6 +174,7 @@ async def create_bet(context:BetCreateContext,
 
 @router.get("/get_single_bet")
 async def get_bet(uuid:str, mongo = Depends(get_mongo), api_key:APIKey = Depends(get_api_key)) -> BetResponse:
+    print("Inside get_single, uuid is " + uuid)
     cursor = mongo[DB_BETS].find({"uuid": uuid}).limit(1)
     documents = await cursor.to_list(length=1)
     if len(documents) != 1:
