@@ -5,70 +5,147 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, SafeAreaView, Image
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
-import backArrowIcon from '../logos/backArrowIcon.png';
 
-
-const positionsData = [
-  {
-    id: '1',
-    question: 'Will Hanover, NH get more than 12 inches of snow before January 4, 2024?',
-    odds: '4%',
-    trend: 'Up',
-    count: 88,
-  },
-  {
-    id: '2',
-    question: 'Will Psi Upsilon get suspended before January 4, 2024?',
-    odds: '48%',
-    trend: 'Down',
-    count: 16,
-  },
-  {
-    id: '3',
-    question: 'Will any students fail COSC 98 in Fall 2023?',
-    odds: '64%',
-    trend: 'Up',
-    count: 88,
-  },
-  // Add more positions as needed
-];
 
 function ProfileScreen({ route, navigation }) {
-  var { newTokens } = route.params || {};
-  const [myTokens, setMyTokens] = useState(newTokens || 50); // Initialize myTokens state
+  const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
+  const [positionsData, setFeedData] = useState([
+  ]);
+
+
+  async function fetchBalance() {
+    try {
+        const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+        const headers = {
+            'access_token': apiToken,
+            'Content-Type': 'application/json',
+        };
+        const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+        const requestOptions = {
+            method: 'GET',
+            headers: headers,
+          };
+        const response = await fetch(apiEndpoint, requestOptions);
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+        const data = await response.json();
+        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+        // console.log('myTokens on token purchase screen', myTokens);
+    } catch (error) {
+        console.error('An error occurred:', error);
+    }
+}
+
+  useEffect(() => {
+    fetchBalance();
+  }); 
+
+  
+  const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Set the headers for the request
+  const headers = {
+    'access_token': apiToken,
+    'Content-Type': 'application/json',
+  };
+
+  const fetchBets = async () => {
+    try {
+      const response = await fetch('https://arena-backend.fly.dev/bets/positions/', {
+        method: 'GET',
+        headers: headers,
+      });
+      const data = await response.json();
+      const bets = data.bets;
+      const oddsPromises = bets.map(async (bet) => {
+        const oddsURL = `https://arena-backend.fly.dev/bets/odds/?uid=${bet.uuid}`;
+        const oddsResponse = await fetch(oddsURL, {
+          method: 'GET',
+          headers: headers,
+        });
+        const oddsData = await oddsResponse.json();
+        const computedOdds = (oddsData.odds[0].odds * 100).toFixed(0) + '%';
+        return {
+          id: bet._id.$oid,
+          question: bet.title,
+          percentage: computedOdds,
+        };
+      });
+      const oddsResults = await Promise.all(oddsPromises);
+      setFeedData(oddsResults);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBets();
+  }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchBets();
+    setRefreshing(false);
+  };
+
+  useEffect(() => {
+    onRefresh(); // Call onRefresh instead of fetchBets directly
+  }, []);
+
+  useEffect(() => {
+  const requestOptions = {
+    method: 'GET',
+    headers: headers,
+  };
+  const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+
+  fetch(apiEndpoint, requestOptions)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      // console.log('Balance fetched successfully!');
+      setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+    })
+    .catch(error => {
+      console.error('An error occurred:', error);
+    });
+  }, []); // The empty dependency array ensures this effect runs only once after the initial render
+
 
 
   useEffect(() => {
-    const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
-    const headers = {
-      'access_token': apiToken,
-      'Content-Type': 'application/json',
-    };
-    const requestOptions = {
-      method: 'GET',
-      headers: headers,
-    };
-    const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+  const requestOptions = {
+    method: 'GET',
+    headers: headers,
+  };
+  const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
 
-    fetch(apiEndpoint, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Balance fetched successfully!');
-        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-      })
-      .catch(error => {
-        console.error('An error occurred:', error);
-      });
+  fetch(apiEndpoint, requestOptions)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      // console.log('Balance fetched successfully!');
+      setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+    })
+    .catch(error => {
+      console.error('An error occurred:', error);
+    });
   }, []); // The empty dependency array ensures this effect runs only once after the initial render
+
 
   const renderPosition = ({ item }) => {
     const textColor = item.trend === 'Up' ? '#34D399' : '#FF4500'; // Green for Up, Red for Down
-
+    
     return (
       <TouchableOpacity onPress={() => navigation.navigate('BetDetail', { itemId: item.id })}>
         <View style={styles.positionItem}>
@@ -77,7 +154,7 @@ function ProfileScreen({ route, navigation }) {
           </View>
           <View style={styles.oddsContainer}>
             <Text style={[styles.oddsPercentage, { color: textColor }]}>
-              {item.odds}
+              {item.percentage}
             </Text>
             <Text style={[styles.trend, { color: textColor }]}>
               {item.trend} {item.count}
@@ -88,13 +165,9 @@ function ProfileScreen({ route, navigation }) {
     );
   };
 
-  console.log('myTokens', myTokens);
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Image source={backArrowIcon} style={styles.backIcon} />
-        </TouchableOpacity>
         <Text style={styles.headerTitle}>My Positions</Text>
       </View>
       <View style={styles.tokenSection}>
@@ -115,7 +188,7 @@ function ProfileScreen({ route, navigation }) {
 
       {/* Footer Section */}
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <Image source={homeIcon} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Question')}>
@@ -139,16 +212,7 @@ const styles = StyleSheet.create({
   header: {
     justifyContent: 'center', // Center the title
     alignItems: 'center', // Align items in the center for the cross-axis
-    paddingVertical: 5,
-  },
-  backButton: {
-    position: 'absolute', // Position absolutely to overlap the header container
-    left: 20, // Distance from the left
-    zIndex: 20, // Ensure it's clickable by placing it above other elements
-  },
-  backIcon: {
-    // height: 15, something wrong here, when I size it right, the icon gets cut off
-    // width: 10,
+    paddingVertical: 10,
   },
   headerTitle: {
     color: 'white',

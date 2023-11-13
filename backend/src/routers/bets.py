@@ -3,9 +3,10 @@ from uuid import uuid4, UUID
 from fastapi import APIRouter, Depends
 from fastapi.security.api_key import APIKey
 from pymongo import DESCENDING
+from bson import ObjectId
 
 from backend.src.models.database import get_mongo, get_db,  get_user, DB_BETS, DB_ODDS, DB_WAGERS, User
-from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetContext, OddsResponse, OddsScheme, WagerCreateContext, BetSettlement
+from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetContext, OddsResponse, OddsScheme, WagerCreateContext, BetSettlement, BetResponse, Holdings
 from backend.src.schemas.index import Success
 from backend.src.auth import get_api_key
 
@@ -144,6 +145,7 @@ async def create_bet(context:BetCreateContext,
         verifier_uuid = "None",
         timestamp = int(utc_timestamp),
         times_viewed = 1,
+        resolved = False,
     )
 
     # clamp the odds to between 0.01 and 0.99
@@ -158,6 +160,7 @@ async def create_bet(context:BetCreateContext,
     bet_json = MessageToDict(bet)
     odds_json = MessageToDict(odds)
     bet_json["timestamp"] = int(utc_timestamp)
+    bet_json["resolved"] = False
     odds_json["timestamp"] = int(utc_timestamp)
 
     try:
@@ -167,6 +170,45 @@ async def create_bet(context:BetCreateContext,
         return Success(ok=True, error=None, message=str(bet_id))
     except Exception as ex:
         return Success(ok=False, error=str(ex), message="Failed to create bet") 
+
+
+@router.get("/get_single_bet")
+async def get_bet(uuid:str, mongo = Depends(get_mongo), api_key:APIKey = Depends(get_api_key)) -> BetResponse:
+    cursor = mongo[DB_BETS].find({"uuid": uuid}).limit(1)
+    documents = await cursor.to_list(length=1)
+    if len(documents) != 1:
+        return BetResponse(success=Success(ok=False, error="Cannot find a bet", message=""), bet=None)
+
+    # Specify the update operation
+    update_data = {
+        "$set": {
+            "timesViewed": int(documents[0]["timesViewed"]) + 1
+        }
+    }
+    
+    # Update the document
+    result = await mongo[DB_BETS].update_one({"_id": ObjectId(documents[0]["_id"])}, update_data)
+    if not result:
+        return BetResponse(success=Success(ok=False, error="Could not update the view count of the bet", message=""), bet=None)
+
+    return BetResponse(success = Success(ok=True, error=None, message=""),
+                       bet=str(dumps(documents[0])))
+
+@router.get("/holdings")
+async def get_holdings(betUuid:str, mongo = Depends(get_mongo), db = Depends(get_db), api_key:APIKey = Depends(get_api_key)) -> Holdings:
+    user = get_user(api_key, db)
+    user_uuid_call = str(user.id)
+    # Retrieve all wagers for the given bet_uuid and given user
+    wagers_cursor = mongo[DB_WAGERS].find({"betUuid": betUuid, "userUuid": user_uuid_call})
+    wagers = await wagers_cursor.to_list(length=100000)
+    owned_yes = 0
+    owned_no = 0
+    for wager in wagers:
+        if wager['yes'] == True:
+            owned_yes += wager['tokens']
+        else:
+            owned_no += wager['tokens']
+    return Holdings(success = Success(ok=True, error=None, message=""), yes = owned_yes, no =owned_no)
 
 
 @router.get("/get/")
@@ -192,7 +234,7 @@ async def get_bets(limit:int=10,
                                 message=""), 
             bets=None)
     # Query the MongoDB collection with sorting
-    cursor = mongo[DB_BETS].find({"timestamp": {"$gt": timestamp}})\
+    cursor = mongo[DB_BETS].find({"timestamp": {"$gt": timestamp}, "resolved": False})\
         .sort("timestamp", DESCENDING)\
         .skip(skip)\
         .limit(limit)
@@ -201,6 +243,38 @@ async def get_bets(limit:int=10,
     documents = await cursor.to_list(length=limit)
     return BetsResponse(success = Success(ok=True, error=None, message=""),
                         bets=str(dumps(documents)))
+
+@router.get("/positions/")
+async def get_positions(
+        limit: int = 10,
+        page: int = 1,
+        timestamp: int = 0,
+        db=Depends(get_db),
+        mongo=Depends(get_mongo),
+        api_key: APIKey = Depends(get_api_key)) -> BetsResponse:
+    user = get_user(api_key, db)
+    user_uuid_call = str(user.id)
+
+    if page <= 0:
+        return BetsResponse(success=Success(ok=False, error="Page must be at least one", message=""), bets=None)
+
+    skip = (page - 1) * limit
+    if skip < 0:
+        return BetsResponse(success=Success(ok=False, error="Invalid limit. limit must be at least one", message=""), bets=None)
+
+    # Retrieve all wagers for the given user_uuid
+    wagers_cursor = mongo[DB_WAGERS].find({"userUuid": user_uuid_call})
+    wagers = await wagers_cursor.to_list(length=100000)
+
+    # Extract unique betUuids from wagers
+    unique_bet_uuids = {wager['betUuid'] for wager in wagers}
+
+    # Retrieve bets from DB_BETS matching the unique betUuids
+    bets_cursor = mongo[DB_BETS].find({"uuid": {"$in": list(unique_bet_uuids)}, "resolved": False})
+    bets = await bets_cursor.to_list(length=limit)
+
+    # Convert the cursor result to a list of documents
+    return BetsResponse(success=Success(ok=True, error=None, message=""), bets=str(dumps(bets)))
 
 
 @router.get("/odds/")
@@ -226,11 +300,16 @@ async def settle_bet(settlement: BetSettlement,
                     mongo=Depends(get_mongo),
                     api_key:APIKey = Depends(get_api_key)) -> Success:
 
+    bet_query = {"uuid": settlement.bet_uuid}
+    bets_cursor = mongo[DB_BETS].find(bet_query)
+    bets = await bets_cursor.to_list(length=1)
+    if len(bets) != 1:
+        return Success(ok=False, error="No such bets found, cannot resolve", message="")
+    
     # Retrieve all wagers for the given bet_uuid
-    print(settlement.bet_uuid)
     wagers_cursor = mongo[DB_WAGERS].find({"betUuid": settlement.bet_uuid})
     wagers = await wagers_cursor.to_list(length=100000)
-    print(wagers)
+
     # Iterate through each wager to calculate and update user balance
     for wager in wagers:
         try:
@@ -253,4 +332,6 @@ async def settle_bet(settlement: BetSettlement,
         user.balance += payout
         db.commit()
 
+    # mark a bet as resolved
+    mongo[DB_BETS].replace_one(bet_query, {"resolved": True})
     return Success(ok=True, error=None, message="All bets settled and balances updated.")

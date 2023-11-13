@@ -12,7 +12,6 @@ class BetsResponse(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-
 class BetCreateContext(BaseModel):
     title: str
     description: str
@@ -20,27 +19,35 @@ class BetCreateContext(BaseModel):
     verifier_uuid: str
     odds: float
 
-
 class BetsGetContext(BaseModel):
     timestamp: int
     limit: int
     page: int
 
+class Holdings(BaseModel):
+    success: Success
+    yes: int
+    no: int
 
 class OddsScheme(BaseModel):
     odds: float
     timestamp: int
 
-
 class OddsResponse(BaseModel):
     success: Success
     odds: List[OddsScheme]
-
 
 class WagerCreateContext(BaseModel):
     amount: int
     yes: bool
     bet_uuid: str
+    
+class BetResponse(BaseModel):
+    success: Success
+    bet: Optional[Json[any]]
+
+    class Config:
+        arbitrary_types_allowed = True
 
 class BetSettlement(BaseModel):
     bet_uuid: str
