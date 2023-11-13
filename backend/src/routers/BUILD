@@ -12,6 +12,9 @@ py_library(
     deps = [requirement("fastapi"),
         requirement("pydantic"),
         requirement("psycopg2-binary"),
+        requirement("authlib"), 
+        requirement("httpx"), 
+        requirement("itsdangerous"),
         "//interfaces:bets_proto_py",
         "//backend/src/models",
         "//backend/src:auth"]
@@ -25,6 +28,8 @@ py_test(
         requirement("pydantic"),
         requirement("httpx"),
         requirement("pytest"),
+        requirement("authlib"),  
+        requirement("itsdangerous"),
         "//backend:main"
     ]
 )
