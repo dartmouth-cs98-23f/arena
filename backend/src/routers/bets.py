@@ -195,7 +195,7 @@ async def get_bet(uuid:str, mongo = Depends(get_mongo), api_key:APIKey = Depends
                        bet=str(dumps(documents[0])))
 
 @router.get("/holdings")
-async def get_holdings(betUuid:str, mongo = Depends(get_mongo), api_key:APIKey = Depends(get_api_key)) -> Holdings:
+async def get_holdings(betUuid:str, mongo = Depends(get_mongo), db = Depends(get_db), api_key:APIKey = Depends(get_api_key)) -> Holdings:
     user = get_user(api_key, db)
     user_uuid_call = str(user.id)
     # Retrieve all wagers for the given bet_uuid and given user
