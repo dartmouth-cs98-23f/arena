@@ -33,11 +33,14 @@ function BetDetailScreen({ navigation }) {
     }
   };
 
+  const ownedYes = 5;
+  const ownedNo = 6;
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Image source={backArrowIcon} style={styles.backIcon} /> 
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Image source={backArrowIcon} style={styles.backIcon} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Bet Details</Text>
         <TouchableOpacity
@@ -48,30 +51,46 @@ function BetDetailScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-        <Text style={styles.questionTitle}>
-          Will any students fail COSC 98 in Fall 2023?
-        </Text>
-        <Text style={styles.oddsTitle}>Current odds</Text>
-        <Text style={styles.percentage}>64%</Text>
+      <Text style={styles.questionTitle}>
+        Will any students fail COSC 98 in Fall 2023?
+      </Text>
+      <Text style={styles.oddsTitle}>Current odds</Text>
+      <Text style={styles.percentage}>64%</Text>
 
-        {/* Graph Section */}
-        <View style={styles.graphContainer}>
-          <LineChart
-            data={data}
-            width={Dimensions.get('window').width - 30} // from react-native
-            height={220}
-            chartConfig={chartConfig}
-            bezier
-          />
+      {/* Buttons Section */}
+      <View style={styles.buttonContainer}>
+          <View style={styles.buttonWrapper}>
+            <TouchableOpacity style={styles.choiceButton}>
+              <Text style={styles.buttonText}>Yes 10</Text>
+            </TouchableOpacity>
+            <Text style={styles.ownedText}>Owned: {ownedYes}</Text>
+          </View>
+          <View style={styles.buttonWrapper}>
+            <TouchableOpacity style={styles.choiceButton}>
+              <Text style={styles.buttonText}>No 10</Text>
+            </TouchableOpacity>
+            <Text style={styles.ownedText}>Owned: {ownedNo}</Text>
+          </View>
         </View>
 
-        {/* Additional Info */}
-        <Text style={styles.additionalInfo}>
-          This bet settles to Yes if at least one student enrolled in COSC 98 does not pass the class. Settles to No otherwise.
-        </Text>
+      {/* Graph Section */}
+      <View style={styles.graphContainer}>
+        <LineChart
+          data={data}
+          width={Dimensions.get('window').width - 30} // from react-native
+          height={220}
+          chartConfig={chartConfig}
+          bezier
+        />
+      </View>
+
+      {/* Additional Info */}
+      <Text style={styles.additionalInfo}>
+        This bet settles to Yes if at least one student enrolled in COSC 98 does not pass the class. Settles to No otherwise.
+      </Text>
       {/* Footer Section */}
       <View style={styles.footer}>
-      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <Image source={homeIcon} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Question')}>
@@ -95,7 +114,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between', // Space items evenly
     paddingHorizontal: 10, // Add padding on the sides
-    height: 60, 
+    height: 60,
   },
   tokenButton: {
     flexDirection: 'row', // Positions the coin icon and balance text in a row
@@ -111,7 +130,7 @@ const styles = StyleSheet.create({
   backIcon: {
     width: 25, // Adjust the size as needed
     height: 25, // Adjust the size as needed
-  resizeMode: 'contain',
+    resizeMode: 'contain',
   },
   headerTitle: {
     color: 'white',
@@ -172,6 +191,34 @@ const styles = StyleSheet.create({
   footerIcon: {
     width: 30,
     height: 30,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginBottom: 20,
+  },
+  buttonWrapper: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  choiceButton: {
+    backgroundColor: '#34D399', // Your button background color
+    paddingVertical: 10,
+    paddingHorizontal: 30, 
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 5,
+  },
+  buttonText: {
+    color: 'black',
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  ownedText: {
+    color: 'white',
+    fontSize: 16,
+    marginTop: 5, // Space between the bet amount and the owned count
   },
   // Add any additional styles you may need here
 });

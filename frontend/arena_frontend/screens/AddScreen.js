@@ -14,9 +14,11 @@ function AddScreen({ navigation }) {
     const [details, setDetails] = useState('');
     const [odds, setOdds] = useState(50);
 
+
     // Function to handle the submit action
     const handleSubmit = () => {
         // Here you would handle the submission of the bet
+
         console.log('Bet Submitted:', { question, details, odds });
     };
 
@@ -33,7 +35,11 @@ function AddScreen({ navigation }) {
                 <Text style={styles.label}>Question</Text>
                 <TextInput
                     style={styles.input}
-                    onChangeText={setQuestion}
+                    onChangeText={value => {
+                        console.log('value', value);
+                        setQuestion(value);
+                        }
+                    }
                     value={question}
                     placeholder="What's in the arena?"
                     placeholderTextColor="#999" // Placeholder text color
@@ -42,7 +48,7 @@ function AddScreen({ navigation }) {
                 <Text style={styles.label}>Details</Text>
                 <TextInput
                     style={[styles.input, styles.inputMultiline]}
-                    onChangeText={setDetails}
+                    onChangeText={value => setDetails(value)}
                     value={details}
                     multiline
                     placeholder="Specify any definitions in your question, as well as how the bet will be settled."

@@ -44,3 +44,6 @@ class BetResponse(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
+class BetSettlement(BaseModel):
+    bet_uuid: str
+    outcome: bool
