@@ -56,6 +56,33 @@ function HomeScreen({ navigation }) {
     setRefreshing(false);
   };
 
+  useEffect(() => {
+    onRefresh(); // Call onRefresh instead of fetchBets directly
+  }, []);
+
+  useEffect(() => {
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+    const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+
+    fetch(apiEndpoint, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Balance fetched successfully!');
+        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+      })
+      .catch(error => {
+        console.error('An error occurred:', error);
+      });
+  }, []); // The empty dependency array ensures this effect runs only once after the initial render
+
   const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
 
 
