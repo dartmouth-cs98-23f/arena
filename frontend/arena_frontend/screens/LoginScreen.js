@@ -1,12 +1,38 @@
-import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, TouchableOpacity, Text, StyleSheet, Image, Linking } from 'react-native';
 import logo from '../logos/ArenaLogo.png';
 
 function LoginScreen({ navigation }) {
-  const handleLogin = () => {
-    // Here you can add any login logic.
-    // After successful login, navigate to BetsListScreen:
-    navigation.navigate('Home');
+  useEffect(() => {
+    // Add URL event listener when the component mounts
+    Linking.addEventListener('url', handleRedirect);
+
+    // Cleanup function to remove the event listener
+    return () => {
+      Linking.removeEventListener('url', handleRedirect);
+    };
+  }, []);
+
+  const handleLogin = async () => {
+    try {
+      // Open OAuth URL
+      await Linking.openURL("http://arena-backend.fly.dev/login");
+    } catch (error) {
+      console.error('Login failed', error);
+    }
+  };
+
+  const handleRedirect = (event) => {
+    // Extract API key from the URL
+    const apiKey = extractApiKeyFromUrl(event.url);
+    if (apiKey) {
+      navigation.navigate('Home', { apiKey: apiKey });
+    }
+  };
+
+  const extractApiKeyFromUrl = (url) => {
+    const queryParams = new URL(url).searchParams;
+    return queryParams.get('api_key');
   };
   
   return (

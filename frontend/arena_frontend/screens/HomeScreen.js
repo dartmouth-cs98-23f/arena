@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, RefreshControl, SafeAreaView} from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, RefreshControl, SafeAreaView } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 import logo from '../logos/ArenaLogo.png';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
@@ -7,7 +8,9 @@ import profileIcon from '../logos/profileIcon.png';
 import coinIcon from '../logos/coinIcon.png';
 
 function HomeScreen({ navigation }) {
-  const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+  const route = useRoute();
+  const apiToken = route.params?.apiKey;
+  console.log(apiToken, "Home")
   const [feedData, setFeedData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -112,7 +115,7 @@ function HomeScreen({ navigation }) {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.itemContainer}
-      onPress={() => navigation.navigate('BetDetail', { itemId: item.id })}>
+      onPress={() => navigation.navigate('BetDetail', { itemId: item.id, apiToken })}>
       <View style={styles.textContainer}>
         <Text style={styles.questionText}>{item.question}</Text>
       </View>
@@ -128,7 +131,7 @@ function HomeScreen({ navigation }) {
       <View style={styles.header}>
         <Image source={logo} style={styles.headerLogo} />
         <Text style={styles.headerText}>ARENA</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('BuyTokens')} style={styles.coinButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('BuyTokens', { apiToken })} style={styles.coinButton}>
           <Image source={coinIcon} style={styles.coinIcon}/>
           {/* <Text>{myTokens}</Text> */}
         </TouchableOpacity>
@@ -145,13 +148,13 @@ function HomeScreen({ navigation }) {
 
 <View style={styles.footer}>
              {/* Add footer navigation icons here */}
-             <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+             <TouchableOpacity onPress={() => navigation.navigate('Home', { apiToken })}>
                <Image source={homeIcon} style={styles.footerIcon} />
              </TouchableOpacity>
-             <TouchableOpacity onPress={() => navigation.navigate('Question')}>
+             <TouchableOpacity onPress={() => navigation.navigate('Question', { apiToken })}>
                <Image source={addIcon} style={styles.footerIcon} />
             </TouchableOpacity>
-             <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+             <TouchableOpacity onPress={() => navigation.navigate('Profile', { apiToken })}>
               <Image source={profileIcon} style={styles.footerIcon} />
              </TouchableOpacity>
            </View>
