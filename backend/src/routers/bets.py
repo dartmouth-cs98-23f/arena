@@ -6,7 +6,7 @@ from pymongo import DESCENDING
 from bson import ObjectId
 
 from backend.src.models.database import get_mongo, get_db,  get_user, DB_BETS, DB_ODDS, DB_WAGERS, User
-from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetContext, OddsResponse, OddsScheme, WagerCreateContext, BetSettlement, BetResponse
+from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetContext, OddsResponse, OddsScheme, WagerCreateContext, BetSettlement, BetResponse, Holdings
 from backend.src.schemas.index import Success
 from backend.src.auth import get_api_key
 
@@ -193,7 +193,23 @@ async def get_bet(uuid:str, mongo = Depends(get_mongo), api_key:APIKey = Depends
 
     return BetResponse(success = Success(ok=True, error=None, message=""),
                        bet=str(dumps(documents[0])))
-    
+
+@router.get("/holdings")
+async def get_holdings(betUuid:str, mongo = Depends(get_mongo), api_key:APIKey = Depends(get_api_key)) -> Holdings:
+    user = get_user(api_key, db)
+    user_uuid_call = str(user.id)
+    # Retrieve all wagers for the given bet_uuid and given user
+    wagers_cursor = mongo[DB_WAGERS].find({"betUuid": betUuid, "userUuid": user_uuid_call})
+    wagers = await wagers_cursor.to_list(length=100000)
+    owned_yes = 0
+    owned_no = 0
+    for wager in wagers:
+        if wager['yes'] == True:
+            owned_yes += wager['amount']
+        else:
+            owned_no += wager['amount']
+    return Holdings(success = Success(ok=True, error=None, message=""), yes = owned_yes, no =owned_no)
+
 
 @router.get("/get/")
 async def get_bets(limit:int=10,
