@@ -4,6 +4,8 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, SafeAreaVie
 import homeIcon from '../logos/homeIcon.png';
 import addIcon from '../logos/addIcon.png';
 import profileIcon from '../logos/profileIcon.png';
+import backArrowIcon from '../logos/backArrowIcon.png';
+
 
 function QuestionScreen({ navigation }) {
     const [question, setQuestion] = useState('');
@@ -17,7 +19,10 @@ function QuestionScreen({ navigation }) {
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
-                    <Text style={styles.header}>           Create Bet</Text>
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                        <Image source={backArrowIcon} style={styles.backIcon} />
+                    </TouchableOpacity>
+                    <Text style={styles.header}>Create Bet</Text>
                     <TouchableOpacity style={styles.nextButton} onPress={goToNextStep}>
                         <Text style={styles.nextButtonText}>Next</Text>
                     </TouchableOpacity>
@@ -63,6 +68,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         flex: 1, // makes sure it takes up the space between the button and the edge
+    },
+    backButton: {
+        padding: 10,
+    },
+    backIcon: {
+        width: 25, // Adjust the size as needed
+        height: 25, // Adjust the size as needed
+        resizeMode: 'contain',
     },
     nextButton: {
         backgroundColor: '#34D399', // Theme color for the button
