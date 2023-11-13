@@ -104,6 +104,8 @@ function BetDetailScreen({ route, navigation }) {
     const result = await response.json();
     console.log("test", result)
     fetchBalance();
+    getOddsForBet();
+    getHoldings();
   };
 
   const purchaseNo = async () => {
@@ -119,6 +121,9 @@ function BetDetailScreen({ route, navigation }) {
     const result = await response.json();
     console.log("test", result)
     fetchBalance();
+    getOddsForBet();
+    getHoldings();
+
   };
 
   const getOddsForBet = async () => {
@@ -133,13 +138,16 @@ function BetDetailScreen({ route, navigation }) {
     const oddsData = await oddsResponse.json();
     const newComputedOdds = (oddsData.odds[0].odds * 100).toFixed(0) + '%';
     setComputedOdds(newComputedOdds); // Update state with new odds
-    getHoldings();
+    
   };
 
   const getHoldings = async () => {
-    if (!betDetails) return; // Make sure betDetails is available
 
-    const oddsURL = `https://arena-backend.fly.dev/bets/holdings?betUuid=${betDetails.uuid}`;
+    
+
+    if (!betDetails) return; // Make sure betDetails is available
+    console.log("testing holdings call")
+    const oddsURL = `http://127.0.0.1:5000/bets/holdings?betUuid=${betDetails.uuid}`;
     const oddsResponse = await fetch(oddsURL, {
       method: 'GET',
       headers: headers,
