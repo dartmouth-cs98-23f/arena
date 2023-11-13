@@ -24,6 +24,11 @@ class BetsGetContext(BaseModel):
     limit: int
     page: int
 
+class Holdings(BaseModel):
+    success: Success
+    yes: int
+    no: int
+
 class OddsScheme(BaseModel):
     odds: float
     timestamp: int
