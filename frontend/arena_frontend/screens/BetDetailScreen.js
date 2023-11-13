@@ -23,6 +23,7 @@ function BetDetailScreen({ route, navigation }) {
   const [myTokens, setMyTokens] = useState(50);
   const [betTitle, setBetTitle] = useState('');
   const [computedOdds, setComputedOdds] = useState('Loading...');
+  const [holdingsData, setHoldingsData] = useState(0);
   const betCost = 10;
 
   const headers = {
@@ -143,18 +144,18 @@ function BetDetailScreen({ route, navigation }) {
 
   const getHoldings = async () => {
 
-    
-
     if (!betDetails) return; // Make sure betDetails is available
     console.log("testing holdings call")
     const oddsURL = `http://127.0.0.1:5000/bets/holdings?betUuid=${betDetails.uuid}`;
-    const oddsResponse = await fetch(oddsURL, {
+    const holdingsResponse = await fetch(oddsURL, {
       method: 'GET',
-      headers: headers,
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d'
+      }
     });
-
-    console.log("holdings", oddsResponse)
-
+    const holdingsData = await holdingsResponse.json();
+    setHoldingsData(holdingsData)
   }
 
   useEffect(() => {
@@ -169,6 +170,12 @@ function BetDetailScreen({ route, navigation }) {
 
   useEffect(() => {
     getOddsForBet(); // Call this when betDetails changes
+  }, [betDetails]);
+
+  useEffect(() => {
+    if (betDetails) {
+      getHoldings();
+    }
   }, [betDetails]);
 
   // Sample data for the graph
@@ -220,13 +227,13 @@ function BetDetailScreen({ route, navigation }) {
           <TouchableOpacity onPress={purchaseYes} style={styles.choiceButton}>
             <Text style={styles.buttonText}>Yes {betCost}</Text>
           </TouchableOpacity>
-          <Text style={styles.ownedText}>Owned: {ownedYes}</Text>
+          <Text style={styles.ownedText}>Owned: {holdingsData.yes}</Text>
         </View>
         <View style={styles.buttonWrapper}>
           <TouchableOpacity onPress={purchaseNo} style={styles.choiceButton}>
             <Text style={styles.buttonText}>No {betCost}</Text>
           </TouchableOpacity>
-          <Text style={styles.ownedText}>Owned: {ownedNo}</Text>
+          <Text style={styles.ownedText}>Owned: {holdingsData.no}</Text>
         </View>
       </View>
 
