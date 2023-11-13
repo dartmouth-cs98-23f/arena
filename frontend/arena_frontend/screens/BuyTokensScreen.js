@@ -62,20 +62,17 @@ function BuyTokensScreen({ route, navigation }) {
                 throw new Error(`Request failed with status ${response.status}`);
             }
             const data = await response.json();
-            console.log('Buy Tokens Screen Balance fetched successfully!', data.balance);
+            // console.log('Buy Tokens Screen Balance fetched successfully!', data.balance);
             setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-            console.log('myTokens on token purchase screen', myTokens);
+            // console.log('myTokens on token purchase screen', myTokens);
         } catch (error) {
             console.error('An error occurred:', error);
         }
     }
     
-    // Call fetchBalance inside your useEffect hook
     useEffect(() => {
         fetchBalance();
-    }); // The empty dependency array ensures this effect runs only once after the initial render
-    
-
+    }); 
 
     const renderTokenPackage = ({ item }) => (
         <TouchableOpacity
