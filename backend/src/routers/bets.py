@@ -174,7 +174,6 @@ async def create_bet(context:BetCreateContext,
 
 @router.get("/get_single_bet")
 async def get_bet(uuid:str, mongo = Depends(get_mongo), api_key:APIKey = Depends(get_api_key)) -> BetResponse:
-    print("Inside get_single, uuid is " + uuid)
     cursor = mongo[DB_BETS].find({"uuid": uuid}).limit(1)
     documents = await cursor.to_list(length=1)
     if len(documents) != 1:
@@ -196,7 +195,7 @@ async def get_bet(uuid:str, mongo = Depends(get_mongo), api_key:APIKey = Depends
                        bet=str(dumps(documents[0])))
 
 @router.get("/holdings")
-async def get_holdings(betUuid:str, mongo = Depends(get_mongo), db = Depends(get_db), api_key:APIKey = Depends(get_api_key)) -> Holdings:
+async def get_holdings(betUuid:str, db = Depends(get_db), mongo = Depends(get_mongo), api_key:APIKey = Depends(get_api_key)) -> Holdings:
     user = get_user(api_key, db)
     user_uuid_call = str(user.id)
     # Retrieve all wagers for the given bet_uuid and given user

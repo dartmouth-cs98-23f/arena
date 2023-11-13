@@ -22,106 +22,146 @@ function BetDetailScreen({ route, navigation }) {
   const [ownedNo, setOwnedNo] = useState(0);
   const [myTokens, setMyTokens] = useState(50);
   const [betTitle, setBetTitle] = useState('');
+  const [computedOdds, setComputedOdds] = useState('Loading...');
   const betCost = 10;
 
-  useEffect(() => {
-    const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d'; // Replace with actual API token
-    const headers = {
-      'access_token': apiToken,
-      'Content-Type': 'application/json',
-    };
-    const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+  const headers = {
+    'access_token': apiToken,
+    'Content-Type': 'application/json',
+  };
+  const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
 
-    const fetchBetDetails = async () => {
-      try {
-        console.log("Attempting to fetch details for bet ID:", betUuid);
+  const fetchBetDetails = async () => {
+    try {
+      console.log("Attempting to fetch details for bet ID:", betUuid);
 
-        const url = `http://127.0.0.1:5000/bets/get_single_bet?uuid=${betUuid}`;
-        const response = await fetch(url, {
+      const url = `https://arena-backend.fly.dev/bets/get_single_bet?uuid=${betUuid}`;
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
+          'Content-Type': 'application/json',
+          'access_token': '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d'
+        }
+      });
+
+      // console.log("Response received:", response);
+
+      const data = await response.json();
+
+      // console.log("Data received:", data);
+
+      if (!response.ok) {
+        throw new Error(data?.detail || 'Failed to fetch bet details');
+      }
+
+      if (data.success && data.success.ok) {
+        // console.log("Bet details fetched successfully:", data.bet);
+        setBetDetails(data.bet); // Set the betDetails state to the bet object
+      } else {
+        console.error('Failed to fetch bet details:', data.success?.error);
+      }
+
+    } catch (error) {
+      console.error('Error fetching bet details:', error);
+    }
+  };
+
+  const fetchBalance = async () => {
+    try {
+      const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+      const headers = {
+        'access_token': apiToken,
+        'Content-Type': 'application/json',
+      };
+      const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+      const requestOptions = {
+        method: 'GET',
+        headers: headers,
+      };
+      const response = await fetch(apiEndpoint, requestOptions);
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+      const data = await response.json();
+      // console.log('Balance fetched successfully!');
+      setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+      // console.log('myTokens', myTokens);
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  }
+
+  const purchaseYes = async () => {
+    const url = 'http://127.0.0.1:5000/bets/wager';
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
         'Content-Type': 'application/json',
         'access_token': '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d'
-        }
-        });
+      },
+      body: JSON.stringify({ amount: 10, yes: true, bet_uuid: betUuid })
+    });
+    const result = await response.json();
+    console.log("test", result)
+    fetchBalance();
+  };
 
-        // const response = await fetch(`http://127.0.0.1:5000/bets/get_single_bet/${betUuid}`, {
-        //   method: 'GET',
-        //   headers: headers,
-        // });
-        console.log("Response received:", response);
+  const purchaseNo = async () => {
+    const url = 'https://arena-backend.fly.dev/bets/wager';
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'access_token': '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d'
+      },
+      body: JSON.stringify({ amount: 10, yes: false, bet_uuid: betUuid })
+    });
+    const result = await response.json();
+    console.log("test", result)
+    fetchBalance();
+  };
 
-        const data = await response.json();
+  const getOddsForBet = async () => {
+    if (!betDetails) return; // Make sure betDetails is available
 
-        console.log("Data received:", data);
+    const oddsURL = `https://arena-backend.fly.dev/bets/odds/?uid=${betDetails.uuid}`;
+    const oddsResponse = await fetch(oddsURL, {
+      method: 'GET',
+      headers: headers,
+    });
 
-        if (!response.ok) {
-          throw new Error(data?.detail || 'Failed to fetch bet details');
-        }
+    const oddsData = await oddsResponse.json();
+    const newComputedOdds = (oddsData.odds[0].odds * 100).toFixed(0) + '%';
+    setComputedOdds(newComputedOdds); // Update state with new odds
+    getHoldings();
+  };
 
-        if (data.success && data.success.ok) {
-          console.log("Bet details fetched successfully:", data.bet);
-          setBetDetails(data.bet); // Set the betDetails state to the bet object
-        } else {
-          console.error('Failed to fetch bet details:', data.success?.error);
-        }
+  const getHoldings = async () => {
+    if (!betDetails) return; // Make sure betDetails is available
 
-      } catch (error) {
-        console.error('Error fetching bet details:', error);
-      }
-    };
+    const oddsURL = `https://arena-backend.fly.dev/bets/holdings?betUuid=${betDetails.uuid}`;
+    const oddsResponse = await fetch(oddsURL, {
+      method: 'GET',
+      headers: headers,
+    });
 
+    console.log("holdings", oddsResponse)
+
+  }
+
+  useEffect(() => {
 
     if (betUuid) {
       fetchBetDetails();
     }
 
-    const fetchBalance = async () => {
-      try {
-        const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
-        const headers = {
-          'access_token': apiToken,
-          'Content-Type': 'application/json',
-        };
-        const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
-        const requestOptions = {
-          method: 'GET',
-          headers: headers,
-        };
-        const response = await fetch(apiEndpoint, requestOptions);
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-        const data = await response.json();
-        console.log('Balance fetched successfully!');
-        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-        console.log('myTokens', myTokens);
-      } catch (error) {
-        console.error('An error occurred:', error);
-      }
-    }
     fetchBalance();
+
   }, [betUuid]);
 
-
-  const purchaseYes = () => {
-    if (tokenBalance >= betCost) {
-      setOwnedYes(ownedYes + 1);
-      setTokenBalance(tokenBalance - betCost);
-    } else {
-      alert('Not enough tokens!');
-    }
-  };
-
-  // Function to handle purchasing "No" bets
-  const purchaseNo = () => {
-    if (tokenBalance >= betCost) {
-      setOwnedNo(ownedNo + 1);
-      setTokenBalance(tokenBalance - betCost);
-    } else {
-      alert('Not enough tokens!');
-    }
-  };
+  useEffect(() => {
+    getOddsForBet(); // Call this when betDetails changes
+  }, [betDetails]);
 
   // Sample data for the graph
   const data = {
@@ -161,14 +201,10 @@ function BetDetailScreen({ route, navigation }) {
         </TouchableOpacity>
       </View>
 
-
       <Text style={styles.questionTitle}>{betDetails?.title || 'Loading...'}</Text>
 
-      {/* <Text style={styles.questionTitle}>
-        Will any students fail COSC 98 in Fall 2023?
-      </Text>
       <Text style={styles.oddsTitle}>Current odds</Text>
-      <Text style={styles.percentage}>64%</Text> */}
+      <Text style={styles.percentage}>{computedOdds}</Text>
 
       {/* Buttons Section */}
       <View style={styles.buttonContainer}>
