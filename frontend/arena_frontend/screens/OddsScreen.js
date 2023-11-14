@@ -18,7 +18,7 @@ function DescriptionScreen({ route, navigation }) {
         console.log('Bet Submitted:', { question, description, odds });
         payload = {
             "title": question.toString(),
-            "description": "...",
+            "description": description.toString(),
             "win_justification": "...",
             "verifier_uuid": "...",
             "odds": odds / 100

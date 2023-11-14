@@ -6,14 +6,14 @@ import addIcon from '../logos/addIcon.png';
 import profileIcon from '../logos/profileIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
 
-
 function DescriptionScreen({ route, navigation }) {
   const { question } = route.params;
-  const [details, setDetails] = useState('');
+  const [description, setDescription] = useState('');
+  
 
   const goToNextStep = () => {
     // Pass the question state to the next screen
-    navigation.navigate('Odds', { question, details });
+    navigation.navigate('Odds', { question, description });
 
   };
 
@@ -29,11 +29,11 @@ function DescriptionScreen({ route, navigation }) {
             <Text style={styles.nextButtonText}>Next</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.label}>Details</Text>
+        <Text style={styles.label}>Description</Text>
         <TextInput
           style={[styles.input, styles.inputMultiline]}
-          onChangeText={setDetails}
-          value={details}
+          onChangeText={setDescription}
+          value={description}
           multiline
           placeholder="Specify any definitions in your question, as well as how the bet will be settled."
           placeholderTextColor="#999" // Placeholder text color
