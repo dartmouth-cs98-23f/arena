@@ -106,7 +106,7 @@ function BetDetailScreen({ route, navigation }) {
   }
 
   const purchaseYes = async () => {
-    const url = 'http://127.0.0.1:5000/bets/wager';
+    const url = 'https://arena-backend.fly.dev/bets/wager';
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -145,43 +145,54 @@ function BetDetailScreen({ route, navigation }) {
   };
 
   const getOddsForBet = async () => {
-    if (!betDetails) return; // Make sure betDetails is available
+    if (!betDetails) return; // Make sure betDetails is defined
   
+    // Construct the URL with the bet UUID and limit
     const oddsURL = `https://arena-backend.fly.dev/bets/odds/?uid=${betDetails.uuid}&limit=8`;
-    const oddsResponse = await fetch(oddsURL, {
-      method: 'GET',
-      headers: headers,
-    });
-  
-    const oddsData = await oddsResponse.json();
-    if (oddsData.odds && oddsData.odds.length > 0) {
-      // Use the odds data as is without reversing
-      const oddsValues = oddsData.odds.map(odds => odds.odds * 100); // Convert odds to percentage
-      // Labels reflect the historical data from left (oldest) to right (newest)
-      const labels = oddsData.odds.map((_, index) => `#${index + 1}`);
-  
-      setGraphData({
-        labels: labels,
-        datasets: [{
-          data: oddsValues,
-          strokeWidth: 2,
-        }],
+    try {
+      // Fetch the odds data from the server
+      const oddsResponse = await fetch(oddsURL, {
+        method: 'GET',
+        headers: headers,
       });
   
-      // Update state with the latest odds
-      const newComputedOdds = (oddsValues[oddsValues.length - 1]).toFixed(0) + '%'; // Assuming the last record is the most recent odds
-      setComputedOdds(newComputedOdds);
-    } else {
-      console.log("No odds data found");
+      const oddsData = await oddsResponse.json();
+      if (oddsData.odds && oddsData.odds.length > 0) {
+        // Reverse the odds array to have the most recent odds at the end
+        const reversedOddsData = [...oddsData.odds].reverse();
+  
+        // Map the reversed odds data to percentage values for the graph
+        const oddsValues = reversedOddsData.map(odds => odds.odds * 100);
+  
+        // Create labels for the graph, with the most recent odds last
+        const labels = reversedOddsData.map((_, index) => `#${index + 1}`);
+  
+        // Update the graphData state with the new values and labels
+        setGraphData({
+          labels: labels,
+          datasets: [{
+            data: oddsValues,
+            strokeWidth: 2, // Maintain any existing styling
+          }],
+        });
+  
+        // Update the displayed computed odds with the most recent value
+        const newComputedOdds = `${oddsValues[oddsValues.length - 1].toFixed(0)}%`;
+        setComputedOdds(newComputedOdds);
+      } else {
+        console.log("No odds data found");
+      }
+    } catch (error) {
+      console.error('Error fetching odds:', error);
     }
-  };
+  };  
   
 
   const getHoldings = async () => {
 
     if (!betDetails) return; // Make sure betDetails is available
     console.log("testing holdings call")
-    const oddsURL = `http://127.0.0.1:5000/bets/holdings?betUuid=${betDetails.uuid}`;
+    const oddsURL = `https://arena-backend.fly.dev/bets/holdings?betUuid=${betDetails.uuid}`;
     const holdingsResponse = await fetch(oddsURL, {
       method: 'GET',
       headers: {
