@@ -25,6 +25,18 @@ function BetDetailScreen({ route, navigation }) {
   const [betTitle, setBetTitle] = useState('');
   const [computedOdds, setComputedOdds] = useState('Loading...');
   const [holdingsData, setHoldingsData] = useState(0);
+
+  const [graphData, setGraphData] = useState({
+    labels: [], // will hold our label data for the graph
+    datasets: [
+      {
+        data: [], // will hold our numerical data for the graph
+        strokeWidth: 2, // optional, default 2
+      },
+    ],
+  });
+
+
   const betCost = 10;
 
   const headers = {
@@ -128,19 +140,51 @@ function BetDetailScreen({ route, navigation }) {
 
   };
 
+  const getFormattedLabels = (oddsArray) => {
+    return oddsArray.map(() => 'Previous odds');
+  };
+
   const getOddsForBet = async () => {
     if (!betDetails) return; // Make sure betDetails is available
 
-    const oddsURL = `https://arena-backend.fly.dev/bets/odds/?uid=${betDetails.uuid}`;
+    const oddsURL = `https://arena-backend.fly.dev/bets/odds/?uid=${betDetails.uuid}&limit=8`;
     const oddsResponse = await fetch(oddsURL, {
       method: 'GET',
       headers: headers,
     });
 
     const oddsData = await oddsResponse.json();
-    const newComputedOdds = (oddsData.odds[0].odds * 100).toFixed(0) + '%';
-    setComputedOdds(newComputedOdds); // Update state with new odds
-    
+    if (oddsData.odds && oddsData.odds.length > 0) {
+      // Process odds data for graph
+      const latestOdds = oddsData.odds[0].odds;
+      const newComputedOdds = (latestOdds * 100).toFixed(0) + '%';
+      setComputedOdds(newComputedOdds); // Update state with new odds
+
+      const oddsValues = oddsData.odds.map(odds => odds.odds * 100); // Convert odds to percentage
+      const labels = oddsData.odds.map((_, index) => `#${index + 1}`); // Generate labels (e.g., #1, #2, ...)
+
+      setGraphData({
+        labels: labels,
+        datasets: [{
+          data: oddsValues,
+          strokeWidth: 2,
+        }],
+      });
+    } else {
+      console.log("No odds data found");
+    }
+
+    const formattedLabels = getFormattedLabels(oddsData.odds);
+    setGraphData({
+      labels: formattedLabels,
+      datasets: [
+        {
+          data: oddsValues,
+          strokeWidth: 2,
+          // Add any other dataset properties you need
+        },
+      ],
+    });
   };
 
   const getHoldings = async () => {
@@ -175,20 +219,10 @@ function BetDetailScreen({ route, navigation }) {
 
   useEffect(() => {
     if (betDetails) {
+      getOddsForBet();
       getHoldings();
     }
   }, [betDetails]);
-
-  // Sample data for the graph
-  const data = {
-    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    datasets: [
-      {
-        data: [20, 45, 28, 80, 99, 43, 50],
-        strokeWidth: 2,
-      },
-    ],
-  };
 
   // Chart configuration
   const chartConfig = {
@@ -238,15 +272,22 @@ function BetDetailScreen({ route, navigation }) {
         </View>
       </View>
 
+      {/* Title for the graph */}
+      <Text style={styles.graphTitle}>Previous Betting Odds</Text>
+
       {/* Graph Section */}
       <View style={styles.graphContainer}>
-        <LineChart
-          data={data}
-          width={Dimensions.get('window').width - 30} // from react-native
-          height={220}
-          chartConfig={chartConfig}
-          bezier
-        />
+        {graphData.labels.length > 0 && (
+          <LineChart
+            data={graphData}
+            width={Dimensions.get('window').width - 30}
+            height={220}
+            chartConfig={chartConfig}
+            bezier
+          // Uncomment the line below if 'formatXLabel' is supported in your library version
+          // formatXLabel={() => ''}
+          />
+        )}
       </View>
 
       {/* Additional Info */}
@@ -332,6 +373,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 20,
+  },
+  graphTitle: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    paddingVertical: 10, // Add some padding at the top and bottom of the title
   },
   additionalInfo: {
     color: 'white',
