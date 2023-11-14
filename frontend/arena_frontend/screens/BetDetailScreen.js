@@ -15,6 +15,7 @@ function BetDetailScreen({ route, navigation }) {
   // console.log("Received item ID:", route.params?.itemId);
 
   const betUuid = route.params?.betUuid;
+  console.log("Received bet UUID-:", route.params?.betUuid);
 
   const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
   const [betDetails, setBetDetails] = useState(null);
