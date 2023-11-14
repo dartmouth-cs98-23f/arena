@@ -36,6 +36,7 @@ function BetDetailScreen({ route, navigation }) {
     ],
   });
 
+
   const betCost = 10;
 
   const headers = {
@@ -57,8 +58,9 @@ function BetDetailScreen({ route, navigation }) {
         }
       });
 
+      // console.log("Response received:", response);
+
       const data = await response.json();
-      console.log("Response received:", data);
 
       // console.log("Data received:", data);
 
@@ -144,7 +146,7 @@ function BetDetailScreen({ route, navigation }) {
 
   const getOddsForBet = async () => {
     if (!betDetails) return; // Make sure betDetails is defined
-
+  
     // Construct the URL with the bet UUID and limit
     const oddsURL = `https://arena-backend.fly.dev/bets/odds/?uid=${betDetails.uuid}&limit=8`;
     try {
@@ -153,18 +155,18 @@ function BetDetailScreen({ route, navigation }) {
         method: 'GET',
         headers: headers,
       });
-
+  
       const oddsData = await oddsResponse.json();
       if (oddsData.odds && oddsData.odds.length > 0) {
         // Reverse the odds array to have the most recent odds at the end
         const reversedOddsData = [...oddsData.odds].reverse();
-
+  
         // Map the reversed odds data to percentage values for the graph
         const oddsValues = reversedOddsData.map(odds => odds.odds * 100);
-
+  
         // Create labels for the graph, with the most recent odds last
         const labels = reversedOddsData.map((_, index) => `#${index + 1}`);
-
+  
         // Update the graphData state with the new values and labels
         setGraphData({
           labels: labels,
@@ -173,7 +175,7 @@ function BetDetailScreen({ route, navigation }) {
             strokeWidth: 2, // Maintain any existing styling
           }],
         });
-
+  
         // Update the displayed computed odds with the most recent value
         const newComputedOdds = `${oddsValues[oddsValues.length - 1].toFixed(0)}%`;
         setComputedOdds(newComputedOdds);
@@ -183,8 +185,8 @@ function BetDetailScreen({ route, navigation }) {
     } catch (error) {
       console.error('Error fetching odds:', error);
     }
-  };
-
+  };  
+  
 
   const getHoldings = async () => {
 
@@ -288,9 +290,6 @@ function BetDetailScreen({ route, navigation }) {
           />
         )}
       </View>
-      {/* Add this Text component for the bet description */}
-
-      <Text style={styles.descriptionText}>Description: {betDetails?.description || 'No description available'}</Text>
 
       {/* Additional Info */}
       <Text style={styles.additionalInfo}>
@@ -434,13 +433,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     marginTop: 5, // Space between the bet amount and the owned count
-  },
-  descriptionText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'normal', // or 'bold' if you prefer
-    padding: 10, // Adjust the padding as needed
-    textAlign: 'center', // Center the text if you like
   },
   // Add any additional styles you may need here
 });
