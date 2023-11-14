@@ -36,7 +36,6 @@ app.add_middleware(
 app.add_middleware(
     SessionMiddleware,
     secret_key=os.getenv("SECRET_KEY"),
-    session_cookie="session",
 )
 
 app.include_router(index.router,
