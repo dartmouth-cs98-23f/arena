@@ -7,7 +7,7 @@ import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
 
 function ProfileScreen({ route, navigation }) {
-  const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
+  const [myTokens, setMyTokens] = useState(route.myTokens); // Initialize myTokens state
   const [positionsData, setFeedData] = useState([
   ]);
 
@@ -122,7 +122,7 @@ function ProfileScreen({ route, navigation }) {
 
 useEffect(() => {
     fetchBalance();
-}); 
+}, []); 
 
 
   const renderPosition = ({ item }) => {
