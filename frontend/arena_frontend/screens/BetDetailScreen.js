@@ -146,23 +146,20 @@ function BetDetailScreen({ route, navigation }) {
 
   const getOddsForBet = async () => {
     if (!betDetails) return; // Make sure betDetails is available
-
+  
     const oddsURL = `https://arena-backend.fly.dev/bets/odds/?uid=${betDetails.uuid}&limit=8`;
     const oddsResponse = await fetch(oddsURL, {
       method: 'GET',
       headers: headers,
     });
-
+  
     const oddsData = await oddsResponse.json();
     if (oddsData.odds && oddsData.odds.length > 0) {
-      // Process odds data for graph
-      const latestOdds = oddsData.odds[0].odds;
-      const newComputedOdds = (latestOdds * 100).toFixed(0) + '%';
-      setComputedOdds(newComputedOdds); // Update state with new odds
-
+      // Use the odds data as is without reversing
       const oddsValues = oddsData.odds.map(odds => odds.odds * 100); // Convert odds to percentage
-      const labels = oddsData.odds.map((_, index) => `#${index + 1}`); // Generate labels (e.g., #1, #2, ...)
-
+      // Labels reflect the historical data from left (oldest) to right (newest)
+      const labels = oddsData.odds.map((_, index) => `#${index + 1}`);
+  
       setGraphData({
         labels: labels,
         datasets: [{
@@ -170,22 +167,15 @@ function BetDetailScreen({ route, navigation }) {
           strokeWidth: 2,
         }],
       });
+  
+      // Update state with the latest odds
+      const newComputedOdds = (oddsValues[oddsValues.length - 1]).toFixed(0) + '%'; // Assuming the last record is the most recent odds
+      setComputedOdds(newComputedOdds);
     } else {
       console.log("No odds data found");
     }
-
-    const formattedLabels = getFormattedLabels(oddsData.odds);
-    setGraphData({
-      labels: formattedLabels,
-      datasets: [
-        {
-          data: oddsValues,
-          strokeWidth: 2,
-          // Add any other dataset properties you need
-        },
-      ],
-    });
   };
+  
 
   const getHoldings = async () => {
 
