@@ -6,7 +6,6 @@ import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
 
-
 function ProfileScreen({ route, navigation }) {
   const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
   const [positionsData, setFeedData] = useState([
@@ -68,9 +67,11 @@ function ProfileScreen({ route, navigation }) {
         const oddsData = await oddsResponse.json();
         const computedOdds = (oddsData.odds[0].odds * 100).toFixed(0) + '%';
         return {
-          id: bet._id.$oid,
+          id: bet._id.$oid, // MongoDB's ObjectID, make sure this is correct
+          uuid: bet.uuid, // This is what you need to ensure is correct
           question: bet.title,
           percentage: computedOdds,
+          // ... any other data you need
         };
       });
       const oddsResults = await Promise.all(oddsPromises);
@@ -117,8 +118,6 @@ function ProfileScreen({ route, navigation }) {
     });
   }, []); // The empty dependency array ensures this effect runs only once after the initial render
 
-
-
   useEffect(() => {
   const requestOptions = {
     method: 'GET',
@@ -147,13 +146,13 @@ function ProfileScreen({ route, navigation }) {
     const textColor = item.trend === 'Up' ? '#34D399' : '#FF4500'; // Green for Up, Red for Down
     
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('BetDetail', { itemId: item.id })}>
+      <TouchableOpacity onPress={() => navigation.navigate('BetDetail', { betUuid: item.uuid })}>
         <View style={styles.positionItem}>
           <View style={styles.questionContainer}>
             <Text style={styles.positionQuestion}>{item.question}</Text>
           </View>
           <View style={styles.oddsContainer}>
-            <Text style={[styles.oddsPercentage, { color: textColor }]}>
+            <Text style={styles.oddsPercentage}>
               {item.percentage}
             </Text>
             <Text style={[styles.trend, { color: textColor }]}>
@@ -203,7 +202,6 @@ function ProfileScreen({ route, navigation }) {
   );
 }
 
-
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -243,22 +241,22 @@ const styles = StyleSheet.create({
   },
   positionItem: {
     flexDirection: 'row',
-    padding: 15,
+    justifyContent: 'space-between',
+    padding: 20,
+    borderBottomColor: 'grey',
     borderBottomWidth: 1,
-    borderBottomColor: '#333333',
   },
   questionContainer: {
-    flex: 0.7,
+    flex: 0.8,
   },
   positionQuestion: {
     color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 18,
   },
   oddsContainer: {
-    flex: 0.3,
-    justifyContent: 'center',
-    alignItems: 'center', // Center align the child components
+    color: '#34D399',
+    fontSize: 27,
+    fontWeight: 'bold',
   },
   oddsText: {
     color: 'white',
@@ -266,10 +264,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   oddsPercentage: {
-    color: 'white', // Set odds percentage color to white
-    fontSize: 16,
+    color: '#34D399',
+    fontSize: 27,
     fontWeight: 'bold',
-    marginVertical: 2, // Add a small vertical margin for spacing
   },
   footer: {
     flexDirection: 'row',

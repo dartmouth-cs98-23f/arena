@@ -84,16 +84,7 @@ function HomeScreen({ navigation }) {
   }, []); // The empty dependency array ensures this effect runs only once after the initial render
 
   const renderItem = ({ item }) => (
-    // <TouchableOpacity
-    //   style={styles.itemContainer}
-    //   onPress={() => navigation.navigate('BetDetail', { itemId: item.id })}>
-    //   <View style={styles.textContainer}>
-    //     <Text style={styles.questionText}>{item.question}</Text>
-    //   </View>
-    //   <View style={styles.percentageContainer}>
-    //     <Text style={styles.percentageText}>{item.percentage}</Text>
-    //   </View>
-    // </TouchableOpacity>
+
     <TouchableOpacity
       style={styles.itemContainer}
       onPress={() => navigation.navigate('BetDetail', { betUuid: item.uuid })}>
