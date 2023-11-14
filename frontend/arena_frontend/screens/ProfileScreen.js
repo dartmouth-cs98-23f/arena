@@ -14,33 +14,33 @@ function ProfileScreen({ route, navigation }) {
 
   async function fetchBalance() {
     try {
-        const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
-        const headers = {
-            'access_token': apiToken,
-            'Content-Type': 'application/json',
-        };
-        const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
-        const requestOptions = {
-            method: 'GET',
-            headers: headers,
-          };
-        const response = await fetch(apiEndpoint, requestOptions);
-        if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}`);
-        }
-        const data = await response.json();
-        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-        // console.log('myTokens on token purchase screen', myTokens);
+      const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+      const headers = {
+        'access_token': apiToken,
+        'Content-Type': 'application/json',
+      };
+      const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+      const requestOptions = {
+        method: 'GET',
+        headers: headers,
+      };
+      const response = await fetch(apiEndpoint, requestOptions);
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+      const data = await response.json();
+      setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+      // console.log('myTokens on token purchase screen', myTokens);
     } catch (error) {
-        console.error('An error occurred:', error);
+      console.error('An error occurred:', error);
     }
-}
+  }
 
   useEffect(() => {
     fetchBalance();
-  }); 
+  });
 
-  
+
   const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
   const [refreshing, setRefreshing] = useState(false);
 
@@ -96,55 +96,55 @@ function ProfileScreen({ route, navigation }) {
   }, []);
 
   useEffect(() => {
-  const requestOptions = {
-    method: 'GET',
-    headers: headers,
-  };
-  const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+    const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
 
-  fetch(apiEndpoint, requestOptions)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      // console.log('Balance fetched successfully!');
-      setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-    })
-    .catch(error => {
-      console.error('An error occurred:', error);
-    });
+    fetch(apiEndpoint, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        // console.log('Balance fetched successfully!');
+        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+      })
+      .catch(error => {
+        console.error('An error occurred:', error);
+      });
   }, []); // The empty dependency array ensures this effect runs only once after the initial render
 
   useEffect(() => {
-  const requestOptions = {
-    method: 'GET',
-    headers: headers,
-  };
-  const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+    const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
 
-  fetch(apiEndpoint, requestOptions)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      // console.log('Balance fetched successfully!');
-      setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-    })
-    .catch(error => {
-      console.error('An error occurred:', error);
-    });
+    fetch(apiEndpoint, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        // console.log('Balance fetched successfully!');
+        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+      })
+      .catch(error => {
+        console.error('An error occurred:', error);
+      });
   }, []); // The empty dependency array ensures this effect runs only once after the initial render
 
 
   const renderPosition = ({ item }) => {
     const textColor = item.trend === 'Up' ? '#34D399' : '#FF4500'; // Green for Up, Red for Down
-    
+
     return (
       <TouchableOpacity onPress={() => navigation.navigate('BetDetail', { betUuid: item.uuid })}>
         <View style={styles.positionItem}>
@@ -170,7 +170,7 @@ function ProfileScreen({ route, navigation }) {
         <Text style={styles.headerTitle}>My Positions</Text>
       </View>
       <View style={styles.tokenSection}>
-        <Text style={styles.tokenCount}>{myTokens}</Text>
+        <Text style={styles.tokenCount}>💰{myTokens}</Text>
         <TouchableOpacity
           style={styles.buyTokensButton}
           onPress={() => navigation.navigate('BuyTokens', { myTokens })} // Add navigation here
@@ -187,7 +187,7 @@ function ProfileScreen({ route, navigation }) {
 
       {/* Footer Section */}
       <View style={styles.footer}>
-      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <Image source={homeIcon} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Question')}>

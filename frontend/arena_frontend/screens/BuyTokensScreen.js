@@ -1,10 +1,11 @@
 // BuyTokensScreen.js
 
 import React, { useState, useEffect } from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, SafeAreaView, FlatList, Image} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, FlatList, Image } from 'react-native';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
+import backArrowIcon from '../logos/backArrowIcon.png';
 
 const tokenPackages = [
     { id: '1', tokens: 100, price: '$0.99' },
@@ -56,7 +57,7 @@ function BuyTokensScreen({ route, navigation }) {
             const requestOptions = {
                 method: 'GET',
                 headers: headers,
-              };
+            };
             const response = await fetch(apiEndpoint, requestOptions);
             if (!response.ok) {
                 throw new Error(`Request failed with status ${response.status}`);
@@ -69,10 +70,10 @@ function BuyTokensScreen({ route, navigation }) {
             console.error('An error occurred:', error);
         }
     }
-    
+
     useEffect(() => {
         fetchBalance();
-    }); 
+    });
 
     const renderTokenPackage = ({ item }) => (
         <TouchableOpacity
@@ -87,11 +88,11 @@ function BuyTokensScreen({ route, navigation }) {
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.navigate("Profile", { myTokens })} style={styles.backButton}>
-                    <Text style={styles.backIcon}>🔙</Text>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Image source={backArrowIcon} style={styles.backIcon} />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Buy Tokens</Text>
-                <Text style={styles.coinBalance}>{myTokens}</Text>
+                <Text style={styles.coinBalance}>💰{myTokens}</Text>
             </View>
             <FlatList
                 data={tokenPackages}
@@ -179,6 +180,14 @@ const styles = StyleSheet.create({
     footerIcon: {
         width: 30,
         height: 30,
+    },
+    backButton: {
+        padding: 10,
+    },
+    backIcon: {
+        width: 25, // Adjust the size as needed
+        height: 25, // Adjust the size as needed
+        resizeMode: 'contain',
     },
 });
 

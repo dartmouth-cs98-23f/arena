@@ -245,8 +245,7 @@ function BetDetailScreen({ route, navigation }) {
         <TouchableOpacity
           onPress={() => navigation.navigate('BuyTokens')}
           style={styles.tokenButton}>
-          <Image source={coinIcon} style={styles.coinIcon} />
-          <Text style={styles.coinBalance}>{myTokens}</Text>
+          <Text style={styles.coinBalance}>💰{myTokens}</Text>
         </TouchableOpacity>
       </View>
 
