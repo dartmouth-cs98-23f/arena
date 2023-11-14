@@ -153,7 +153,7 @@ function ProfileScreen({ route, navigation }) {
             <Text style={styles.positionQuestion}>{item.question}</Text>
           </View>
           <View style={styles.oddsContainer}>
-            <Text style={[styles.oddsPercentage, { color: textColor }]}>
+            <Text style={styles.oddsPercentage}>
               {item.percentage}
             </Text>
             <Text style={[styles.trend, { color: textColor }]}>
@@ -243,22 +243,22 @@ const styles = StyleSheet.create({
   },
   positionItem: {
     flexDirection: 'row',
-    padding: 15,
+    justifyContent: 'space-between',
+    padding: 20,
+    borderBottomColor: 'grey',
     borderBottomWidth: 1,
-    borderBottomColor: '#333333',
   },
   questionContainer: {
-    flex: 0.7,
+    flex: 0.8,
   },
   positionQuestion: {
     color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 18,
   },
   oddsContainer: {
-    flex: 0.3,
-    justifyContent: 'center',
-    alignItems: 'center', // Center align the child components
+    color: '#34D399',
+    fontSize: 27,
+    fontWeight: 'bold',
   },
   oddsText: {
     color: 'white',
@@ -266,10 +266,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   oddsPercentage: {
-    color: 'white', // Set odds percentage color to white
-    fontSize: 16,
+    color: '#34D399',
+    fontSize: 27,
     fontWeight: 'bold',
-    marginVertical: 2, // Add a small vertical margin for spacing
   },
   footer: {
     flexDirection: 'row',
