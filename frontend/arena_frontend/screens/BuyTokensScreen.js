@@ -39,7 +39,7 @@ function BuyTokensScreen({ route, navigation }) {
 
         try {
             await fetch(apiEndpointPost, requestOptions);
-            navigation.navigate('Profile');
+            navigation.navigate("Profile", { myTokens });
         } catch (error) {
             console.error('Error during token purchase:', error);
         }
@@ -87,7 +87,7 @@ function BuyTokensScreen({ route, navigation }) {
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                <TouchableOpacity onPress={() => navigation.navigate("Profile", { myTokens })} style={styles.backButton}>
                     <Text style={styles.backIcon}>🔙</Text>
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Buy Tokens</Text>
