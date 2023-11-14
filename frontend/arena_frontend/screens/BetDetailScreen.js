@@ -94,7 +94,7 @@ function BetDetailScreen({ route, navigation }) {
   }
 
   const purchaseYes = async () => {
-    const url = 'http://127.0.0.1:5000/bets/wager';
+    const url = 'https://arena-backend.fly.dev/bets/wager';
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -147,7 +147,7 @@ function BetDetailScreen({ route, navigation }) {
 
     if (!betDetails) return; // Make sure betDetails is available
     console.log("testing holdings call")
-    const oddsURL = `http://127.0.0.1:5000/bets/holdings?betUuid=${betDetails.uuid}`;
+    const oddsURL = `http://arena-backend.fly.dev/bets/holdings?betUuid=${betDetails.uuid}`;
     const holdingsResponse = await fetch(oddsURL, {
       method: 'GET',
       headers: {
