@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, RefreshControl, SafeAreaView} from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, RefreshControl, SafeAreaView } from 'react-native';
 import logo from '../logos/ArenaLogo.png';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
 import coinIcon from '../logos/coinIcon.png';
 
-function HomeScreen({ navigation }) {
+function HomeScreen({ route, navigation }) {
   const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
   const [feedData, setFeedData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+
+  const { api_key } = route.params;
+
+  console.log(api_key);
 
   // Set the headers for the request
   const headers = {
@@ -61,52 +65,52 @@ function HomeScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-  const requestOptions = {
-    method: 'GET',
-    headers: headers,
-  };
-  const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+    const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
 
-  fetch(apiEndpoint, requestOptions)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Balance fetched successfully!');
-      setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-    })
-    .catch(error => {
-      console.error('An error occurred:', error);
-    });
+    fetch(apiEndpoint, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Balance fetched successfully!');
+        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+      })
+      .catch(error => {
+        console.error('An error occurred:', error);
+      });
   }, []); // The empty dependency array ensures this effect runs only once after the initial render
 
   const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
 
 
   useEffect(() => {
-  const requestOptions = {
-    method: 'GET',
-    headers: headers,
-  };
-  const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+    const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
 
-  fetch(apiEndpoint, requestOptions)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Balance fetched successfully!');
-      setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-    })
-    .catch(error => {
-      console.error('An error occurred:', error);
-    });
+    fetch(apiEndpoint, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Balance fetched successfully!');
+        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+      })
+      .catch(error => {
+        console.error('An error occurred:', error);
+      });
   }, []); // The empty dependency array ensures this effect runs only once after the initial render
 
   const renderItem = ({ item }) => (
@@ -124,38 +128,38 @@ function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-       <View style={styles.container}>
-      <View style={styles.header}>
-        <Image source={logo} style={styles.headerLogo} />
-        <Text style={styles.headerText}>ARENA</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('BuyTokens')} style={styles.coinButton}>
-          <Image source={coinIcon} style={styles.coinIcon}/>
-          {/* <Text>{myTokens}</Text> */}
-        </TouchableOpacity>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Image source={logo} style={styles.headerLogo} />
+          <Text style={styles.headerText}>ARENA</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('BuyTokens')} style={styles.coinButton}>
+            <Image source={coinIcon} style={styles.coinIcon} />
+            {/* <Text>{myTokens}</Text> */}
+          </TouchableOpacity>
+        </View>
+
+        <FlatList
+          data={feedData}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        />
+
+        <View style={styles.footer}>
+          {/* Add footer navigation icons here */}
+          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+            <Image source={homeIcon} style={styles.footerIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Question')}>
+            <Image source={addIcon} style={styles.footerIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+            <Image source={profileIcon} style={styles.footerIcon} />
+          </TouchableOpacity>
+        </View>
       </View>
-
-      <FlatList
-        data={feedData}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      />
-
-<View style={styles.footer}>
-             {/* Add footer navigation icons here */}
-             <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-               <Image source={homeIcon} style={styles.footerIcon} />
-             </TouchableOpacity>
-             <TouchableOpacity onPress={() => navigation.navigate('Question')}>
-               <Image source={addIcon} style={styles.footerIcon} />
-            </TouchableOpacity>
-             <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-              <Image source={profileIcon} style={styles.footerIcon} />
-             </TouchableOpacity>
-           </View>
-         </View>
     </SafeAreaView>
   );
 }

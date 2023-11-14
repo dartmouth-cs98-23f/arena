@@ -1,22 +1,30 @@
-import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, TouchableOpacity, Text, StyleSheet, Image, TextInput } from 'react-native';
 import logo from '../logos/ArenaLogo.png';
 
 function LoginScreen({ navigation }) {
+  const [username, setUsername] = React.useState('');
+  const api_key = username;
+
   const handleLogin = () => {
     // Here you can add any login logic.
     // After successful login, navigate to BetsListScreen:
-    navigation.navigate('Home');
+    navigation.navigate('Home', {api_key} );
   };
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
-    <Image source={logo} style={styles.logo} />
+        <Image source={logo} style={styles.logo} />
       </View>
-
       <Text style={styles.title}>ARENA</Text>
       <Text style={styles.subtitle}>Enter. Bet. Win.</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        onChangeText={(text) => setUsername(text)}
+        value={username}
+      />
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Authenticate Now</Text>
       </TouchableOpacity>
@@ -73,6 +81,14 @@ const styles = StyleSheet.create({
     color: 'grey',
     fontSize: 12,
     textAlign: 'center',
+  },
+  input: {
+    width: '100%',
+    backgroundColor: 'white',
+    borderRadius: 25,
+    height: 50,
+    paddingHorizontal: 20,
+    marginBottom: 20,
   },
 });
 
