@@ -7,18 +7,15 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 #------------------------------------------------------------------
 http_archive(
     name = "rules_proto_grpc",
-    sha256 = "9ba7299c5eb6ec45b6b9a0ceb9916d0ab96789ac8218269322f0124c0c0d24e2",
-    strip_prefix = "rules_proto_grpc-4.5.0",
-    urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/releases/download/4.5.0/rules_proto_grpc-4.5.0.tar.gz"],
+    sha256 = "",
+    strip_prefix = "rules_proto_grpc-4.6.0",
+    urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/releases/download/4.6.0/rules_proto_grpc-4.6.0.tar.gz"],
 )
+
 
 load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_toolchains", "rules_proto_grpc_repos")
 rules_proto_grpc_toolchains()
 rules_proto_grpc_repos()
-
-load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
-rules_proto_dependencies()
-rules_proto_toolchains()
 
 load("@rules_proto_grpc//js:repositories.bzl", rules_proto_grpc_js_repos = "js_repos")
 
@@ -60,6 +57,7 @@ python_register_toolchains(
 
 load("@python_3_10//:defs.bzl", "interpreter")
 
+
 load("@rules_python//python:pip.bzl", "pip_parse")
 
 pip_parse(
@@ -72,3 +70,20 @@ pip_parse(
 load("@python_deps//:requirements.bzl", "install_deps")
 # Call it to define repos for your requirements.
 install_deps()
+
+http_archive(
+    name = "com_google_protobuf",
+    sha256 = "",
+    strip_prefix = "protobuf-3.20.3",
+    # latest, as of 2020-02-217
+    urls = [
+        "https://mirror.bazel.build/github.com/protocolbuffers/protobuf/archive/v3.20.3.tar.gz",
+        "https://github.com/protocolbuffers/protobuf/archive/v3.20.3.tar.gz",
+    ],
+)
+
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+
+protobuf_deps()
+
+
