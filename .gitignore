@@ -1,0 +1,15 @@
+**/.DS_Store
+bazel-testlogs/
+.clwb
+**/.hypothesis
+__pycache__
+**/__pycache__/
+bazel-arena
+bazel-bin
+bazel-out
+bazel-testlogs
+dev.env.sh
+**/.hypothesis
+**/alembic
+backend/alembic
+**/alembic.ini
