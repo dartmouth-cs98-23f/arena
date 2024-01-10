@@ -29,4 +29,4 @@ RUN /usr/bin/bazelisk build //backend:main
 EXPOSE 5000
 
 # Run the app
-CMD ["bazel, "run", "//backend:main"]
+CMD ["/usr/bin/bazelisk", "run", "//backend:main"]
