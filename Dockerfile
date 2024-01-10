@@ -25,9 +25,6 @@ RUN wget https://github.com/bazelbuild/bazelisk/releases/download/v1.15.0/bazeli
 # Build the application with Bazel
 RUN /usr/bin/bazelisk build //backend:main
 
-# Optionally, clean up Bazel cache to reduce Docker image size
-RUN /usr/bin/bazelisk clean --expunge
-
 # Expose the port the app runs on
 EXPOSE 5000
 
