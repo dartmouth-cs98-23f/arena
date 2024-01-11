@@ -5,6 +5,8 @@ import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
 import coinIcon from '../logos/coinIcon.png';
+import verifiersIcon from '../logos/verifiersIcon.png';
+
 
 function HomeScreen({ navigation }) {
   const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
@@ -128,6 +130,9 @@ function HomeScreen({ navigation }) {
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
             <Image source={profileIcon} style={styles.footerIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Verifiers')}>
+            <Image source={verifiersIcon} style={styles.footerIcon} />
           </TouchableOpacity>
         </View>
       </View>

@@ -16,10 +16,13 @@ import BuyTokensScreen from './screens/BuyTokensScreen';
 import QuestionScreen from './screens/QuestionScreen';
 import DescriptionScreen from './screens/DescriptionScreen';
 import OddsScreen from './screens/OddsScreen';
+import VerifiersScreen from './screens/VerifiersScreen';
 
 import addIcon from './logos/addIcon.png';
 import homeIcon from './logos/homeIcon.png';
 import profileIcon from './logos/profileIcon.png';
+import verifiersIcon from './logos/verifiersIcon.png';
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -33,7 +36,8 @@ function BottomTabNavigator() {
           if (route.name === 'Home') iconName = homeIcon;
           else if (route.name === 'Add') iconName = addIcon;
           else if (route.name === 'Profile') iconName = profileIcon;
-          return <Image source={iconName} style={{ width: 30, height: 30 }} />;
+          else if (route.name === 'Verifiers') iconName = verifiersIcon;
+          return <Image source={iconName} style={{ width: 20, height: 20 }} />;
         },
       })}
       tabBarOptions={{
@@ -44,10 +48,20 @@ function BottomTabNavigator() {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Add" component={AddScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen 
+        name="Verifiers" 
+        component={VerifiersScreen} 
+        
+      />
       {/* Add more Tab.Screen components here for other tabs */}
     </Tab.Navigator>
   );
 }
+//options={{
+//   tabBarIcon: ({ focused, color, size }) => (
+//     <Image source={verifiersIcon} style={{ width: 30, height: 30 }} />
+//   ),
+// }}
 
 function App() {
   return (
@@ -59,6 +73,7 @@ function App() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Verifiers" component={VerifiersScreen} />
         <Stack.Screen name="Bets List" component={BetsListScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Wallet" component={WalletScreen} />
