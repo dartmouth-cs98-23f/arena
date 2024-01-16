@@ -17,7 +17,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "markets.arena.arena"
+      "bundleIdentifier": "markets98.arena.arena"
     },
     "android": {
       "adaptiveIcon": {
