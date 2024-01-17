@@ -37,3 +37,9 @@ jobs:
 
       - name: Run tests
         run: bazel test //...
+
+      - name: Login to GitHub Container Registry
+        run: echo ${{ secrets.GH_TOKEN}} | docker login ghcr.io -u ianmkim --password-stdin
+
+      - name: Deploy to GHCR
+        run: bazel run //backend:push_arena
