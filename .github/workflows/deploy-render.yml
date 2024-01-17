@@ -1,7 +1,13 @@
-name: ci
+name: deploy
 
 on:
-  pull_request:
+  workflow_run:
+    workflows: ["ci"]
+    types:
+      - completed
+  push:
+    branches:
+      - master
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -37,3 +43,12 @@ jobs:
 
       - name: Run tests
         run: bazel test //...
+
+      - name: Login to GitHub Container Registry
+        run: echo ${{ secrets.GH_TOKEN}} | docker login ghcr.io -u ianmkim --password-stdin
+
+      - name: Deploy to GHCR
+        run: bazel run //backend:push_arena
+
+      - name: Trigger deploy on Render
+        run: curl ${{ secrets.RENDER_DEPLOY_HOOK }}
