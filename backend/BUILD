@@ -21,6 +21,9 @@ py_binary(
 py3_image(
     name = "arena_image",
     srcs = ["//backend/src:main.py"],
+    deps = [requirement("fastapi"),
+            requirement("pydantic"),
+            requirement("uvicorn")],
     main = "main.py",
 )
 
