@@ -21,10 +21,9 @@ py_binary(
 py3_image(
     name = "arena_image",
     srcs = ["//backend/src:main.py"],
-    deps = [
-            "//backend/src:routers"
-            "//backend/src:schemas"
-            "//backend/src:models"
+    deps = ["//backend/src/routers",
+            "//backend/src/schemas",
+            "//backend/src/models",
             requirement("fastapi"),
             requirement("pydantic"),
             requirement("uvicorn"),
