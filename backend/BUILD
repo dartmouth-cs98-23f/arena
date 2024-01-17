@@ -36,6 +36,7 @@ py3_image(
             requirement("psycopg2_binary"),
             requirement("protobuf"),
             requirement("authlib"),
+            requirement("itsdangerous"),
             requirement("pydantic-core")],
     main = "main.py",
 )
