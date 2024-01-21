@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "arena_frontend",
-    "slug": "arena_frontend",
+    "name": "Arena",
+    "slug": "Arena",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -27,6 +27,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "75152b54-0aa6-44c1-a59d-1296458d7d4d"
+      }
     }
   }
 }
