@@ -37,6 +37,7 @@ def get_mongo():
     finally:
         db.close()
 
+
 def get_db():
     try:
         db = SessionLocal()
