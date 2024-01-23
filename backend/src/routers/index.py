@@ -86,5 +86,5 @@ async def auth(request: Request):
 
     # Assuming you want to redirect to a page that uses the API key
     #response = RedirectResponse(url=f'/auth?api_key={api_key}')
-    response = RedirectResponse(url="markets.arena.arena://")
+    response = RedirectResponse(url="expo://")
     return response
