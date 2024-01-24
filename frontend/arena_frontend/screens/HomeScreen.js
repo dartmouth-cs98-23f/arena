@@ -19,14 +19,14 @@ function HomeScreen({ navigation }) {
 
   const fetchBets = async () => {
     try {
-      const response = await fetch('https://arena-backend.fly.dev/bets/get/', {
+      const response = await fetch('https://api.arena.markets/bets/get/', {
         method: 'GET',
         headers: headers,
       });
       const data = await response.json();
       const bets = data.bets;
       const oddsPromises = bets.map(async (bet) => {
-        const oddsURL = `https://arena-backend.fly.dev/bets/odds/?uid=${bet.uuid}`;
+        const oddsURL = `https://api.arena.markets/bets/odds/?uid=${bet.uuid}`;
         const oddsResponse = await fetch(oddsURL, {
           method: 'GET',
           headers: headers,
@@ -65,7 +65,7 @@ function HomeScreen({ navigation }) {
       method: 'GET',
       headers: headers,
     };
-    const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+    const apiEndpoint = 'https://api.arena.markets/user/balance';
 
     fetch(apiEndpoint, requestOptions)
       .then(response => {
