@@ -291,10 +291,6 @@ function BetDetailScreen({ route, navigation }) {
 
       <Text style={styles.descriptionText}>Description: {betDetails?.description || 'No description available'}</Text>
 
-      {/* Additional Info */}
-      <Text style={styles.additionalInfo}>
-        This bet settles to Yes if at least one student enrolled in COSC 98 does not pass the class. Settles to No otherwise.
-      </Text>
       {/* Footer Section */}
       <View style={styles.footer}>
         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
