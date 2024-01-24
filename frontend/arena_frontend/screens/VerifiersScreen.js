@@ -53,13 +53,13 @@ function VerifiersScreen({ navigation }) {
                             style={[styles.button, styles.acceptButton]}
                             onPress={() => handleInvitationResponse(invitation.question, true)}
                         >
-                            <Text style={styles.buttonText}>Accept</Text>
+                            <Text style={styles.buttonTextBlack}>Accept</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[styles.button, styles.declineButton]}
                             onPress={() => handleInvitationResponse(invitation.question, false)}
                         >
-                            <Text style={styles.buttonText}>Decline</Text>
+                            <Text style={styles.buttonTextBlack}>Decline</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -106,40 +106,33 @@ function VerifiersScreen({ navigation }) {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: 'black', // Use the same background color as HomeScreen
-         padding: 10,
-    },
-    container: {
-        flex: 1, // Takes up the entire safe area
-    },
-    header: {
-        flexDirection: 'row', // Aligns items horizontally
-        alignItems: 'center', // Centers items vertically within the header
-        justifyContent: 'center', // Centers the header content horizontally
-        padding: 15, // Padding inside the header, which creates space around the content
+        backgroundColor: 'black', // Background color of the entire screen
     },
     headerText: {
         color: 'white', // Text color for the header
-        fontSize: 30, // Size of the header text
+        fontSize: 24, // Size of the header text
         fontWeight: 'bold', // Bold font weight for the header text
-        marginBottom: 20, // Additional space below the header text if needed
-        alignSelf: 'center',
+        textAlign: 'center', // Center the text horizontally
+        marginVertical: 20, // Add vertical margin for spacing from the top of the screen
     },
     subheader: {
         color: '#FFF',
         fontSize: 18,
         fontWeight: 'bold',
         marginTop: 16, // Space below the header for the subheader
+        marginBottom: 10, // Space above the content
     },
     invitationItem: {
         marginBottom: 10,
         padding: 16,
-        backgroundColor: '#1A1A1A', // Card appearance
+        backgroundColor: 'black', // Card appearance
+        borderWidth: 1, // Outline width for the container
     },
     processItem: {
         marginBottom: 10,
         padding: 16,
-        backgroundColor: '#1A1A1A', // Card appearance
+        backgroundColor: 'black', // Card appearance
+        borderWidth: 1, // Outline width for the container
     },
     question: {
         color: '#FFF',
@@ -149,47 +142,61 @@ const styles = StyleSheet.create({
     buttonGroup: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 10, // Space above the button group
+        marginTop: 10,
     },
     button: {
         paddingVertical: 10,
         paddingHorizontal: 20,
-        borderRadius: 25, // Rounded corners
+        borderRadius: 20, // Rounded corners for buttons
         flexGrow: 1, // Flex to fill available space
         marginHorizontal: 5, // Space between buttons
+        backgroundColor: 'black', // Button background color
+        fontWeight: 'bold',
+        borderColor: '#34D399', // Button border color
+        borderWidth: 1, // Button border width
     },
     acceptButton: {
-        backgroundColor: '#34C759', // Green button
+
+        backgroundColor: 'black', // White background for accept button
+        borderColor: '#34D399', // Border color for the button
     },
     declineButton: {
-        backgroundColor: '#FF3B30', // Red button
+        backgroundColor: 'black', // White background for decline button
+        borderColor: '#34D399', // Border color for the button
     },
     yesButton: {
-        backgroundColor: '#34C759', // Green button
+
+        backgroundColor: '#34D399',
     },
     noButton: {
-        backgroundColor: '#FF3B30', // Red button
+
+        backgroundColor: '#34D399',
     },
     buttonText: {
-        color: '#FFF',
+        color: 'black', // Text color for buttons with a black background
+        fontWeight: 'bold',
         textAlign: 'center',
-        fontWeight: '500',
+    },
+    buttonTextBlack: {
+        color: 'white', // Text color for buttons with a white background
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
     footer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        position: 'absolute',  // Position the footer absolutely
-        bottom: 0,            // Align it to the bottom of the parent container
-        left: 0,              // Align it to the left of the parent container
-        right: 0,             // Align it to the right of the parent container
-        paddingVertical: 20,  // Padding at top and bottom
-        backgroundColor: 'black',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        paddingVertical: 20, // Padding inside the footer
+        paddingHorizontal: 10, // Padding inside the footer
+        backgroundColor: 'black', // Footer background color
     },
     footerIcon: {
         width: 30,
         height: 30,
     },
-      
 });
 
 
