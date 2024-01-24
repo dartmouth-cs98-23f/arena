@@ -36,7 +36,7 @@ function DescriptionScreen({ route, navigation }) {
             body: JSON.stringify(payload),
         };
 
-        const apiEndpoint = 'https://arena-backend.fly.dev/bets/create';
+        const apiEndpoint = 'https://api.arena.markets/bets/create';
 
         fetch(apiEndpoint, requestOptions)
             .then((response) => {

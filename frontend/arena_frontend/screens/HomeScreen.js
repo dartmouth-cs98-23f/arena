@@ -65,7 +65,7 @@ function HomeScreen({ navigation }) {
       method: 'GET',
       headers: headers,
     };
-    const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+    const apiEndpoint = 'https://api.arena.markets/user/balance';
 
     fetch(apiEndpoint, requestOptions)
       .then(response => {

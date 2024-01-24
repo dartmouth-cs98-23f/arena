@@ -42,13 +42,13 @@ function BetDetailScreen({ route, navigation }) {
     'access_token': apiToken,
     'Content-Type': 'application/json',
   };
-  const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+  const apiEndpoint = 'https://api.arena.markets/user/balance';
 
   const fetchBetDetails = async () => {
     try {
       console.log("Attempting to fetch details for bet ID:", betUuid);
 
-      const url = `https://arena-backend.fly.dev/bets/get_single_bet?uuid=${betUuid}`;
+      const url = `https://api.arena.markets/bets/get_single_bet?uuid=${betUuid}`;
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -85,7 +85,7 @@ function BetDetailScreen({ route, navigation }) {
         'access_token': apiToken,
         'Content-Type': 'application/json',
       };
-      const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+      const apiEndpoint = 'https://api.arena.markets/user/balance';
       const requestOptions = {
         method: 'GET',
         headers: headers,
@@ -104,7 +104,7 @@ function BetDetailScreen({ route, navigation }) {
   }
 
   const purchaseYes = async () => {
-    const url = 'https://arena-backend.fly.dev/bets/wager';
+    const url = 'https://api.arena.markets/bets/wager';
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -121,7 +121,7 @@ function BetDetailScreen({ route, navigation }) {
   };
 
   const purchaseNo = async () => {
-    const url = 'https://arena-backend.fly.dev/bets/wager';
+    const url = 'https://api.arena.markets/bets/wager';
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -146,7 +146,7 @@ function BetDetailScreen({ route, navigation }) {
     if (!betDetails) return; // Make sure betDetails is defined
 
     // Construct the URL with the bet UUID and limit
-    const oddsURL = `https://arena-backend.fly.dev/bets/odds/?uid=${betDetails.uuid}&limit=8`;
+    const oddsURL = `https://api.arena.markets/bets/odds/?uid=${betDetails.uuid}&limit=8`;
     try {
       // Fetch the odds data from the server
       const oddsResponse = await fetch(oddsURL, {
@@ -190,7 +190,7 @@ function BetDetailScreen({ route, navigation }) {
 
     if (!betDetails) return; // Make sure betDetails is available
     console.log("testing holdings call")
-    const oddsURL = `https://arena-backend.fly.dev/bets/holdings?betUuid=${betDetails.uuid}`;
+    const oddsURL = `https://api.arena.markets/bets/holdings?betUuid=${betDetails.uuid}`;
     const holdingsResponse = await fetch(oddsURL, {
       method: 'GET',
       headers: {

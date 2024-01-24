@@ -24,7 +24,7 @@ function BuyTokensScreen({ route, navigation }) {
             'access_token': apiToken,
             'Content-Type': 'application/json',
         };
-        const apiEndpointPost = 'https://arena-backend.fly.dev/user/balance';
+        const apiEndpointPost = 'https://api.arena.markets/user/balance';
 
         const payload = {
             "additional_balance": tokens,
@@ -53,7 +53,7 @@ function BuyTokensScreen({ route, navigation }) {
                 'access_token': apiToken,
                 'Content-Type': 'application/json',
             };
-            const apiEndpoint = 'https://arena-backend.fly.dev/user/balance';
+            const apiEndpoint = 'https://api.arena.markets/user/balance';
             const requestOptions = {
                 method: 'GET',
                 headers: headers,
