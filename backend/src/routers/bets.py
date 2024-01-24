@@ -1,6 +1,6 @@
 import random
 from uuid import uuid4, UUID
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.security.api_key import APIKey
 from pymongo import DESCENDING
 from bson import ObjectId
@@ -8,12 +8,12 @@ from bson import ObjectId
 from backend.src.models.database import get_mongo, get_db,  get_user, DB_BETS, DB_ODDS, DB_WAGERS, User
 from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetContext, OddsResponse, OddsScheme, WagerCreateContext, BetSettlement, BetResponse, Holdings
 from backend.src.schemas.index import Success
-from backend.src.auth import get_api_key
+from backend.src.auth import get_api_key, get_api_key_from_state
 
 from interfaces.bets_pb2 import Bet, Odds, Wager
 
-from datetime import timezone 
-import datetime 
+from datetime import timezone
+import datetime
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.timestamp_pb2 import Timestamp
 from bson.json_util import dumps
@@ -21,10 +21,12 @@ from bson.json_util import dumps
 router = APIRouter()
 
 @router.post("/wager")
-async def create_wager(context:WagerCreateContext,
+async def create_wager(request:Request,
+                       context:WagerCreateContext,
                        db=Depends(get_db),
-                       mongo=Depends(get_mongo),
-                       api_key:APIKey = Depends(get_api_key)) -> Success:
+                       mongo=Depends(get_mongo)) -> Success:
+    api_key = get_api_key_from_state(request)
+
     # find the current user
     user = get_user(api_key, db)
 
@@ -35,9 +37,9 @@ async def create_wager(context:WagerCreateContext,
             .limit(1)
     documents = await cursor.to_list(length=1)
     odds_collection = [OddsScheme(odds=float(doc["odds"]), timestamp=int(doc["timestamp"])) for doc in documents]
-        
+
     if len(odds_collection) == 0:
-        return Success(ok=False, error="This bet does not exist", message="") 
+        return Success(ok=False, error="This bet does not exist", message="")
 
     # subtract the balance from user
     if not user.balance or user.balance < context.amount:
@@ -45,9 +47,9 @@ async def create_wager(context:WagerCreateContext,
     user.balance -= context.amount
     db.commit()
 
-    dt = datetime.datetime.now(timezone.utc) 
-    utc_time = dt.replace(tzinfo=timezone.utc) 
-    utc_timestamp = utc_time.timestamp() 
+    dt = datetime.datetime.now(timezone.utc)
+    utc_time = dt.replace(tzinfo=timezone.utc)
+    utc_timestamp = utc_time.timestamp()
 
     # create a bet
     wager = Wager(
@@ -69,7 +71,7 @@ async def create_wager(context:WagerCreateContext,
 
         wager_results = await mongo[DB_WAGERS].insert_one(wager_json)
     except Exception as ex:
-        return Success(ok=False, error=str(ex), message="Failed to create wager") 
+        return Success(ok=False, error=str(ex), message="Failed to create wager")
 
     # get the last yes bet
     cursor = mongo[DB_ODDS]\
@@ -102,9 +104,9 @@ async def create_wager(context:WagerCreateContext,
         updated_odds = ((last_yes.odds + last_no.odds) / 2) + random.uniform(-max_adjust, max_adjust)
     else: # no bets exist
         updated_odds = odds_collection[0].odds + random.uniform(-max_adjust, max_adjust)
-    
+
     updated_odds = min(max(0.01, updated_odds), 0.99)
-    
+
     # update the odds
     # for implementation look at experiments/adjust_odds
     odds = Odds(
@@ -113,7 +115,7 @@ async def create_wager(context:WagerCreateContext,
         odds = updated_odds,
         timestamp = int(utc_timestamp),
     )
-    
+
     odds_json = MessageToDict(odds)
     odds_json["timestamp"] = int(utc_timestamp)
 
@@ -121,21 +123,23 @@ async def create_wager(context:WagerCreateContext,
         odds_result = await mongo[DB_ODDS].insert_one(odds_json)
         return Success(ok=True, error=None, message=str(odds_result.inserted_id))
     except Exception as ex:
-        return Success(ok=False, error=str(ex), message="Failed to update odds") 
+        return Success(ok=False, error=str(ex), message="Failed to update odds")
 
 
 @router.post("/create")
-async def create_bet(context:BetCreateContext,
-                 db = Depends(get_db),
-                 mongo = Depends(get_mongo), 
-                 api_key:APIKey = Depends(get_api_key)) -> Success:
+async def create_bet(request: Request,
+                     context:BetCreateContext,
+                        db = Depends(get_db),
+                        mongo = Depends(get_mongo)) -> Success:
+    api_key = get_api_key_from_state(request)
+
     user = get_user(api_key, db)
     if not user:
         return Success(ok=False, error="Cannot find the user associated with the API key", message="")
 
-    dt = datetime.datetime.now(timezone.utc) 
-    utc_time = dt.replace(tzinfo=timezone.utc) 
-    utc_timestamp = utc_time.timestamp() 
+    dt = datetime.datetime.now(timezone.utc)
+    utc_time = dt.replace(tzinfo=timezone.utc)
+    utc_timestamp = utc_time.timestamp()
 
     bet = Bet(
         uuid = str(uuid4()),
@@ -156,7 +160,7 @@ async def create_bet(context:BetCreateContext,
         odds = odds_input,
         timestamp = int(utc_timestamp),
     )
-    
+
     bet_json = MessageToDict(bet)
     odds_json = MessageToDict(odds)
     bet_json["timestamp"] = int(utc_timestamp)
@@ -169,11 +173,13 @@ async def create_bet(context:BetCreateContext,
         bet_id = bet_result.inserted_id
         return Success(ok=True, error=None, message=str(bet_id))
     except Exception as ex:
-        return Success(ok=False, error=str(ex), message="Failed to create bet") 
+        return Success(ok=False, error=str(ex), message="Failed to create bet")
 
 
 @router.get("/get_single_bet")
-async def get_bet(uuid:str, mongo = Depends(get_mongo), api_key:APIKey = Depends(get_api_key)) -> BetResponse:
+async def get_bet(request:Request, uuid:str, mongo = Depends(get_mongo)) -> BetResponse:
+    api_key = get_api_key_from_state(request)
+
     cursor = mongo[DB_BETS].find({"uuid": uuid}).limit(1)
     documents = await cursor.to_list(length=1)
     if len(documents) != 1:
@@ -185,7 +191,7 @@ async def get_bet(uuid:str, mongo = Depends(get_mongo), api_key:APIKey = Depends
             "timesViewed": int(documents[0]["timesViewed"]) + 1
         }
     }
-    
+
     # Update the document
     result = await mongo[DB_BETS].update_one({"_id": ObjectId(documents[0]["_id"])}, update_data)
     if not result:
@@ -195,7 +201,9 @@ async def get_bet(uuid:str, mongo = Depends(get_mongo), api_key:APIKey = Depends
                        bet=str(dumps(documents[0])))
 
 @router.get("/holdings")
-async def get_holdings(betUuid:str, db = Depends(get_db), mongo = Depends(get_mongo), api_key:APIKey = Depends(get_api_key)) -> Holdings:
+async def get_holdings(request:Request, betUuid:str, db = Depends(get_db), mongo = Depends(get_mongo)) -> Holdings:
+    api_key = get_api_key_from_state(request)
+
     user = get_user(api_key, db)
     user_uuid_call = str(user.id)
     # Retrieve all wagers for the given bet_uuid and given user
@@ -212,26 +220,28 @@ async def get_holdings(betUuid:str, db = Depends(get_db), mongo = Depends(get_mo
 
 
 @router.get("/get/")
-async def get_bets(limit:int=10,
+async def get_bets(request:Request,
+                   limit:int=10,
                    page:int=1,
                    timestamp:int=0,
-                   mongo = Depends(get_mongo),
-                   api_key:APIKey = Depends(get_api_key)) -> BetsResponse:
+                   mongo = Depends(get_mongo)) -> BetsResponse:
+    api_key = get_api_key_from_state(request)
+
     if page <= 0:
         return BetsResponse(success=
                             Success(
-                                ok=False, 
-                                error="Page must be at least one", 
+                                ok=False,
+                                error="Page must be at least one",
                                 message=""),
-                            bets=None)  
+                            bets=None)
 
     skip = (page - 1) * limit
     if skip < 0:
         return BetsResponse(success=
                             Success(
-                                ok=False, 
-                                error="Invalid limit. limit must be at least one", 
-                                message=""), 
+                                ok=False,
+                                error="Invalid limit. limit must be at least one",
+                                message=""),
             bets=None)
     # Query the MongoDB collection with sorting
     cursor = mongo[DB_BETS].find({"timestamp": {"$gt": timestamp}, "resolved": False})\
@@ -246,12 +256,14 @@ async def get_bets(limit:int=10,
 
 @router.get("/positions/")
 async def get_positions(
+        request:Request,
         limit: int = 10,
         page: int = 1,
         timestamp: int = 0,
         db=Depends(get_db),
-        mongo=Depends(get_mongo),
-        api_key: APIKey = Depends(get_api_key)) -> BetsResponse:
+        mongo=Depends(get_mongo)) -> BetsResponse:
+    api_key = get_api_key_from_state(request)
+
     user = get_user(api_key, db)
     user_uuid_call = str(user.id)
 
@@ -278,10 +290,12 @@ async def get_positions(
 
 
 @router.get("/odds/")
-async def get_odds(uid:str,
+async def get_odds(request:Request,
+                   uid:str,
                    limit:int=1,
-                   mongo = Depends(get_mongo),
-                   _:APIKey = Depends(get_api_key)) -> OddsResponse:
+                   mongo = Depends(get_mongo)) -> OddsResponse:
+    api_key = get_api_key_from_state(request)
+
     if limit <= 0:
         limit = 1
 
@@ -295,17 +309,18 @@ async def get_odds(uid:str,
                         odds=odds_collection)
 
 @router.post("/settle")
-async def settle_bet(settlement: BetSettlement, 
+async def settle_bet(request:Request,
+                    settlement: BetSettlement,
                     db=Depends(get_db),
-                    mongo=Depends(get_mongo),
-                    api_key:APIKey = Depends(get_api_key)) -> Success:
+                    mongo=Depends(get_mongo)) -> Success:
+    api_key = get_api_key_from_state(request)
 
     bet_query = {"uuid": settlement.bet_uuid}
     bets_cursor = mongo[DB_BETS].find(bet_query)
     bets = await bets_cursor.to_list(length=1)
     if len(bets) != 1:
         return Success(ok=False, error="No such bets found, cannot resolve", message="")
-    
+
     # Retrieve all wagers for the given bet_uuid
     wagers_cursor = mongo[DB_WAGERS].find({"betUuid": settlement.bet_uuid})
     wagers = await wagers_cursor.to_list(length=100000)
@@ -317,7 +332,7 @@ async def settle_bet(settlement: BetSettlement,
             print(UUID(wager['userUuid']))
             user = db.query(User).filter(User.id == UUID(wager['userUuid'])).first()
         except Exception as ex:
-            return Success(ok=False, error=str(ex), message="User not found") 
+            return Success(ok=False, error=str(ex), message="User not found")
 
         # Calculate payout based on the odds and whether the user bet Yes or No
         odds = wager['odds']

@@ -2,6 +2,7 @@ import uvicorn
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
+from fastapi_profiler import PyInstrumentProfilerMiddleware
 
 import os
 
@@ -9,6 +10,7 @@ import os
 from backend.src.routers import index
 from backend.src.routers import bets
 from backend.src.routers import users
+from backend.src.models import database
 
 __version__ = "0.0.1"
 
@@ -33,6 +35,19 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
+""" for DEBUG purposes only
+app.add_middleware(
+    PyInstrumentProfilerMiddleware,
+    server_app=app,
+    profiler_output_type="html",
+    is_print_each_request=False,  # Set to True to show request profile on
+                                  # stdout on each request
+    open_in_browser=False,        # Set to true to open your web-browser automatically
+                                  # when the server shuts down
+    html_file_name="example_profile.html"  # Filename for output
+)
+"""
+
 app.add_middleware(
     SessionMiddleware,
     secret_key=os.getenv("SECRET_KEY"),
@@ -48,5 +63,10 @@ app.include_router(users.router,
                    prefix="/user",
                    tags=["user"])
 
+@app.on_event("startup")
+async def startup():
+    app.state.db = database.get_db()
+
+
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=5000, log_level="info")
+    uvicorn.run("main:app", host="0.0.0.0", port=8888, log_level="info")

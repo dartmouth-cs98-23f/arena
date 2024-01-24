@@ -14,7 +14,8 @@ py_binary(
             "//backend/src/schemas",
             requirement("fastapi"),
             requirement("pydantic"),
-            requirement("uvicorn")],
+            requirement("uvicorn"),
+            requirement("fastapi_profiler")],
 )
 
 
@@ -40,7 +41,8 @@ py3_image(
             requirement("protobuf"),
             requirement("authlib"),
             requirement("itsdangerous"),
-            requirement("pydantic-core")],
+            requirement("pydantic-core"),
+            requirement("fastapi_profiler")],
     main = "main.py",
 )
 
