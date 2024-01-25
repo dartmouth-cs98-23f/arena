@@ -17,7 +17,7 @@ def get_api_key_from_state(request:Request) -> Optional[str]:
     api_key_header = Security(APIKeyHeader(name="access_token", auto_error=False))
     # we get database from the app state which is in the request
     for db in request.app.state.db:
-        print(api_key_header)
+        print(str(api_key_header))
         keyobj = db.query(Key).filter(Key.key == str(api_key_header)).first()
         print(keyobj)
         print()
