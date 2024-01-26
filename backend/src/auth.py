@@ -13,11 +13,13 @@ from datetime import datetime
 
 api_key_header = APIKeyHeader(name="access_token", auto_error=False)
 
-def get_api_key_from_state(request:Request) -> Optional[str]:
-    api_key_header = Security(APIKeyHeader(name="access_token", auto_error=False))
+async def get_api_key_from_state(request:Request) -> Optional[str]:
+    api_key_header = request.headers["access_token"]
     # we get database from the app state which is in the request
     for db in request.app.state.db:
-        keyobj = db.query(Key).filter(Key.key == str(api_key_header)).first()
+        keyobj = db.query(Key).filter(Key.key == api_key_header).first()
+        print(keyobj)
+        print()
         if(keyobj is not None):
             return api_key_header
 
