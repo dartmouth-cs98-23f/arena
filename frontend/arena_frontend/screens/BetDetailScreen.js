@@ -1,18 +1,22 @@
 // BetDetailScreen.js
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image, SafeAreaView } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image, SafeAreaView, Modal } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
 import coinIcon from '../logos/coinIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
+import informationLogo from '../logos/informationLogo.png'; // Make sure to import your icon
 
 function BetDetailScreen({ route, navigation }) {
 
   // const itemId = route.params?.itemId || 'default_bet_id'; 
   // console.log("Received item ID:", route.params?.itemId);
+
+  const [tooltipVisible, setTooltipVisible] = useState(false); // State to control tooltip visibility
+  const tooltipTimeoutRef = useRef(null);
 
   const betUuid = route.params?.betUuid;
   console.log("Received bet UUID-:", route.params?.betUuid);
@@ -25,6 +29,24 @@ function BetDetailScreen({ route, navigation }) {
   const [betTitle, setBetTitle] = useState('');
   const [computedOdds, setComputedOdds] = useState('Loading...');
   const [holdingsData, setHoldingsData] = useState(0);
+
+  const showTooltip = () => {
+    setTooltipVisible(true);
+    if (tooltipTimeoutRef.current) {
+      clearTimeout(tooltipTimeoutRef.current);
+    }
+    tooltipTimeoutRef.current = setTimeout(() => {
+      setTooltipVisible(false);
+    }, 3000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (tooltipTimeoutRef.current) {
+        clearTimeout(tooltipTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const [graphData, setGraphData] = useState({
     labels: [], // will hold our label data for the graph
@@ -252,7 +274,33 @@ function BetDetailScreen({ route, navigation }) {
       <Text style={styles.questionTitle}>{betDetails?.title || 'Loading...'}</Text>
 
       <Text style={styles.oddsTitle}>Current odds</Text>
-      <Text style={styles.percentage}>{computedOdds}</Text>
+      <View style={styles.oddsContainer}>
+        <Text style={styles.percentage}>{computedOdds}</Text>
+        <TouchableOpacity onPress={showTooltip} style={styles.infoIcon}>
+          <Image source={informationLogo} />
+          {tooltipVisible && (
+            <View style={styles.tooltip}>
+              <Text style={styles.tooltipText}>
+The current odds represent market-implied probability of the bet settling in a yes. You should bet yes if you think the question has a higher probability of settling to a yes than the current odds, and should bet no if you think the question has a lower probability of settling to yes than reflected in the current odds
+</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
+
+      {/* Tooltip Modal */}
+      {/* <Modal
+        animationType="fade"
+        transparent={true}
+        visible={tooltipVisible}
+        onRequestClose={showTooltip} // Android back button
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Sample information text...</Text>
+          </View>
+        </View>
+      </Modal> */}
 
       {/* Buttons Section */}
       <View style={styles.buttonContainer}>
@@ -441,7 +489,63 @@ const styles = StyleSheet.create({
     padding: 10, // Adjust the padding as needed
     textAlign: 'center', // Center the text if you like
   },
-  // Add any additional styles you may need here
+  oddsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10
+  },
+  infoIcon: {
+    marginLeft: 5,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "black",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  },
+  tooltip: {
+    position: 'absolute',
+    left: -80, // Adjust this value to position the tooltip right of the info icon
+    top: 30, // Adjust this value to position the tooltip above the info icon
+    backgroundColor: 'rgba(0, 0, 0, 0.8)', // Semi-transparent black background
+    padding: 10,
+    borderRadius: 5,
+    zIndex: 1000, // Make sure the tooltip appears above other elements
+    width: 250, // This will automatically adjust to content if you remove the width
+    // maxWidth: 400, // Maximum width of the tooltip - adjust as needed
+    alignItems: 'center', // Align text to the start
+  },
+  tooltipText: {
+    color: '#FFF', // White text color
+    textAlign: 'left', // Align text to the left
+    // If you have a lot of text, you might want to control the size of the text as well
+    fontSize: 13, // Adjust font size as needed
+  },
+  infoIcon: {
+    marginLeft: 5,
+    position: 'relative', // Position relative to allow absolute positioning of the tooltip
+  },
+  // ... (additional styles if needed)
 });
 
 export default BetDetailScreen;
