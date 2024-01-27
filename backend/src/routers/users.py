@@ -1,13 +1,37 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.security.api_key import APIKey 
 
-from backend.src.auth import get_api_key
+from backend.src.auth import get_api_key, get_api_key_from_state
 from backend.src.models.database import get_db, get_mongo, get_user, DB_ODDS, DB_WAGERS
 
-from backend.src.schemas.users import BalanceResponse, WagersResponse, BalanceAddContext
+from backend.src.schemas.users import BalanceResponse, WagersResponse, BalanceAddContext, CondensedUser, UserResponse
 from backend.src.schemas.index import Success
 
+from backend.src.models.database import User
+
 router = APIRouter() 
+
+@router.get("/search")
+async def search_for_user(request:Request, 
+                          email_query:str) -> UserResponse:
+    _ = get_api_key_from_state(request)
+    user = request.app.state.db.query(User).filter(User.email == email_query).first()
+    if not user:
+        return UserResponse(
+            success = Success(ok=False, error="No such user exists", message=""),
+            user = None
+        )
+
+    return UserResponse(
+        success = Success(ok=True, error=None, message="Found user with email given"),
+        user = CondensedUser(email=user.email, uuid=str(user.id))
+    )
+
+    return UserResponse(
+                success = Success(ok=False, error="Failed database initialization", message=""),
+                user = None
+            )
+
 
 @router.get("/balance")
 async def user_balance(

@@ -26,7 +26,7 @@ async def get_invites(request:Request,
                       mongo=Depends(get_mongo)) -> BetsResponse:
     user_uuid = await get_api_key_from_state(request)
     cursor = mongo[DB_BETS].find({
-        "verifier_uuid": user_uuid,
+        "verifierUuid": user_uuid,
         "verifier_accepted": False,
         "resolved": False,
     }).limit(10000)
@@ -40,14 +40,13 @@ async def get_verifications(request: Request,
                             mongo=Depends(get_mongo)) -> BetsResponse:
     user_uuid = await get_api_key_from_state(request)
     cursor = mongo[DB_BETS].find({
-        "verifiers_uuid": user_uuid,
+        "verifierUuid": user_uuid,
         "verifier_accepted": True,
         "resolved": False,
     }).limit(10000)
     documents = await cursor.to_list(length=10000)
     
-    return BetsResponse(success=Success(ok=True, error=None),
-                        message="", bets=str(dumps(documents)))
+    return BetsResponse(success=Success(ok=True, error=None, message=""), bets=str(dumps(documents)))
 
 
 @router.post("/accept")
@@ -58,7 +57,7 @@ async def accept_invite(request:Request,
     user_uuid = await get_api_key_from_state(request)
     cursor = mongo[DB_BETS].find({
         "uuid": bet_uuid, 
-        "verifier_uuid": user_uuid,
+        "verifierUuid": user_uuid,
         "verifier_accepted": False}).limit(1)
     documents = await cursor.to_list(length=1)
 
@@ -95,7 +94,7 @@ async def resolve_bet(request:Request,
     user_uuid = await get_api_key_from_state(request)
     cursor = mongo[DB_BETS].find({
         "uuid": bet_uuid, 
-        "verifier_uuid": huser_uuid,
+        "verifierUuid": user_uuid,
         "verifier_accepted": True
     }).limit(1)
     documents = await cursor.to_list(length=1)

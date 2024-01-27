@@ -39,11 +39,8 @@ def get_mongo():
 
 
 def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
+    db = SessionLocal()
+    return db
 
 
 class Key(Base):

@@ -128,8 +128,8 @@ async def create_wager(request:Request,
 @router.post("/create")
 async def create_bet(request: Request,
                      context:BetCreateContext,
-                        db = Depends(get_db),
-                        mongo = Depends(get_mongo)) -> Success:
+                     db = Depends(get_db),
+                     mongo = Depends(get_mongo)) -> Success:
     uuid = await get_api_key_from_state(request)
 
     user = get_user_from_uuid(uuid, db)
@@ -145,7 +145,7 @@ async def create_bet(request: Request,
         creator_uuid = str(user.id),
         title = context.title,
         description = context.description,
-        verifier_uuid = "None",
+        verifier_uuid = context.verifier_uuid,
         timestamp = int(utc_timestamp),
         times_viewed = 1,
         resolved = False,
@@ -167,6 +167,8 @@ async def create_bet(request: Request,
     odds_json = MessageToDict(odds)
     bet_json["timestamp"] = int(utc_timestamp)
     bet_json["resolved"] = False
+    bet_json["result"] = False
+    bet_json["verifier_accepted"] = False
     odds_json["timestamp"] = int(utc_timestamp)
 
     try:
