@@ -5,7 +5,7 @@ from fastapi.security.api_key import APIKey
 from pymongo import DESCENDING
 from bson import ObjectId
 
-from backend.src.models.database import get_mongo, get_db,  get_user, DB_BETS, DB_ODDS, DB_WAGERS, User
+from backend.src.models.database import get_user_from_uuid, get_mongo, get_db,  get_user, DB_BETS, DB_ODDS, DB_WAGERS, User
 from backend.src.schemas.bets import BetCreateContext, BetsResponse, BetsGetContext, OddsResponse, OddsScheme, WagerCreateContext, BetSettlement, BetResponse, Holdings
 from backend.src.schemas.index import Success
 from backend.src.auth import get_api_key_from_state
@@ -23,12 +23,11 @@ router = APIRouter()
 @router.post("/wager")
 async def create_wager(request:Request,
                        context:WagerCreateContext,
-                       db=Depends(get_db),
                        mongo=Depends(get_mongo)) -> Success:
-    api_key = await get_api_key_from_state(request)
+    uuid = await get_api_key_from_state(request)
 
     # find the current user
-    user = get_user(api_key, db)
+    user = get_user_from_uuid(uuid, request.app.state.db)
 
     # find the bet the user is wagering on
     cursor = mongo[DB_ODDS]\
@@ -131,9 +130,9 @@ async def create_bet(request: Request,
                      context:BetCreateContext,
                         db = Depends(get_db),
                         mongo = Depends(get_mongo)) -> Success:
-    api_key = await get_api_key_from_state(request)
+    uuid = await get_api_key_from_state(request)
 
-    user = get_user(api_key, db)
+    user = get_user_from_uuid(uuid, db)
     if not user:
         return Success(ok=False, error="Cannot find the user associated with the API key", message="")
 
@@ -150,6 +149,9 @@ async def create_bet(request: Request,
         timestamp = int(utc_timestamp),
         times_viewed = 1,
         resolved = False,
+        verifier_accepted = False,
+        win_justification = "",
+        result = False
     )
 
     # clamp the odds to between 0.01 and 0.99
@@ -178,7 +180,7 @@ async def create_bet(request: Request,
 
 @router.get("/get_single_bet")
 async def get_bet(request:Request, uuid:str, mongo = Depends(get_mongo)) -> BetResponse:
-    api_key = await get_api_key_from_state(request)
+    _ = await get_api_key_from_state(request)
 
     cursor = mongo[DB_BETS].find({"uuid": uuid}).limit(1)
     documents = await cursor.to_list(length=1)
@@ -202,10 +204,8 @@ async def get_bet(request:Request, uuid:str, mongo = Depends(get_mongo)) -> BetR
 
 @router.get("/holdings")
 async def get_holdings(request:Request, betUuid:str, db = Depends(get_db), mongo = Depends(get_mongo)) -> Holdings:
-    api_key = await get_api_key_from_state(request)
+    user_uuid_call = await get_api_key_from_state(request)
 
-    user = get_user(api_key, db)
-    user_uuid_call = str(user.id)
     # Retrieve all wagers for the given bet_uuid and given user
     wagers_cursor = mongo[DB_WAGERS].find({"betUuid": betUuid, "userUuid": user_uuid_call})
     wagers = await wagers_cursor.to_list(length=100000)
@@ -225,7 +225,7 @@ async def get_bets(request:Request,
                    page:int=1,
                    timestamp:int=0,
                    mongo = Depends(get_mongo)) -> BetsResponse:
-    api_key = await get_api_key_from_state(request)
+    _ = await get_api_key_from_state(request)
 
     if page <= 0:
         return BetsResponse(success=
@@ -262,10 +262,7 @@ async def get_positions(
         timestamp: int = 0,
         db=Depends(get_db),
         mongo=Depends(get_mongo)) -> BetsResponse:
-    api_key = await get_api_key_from_state(request)
-
-    user = get_user(api_key, db)
-    user_uuid_call = str(user.id)
+    user_uuid_call = await get_api_key_from_state(request)
 
     if page <= 0:
         return BetsResponse(success=Success(ok=False, error="Page must be at least one", message=""), bets=None)
@@ -294,7 +291,7 @@ async def get_odds(request:Request,
                    uid:str,
                    limit:int=1,
                    mongo = Depends(get_mongo)) -> OddsResponse:
-    api_key = await get_api_key_from_state(request)
+    _ = await get_api_key_from_state(request)
 
     if limit <= 0:
         limit = 1
@@ -313,7 +310,7 @@ async def settle_bet(request:Request,
                     settlement: BetSettlement,
                     db=Depends(get_db),
                     mongo=Depends(get_mongo)) -> Success:
-    api_key = await get_api_key_from_state(request)
+    _ = await get_api_key_from_state(request)
 
     bet_query = {"uuid": settlement.bet_uuid}
     bets_cursor = mongo[DB_BETS].find(bet_query)

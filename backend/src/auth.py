@@ -18,10 +18,8 @@ async def get_api_key_from_state(request:Request) -> Optional[str]:
     # we get database from the app state which is in the request
     for db in request.app.state.db:
         keyobj = db.query(Key).filter(Key.key == api_key_header).first()
-        print(keyobj)
-        print()
         if(keyobj is not None):
-            return api_key_header
+            return str(keyobj.user_id)
 
     raise HTTPException(
         status_code = HTTP_403_FORBIDDEN,

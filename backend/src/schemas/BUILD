@@ -8,7 +8,8 @@ py_library(
     srcs = ["__init__.py",
             "index.py",
             "bets.py",
-            "users.py"],
+            "users.py",
+            "verifiers.py"],
     deps = [requirement("fastapi"),
         requirement("pydantic")]
 )

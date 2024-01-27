@@ -11,7 +11,7 @@ from sqlalchemy import Column, String
 
 import motor.motor_asyncio
 import asyncio
-from uuid import uuid4
+from uuid import uuid4, UUID
 
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -95,6 +95,13 @@ class User(Base):
     google_id = Column(String(1024))
     api_token = Column(String(1024))
     balance = Column(Integer, default=500)
+
+
+def get_user_from_uuid(uuid:str, db) -> Optional[User]:
+    user = db.query(User).filter(User.id == UUID(uuid)).first() 
+    if not user:
+        return None
+    return user
 
 
 def get_user(api_key, db) -> Optional[User]:
