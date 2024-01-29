@@ -10,6 +10,8 @@ message Bet {
   int64 timestamp = 7;
   int64 times_viewed = 8;
   bool resolved = 9;
+  bool verifier_accepted = 10;
+  bool result = 11;
 }
 
 message Odds {
