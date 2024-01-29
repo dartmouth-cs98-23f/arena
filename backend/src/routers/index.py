@@ -1,3 +1,4 @@
+import json
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse, JSONResponse
 from starlette.responses import RedirectResponse
@@ -37,9 +38,27 @@ async def index() -> Success:
                    message = "Hello world",
                    error = None)
 
+@router.get("/apple-app-site-association")
+async def apple_app_site_association():
+    site_association_string = """
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "7379ZHK5D8.markets98.arena.arena",
+        "paths": ["*"]
+      }
+    ]
+  }
+}
+    """
+    return JSONResponse(content=json.loads(site_association_string))
+
 @router.route('/login')
 async def login(request: Request):
     redirect_uri = request.url_for('auth')  # This creates the url for our /auth endpoint
+    print("redirect URI from login: ", redirect_uri)
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
 @router.get("/auth")
@@ -47,7 +66,7 @@ async def auth(request: Request):
     token = await oauth.google.authorize_access_token(request)
     userinfo = token['userinfo']
     request.session['user'] = userinfo
-    
+
     # Check if the email ends with @dartmouth.edu
     if not userinfo['email'].endswith("@dartmouth.edu"):
         # If it doesn't, return an error response.
