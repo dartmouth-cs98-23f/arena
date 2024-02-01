@@ -464,15 +464,10 @@ const styles = StyleSheet.create({
     flex: 1, // This will ensure that the container takes up all available space
   },
   footer: {
-    position: 'absolute', // Ensures footer sticks to the bottom
-    bottom: 0, // Align to the bottom
-    left: 0,
-    right: 0,
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: 'black',
-    borderTopWidth: 1, // Add a border top if needed for design
-    paddingVertical: 10, // Padding inside the footer
+    padding: 20,
+    backgroundColor: 'black', // Adjust the background color as needed
   },
   footerIcon: {
     width: 30,
