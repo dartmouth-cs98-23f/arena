@@ -1,7 +1,7 @@
 // BetDetailScreen.js
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Dimensions, Image, SafeAreaView, Modal } from 'react-native';
+import { RefreshControl, ScrollView, View, Text, StyleSheet, TouchableOpacity, Dimensions, Image, SafeAreaView, Modal } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
@@ -16,6 +16,9 @@ function BetDetailScreen({ route, navigation }) {
 
   // const itemId = route.params?.itemId || 'default_bet_id'; 
   // console.log("Received item ID:", route.params?.itemId);
+
+  const [refreshing, setRefreshing] = useState(false); // Add this line
+
 
   const [tooltipVisible, setTooltipVisible] = useState(false); // State to control tooltip visibility
   const tooltipTimeoutRef = useRef(null);
@@ -226,6 +229,11 @@ function BetDetailScreen({ route, navigation }) {
     setHoldingsData(holdingsData)
   }
 
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    Promise.all([fetchBetDetails(), fetchBalance()]).then(() => setRefreshing(false));
+  }, [betUuid]); // Add dependencies here if needed
+
   useEffect(() => {
 
     if (betUuid) {
@@ -273,7 +281,16 @@ function BetDetailScreen({ route, navigation }) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+      <ScrollView
+        contentContainerStyle={styles.scrollViewContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#fff" // Set the color of the spinner to white
+          />
+        }
+        >
       <Text style={styles.questionTitle}>{betDetails?.title || 'Loading...'}</Text>
 
       <Text style={styles.oddsTitle}>Current odds</Text>
