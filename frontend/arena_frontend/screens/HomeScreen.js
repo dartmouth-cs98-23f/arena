@@ -116,7 +116,7 @@ function HomeScreen({ navigation }) {
           renderItem={renderItem}
           keyExtractor={item => item.id}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#fff"/>
           }
         />
 

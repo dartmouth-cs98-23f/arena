@@ -1,16 +1,22 @@
-// ProfileScreen.js
-
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, SafeAreaView, Image } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  SafeAreaView,
+  Image,
+  RefreshControl,
+} from 'react-native';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
 
 function ProfileScreen({ route, navigation }) {
-  const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
-  const [positionsData, setFeedData] = useState([
-  ]);
-
+  const [myTokens, setMyTokens] = useState(50);
+  const [positionsData, setFeedData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   async function fetchBalance() {
     try {
@@ -29,29 +35,19 @@ function ProfileScreen({ route, navigation }) {
         throw new Error(`Request failed with status ${response.status}`);
       }
       const data = await response.json();
-      setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-      // console.log('myTokens on token purchase screen', myTokens);
+      setMyTokens(data.balance);
     } catch (error) {
       console.error('An error occurred:', error);
     }
   }
 
-  useEffect(() => {
-    fetchBalance();
-  });
-
-
-  const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
-  const [refreshing, setRefreshing] = useState(false);
-
-  // Set the headers for the request
-  const headers = {
-    'access_token': apiToken,
-    'Content-Type': 'application/json',
-  };
-
-  const fetchBets = async () => {
+  async function fetchBets() {
     try {
+      const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+      const headers = {
+        'access_token': apiToken,
+        'Content-Type': 'application/json',
+      };
       const response = await fetch('https://api.arena.markets/bets/positions/', {
         method: 'GET',
         headers: headers,
@@ -67,11 +63,10 @@ function ProfileScreen({ route, navigation }) {
         const oddsData = await oddsResponse.json();
         const computedOdds = (oddsData.odds[0].odds * 100).toFixed(0) + '%';
         return {
-          id: bet._id.$oid, // MongoDB's ObjectID, make sure this is correct
-          uuid: bet.uuid, // This is what you need to ensure is correct
+          id: bet._id.$oid,
+          uuid: bet.uuid,
           question: bet.title,
           percentage: computedOdds,
-          // ... any other data you need
         };
       });
       const oddsResults = await Promise.all(oddsPromises);
@@ -79,71 +74,22 @@ function ProfileScreen({ route, navigation }) {
     } catch (error) {
       console.error('Error:', error);
     }
-  };
+  }
 
   useEffect(() => {
+    fetchBalance();
     fetchBets();
   }, []);
 
   const onRefresh = async () => {
     setRefreshing(true);
+    await fetchBalance();
     await fetchBets();
     setRefreshing(false);
   };
 
-  useEffect(() => {
-    onRefresh(); // Call onRefresh instead of fetchBets directly
-  }, []);
-
-  useEffect(() => {
-    const requestOptions = {
-      method: 'GET',
-      headers: headers,
-    };
-    const apiEndpoint = 'https://api.arena.markets/user/balance';
-
-    fetch(apiEndpoint, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        // console.log('Balance fetched successfully!');
-        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-      })
-      .catch(error => {
-        console.error('An error occurred:', error);
-      });
-  }, []); // The empty dependency array ensures this effect runs only once after the initial render
-
-  useEffect(() => {
-    const requestOptions = {
-      method: 'GET',
-      headers: headers,
-    };
-    const apiEndpoint = 'https://api.arena.markets/user/balance';
-
-    fetch(apiEndpoint, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        // console.log('Balance fetched successfully!');
-        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-      })
-      .catch(error => {
-        console.error('An error occurred:', error);
-      });
-  }, []); // The empty dependency array ensures this effect runs only once after the initial render
-
-
   const renderPosition = ({ item }) => {
-    const textColor = item.trend === 'Up' ? '#34D399' : '#FF4500'; // Green for Up, Red for Down
+    const textColor = item.trend === 'Up' ? '#34D399' : '#FF4500';
 
     return (
       <TouchableOpacity onPress={() => navigation.navigate('BetDetail', { betUuid: item.uuid })}>
@@ -173,9 +119,8 @@ function ProfileScreen({ route, navigation }) {
         <Text style={styles.tokenCount}>💰{myTokens}</Text>
         <TouchableOpacity
           style={styles.buyTokensButton}
-          onPress={() => navigation.navigate('BuyTokens', { myTokens })} // Add navigation here
+          onPress={() => navigation.navigate('BuyTokens', { myTokens })}
         >
-
           <Text style={styles.buyTokensText}>Buy Tokens</Text>
         </TouchableOpacity>
       </View>
@@ -183,9 +128,15 @@ function ProfileScreen({ route, navigation }) {
         data={positionsData}
         renderItem={renderPosition}
         keyExtractor={item => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#fff" // iOS spinner color
+            colors={["#fff"]} // Android spinner colors
+          />
+        }
       />
-
-      {/* Footer Section */}
       <View style={styles.footer}>
         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <Image source={homeIcon} style={styles.footerIcon} />
@@ -197,7 +148,6 @@ function ProfileScreen({ route, navigation }) {
           <Image source={profileIcon} style={styles.footerIcon} />
         </TouchableOpacity>
       </View>
-
     </SafeAreaView>
   );
 }
@@ -208,8 +158,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
   header: {
-    justifyContent: 'center', // Center the title
-    alignItems: 'center', // Align items in the center for the cross-axis
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingVertical: 10,
   },
   headerTitle: {
@@ -219,7 +169,7 @@ const styles = StyleSheet.create({
   },
   tokenSection: {
     flexDirection: 'row',
-    justifyContent: 'space-around', // Evenly space the token count and buy tokens button
+    justifyContent: 'space-around',
     alignItems: 'center',
     paddingVertical: 10,
   },
@@ -254,19 +204,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   oddsContainer: {
-    color: '#34D399',
-    fontSize: 27,
-    fontWeight: 'bold',
-  },
-  oddsText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
+    flex: 0.2,
+    alignItems: 'flex-end',
   },
   oddsPercentage: {
     color: '#34D399',
     fontSize: 27,
     fontWeight: 'bold',
+  },
+  trend: {
+    fontSize: 16,
+    marginTop: 4,
   },
   footer: {
     flexDirection: 'row',
