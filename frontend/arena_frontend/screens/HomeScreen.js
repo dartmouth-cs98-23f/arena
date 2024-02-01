@@ -49,14 +49,45 @@ function HomeScreen({ navigation }) {
     }
   };
 
+  const fetchBalance = async () => {
+    try {
+      const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+      const headers = {
+        'access_token': apiToken,
+        'Content-Type': 'application/json',
+      };
+      const apiEndpoint = 'https://api.arena.markets/user/balance';
+      const requestOptions = {
+        method: 'GET',
+        headers: headers,
+      };
+      const response = await fetch(apiEndpoint, requestOptions);
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+      const data = await response.json();
+      // console.log('Balance fetched successfully!');
+      setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+      // console.log('myTokens', myTokens);
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  }
+
 
   useEffect(() => {
     fetchBets();
+    fetchBalance();
   }, []);
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await fetchBets();
+    try {
+      await fetchBets();
+      await fetchBalance(); // This ensures the token balance is updated on pull to refresh
+    } catch (error) {
+      console.error('Error on refreshing:', error);
+    }
     setRefreshing(false);
   };
 
