@@ -7,81 +7,51 @@ import profileIcon from '../logos/profileIcon.png';
 import coinIcon from '../logos/coinIcon.png';
 import verifiersIcon from '../logos/verifiersIcon.png';
 
+  function HomeScreen({ navigation }) {
+    const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+    const [feedData, setFeedData] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
+  
+    // Set the headers for the request
+    const headers = {
+      'access_token': apiToken,
+      'Content-Type': 'application/json',
+    };
+  
+    const fetchBets = async () => {
+      try {
+        const response = await fetch('https://api.arena.markets/bets/get/', {
+          method: 'GET',
+          headers: headers,
+        });
+        const data = await response.json();
+        const bets = data.bets;
+        const oddsPromises = bets.map(async (bet) => {
+          const oddsURL = `https://api.arena.markets/bets/odds/?uid=${bet.uuid}`;
+          const oddsResponse = await fetch(oddsURL, {
+            method: 'GET',
+            headers: headers,
+          });
+          const oddsData = await oddsResponse.json();
+          const computedOdds = (oddsData.odds[0].odds * 100).toFixed(0) + '%';
+          return {
+            id: bet._id.$oid, // MongoDB's ObjectID
+            uuid: bet.uuid, // The UUID needed for detail view
+            question: bet.title,
+            percentage: computedOdds,
+          };
+        });
+        const oddsResults = await Promise.all(oddsPromises);
+        setFeedData(oddsResults);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
 
-function HomeScreen({ navigation }) {
-  const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
-  const [feedData, setFeedData] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
-
-  // Set the headers for the request
-  const headers = {
-    'access_token': apiToken,
-    'Access-Control-Allow-Origin': "*",
-  };
 
   useEffect(() => {
-    const requestOptions = {
-      method: 'GET',
-      headers: headers,
-    };
-    const betEndpoint = "https://api.arena.markets/bets/get/";
-
-    fetch(betEndpoint, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Bets received properly');
-        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-        return data.bets;
-      })
-      .then(bets => {
-        console.log('bets', bets);
-      })
-      .catch(error => {
-        console.error('An error occurred:', error);
-      });
-  }, []); // The empty dependency array ensures this effect runs only once after the initial render
-
-  //   try {
-  //     const response = await fetch('https://api.arena.markets/bets/get/', {
-  //       method: 'GET',
-  //       headers: headers,
-  //     });
-  //     const data = await response;
-  //     console.log('data', data.json());
-  //     const bets = data.bets;
-  //     console.log('bets', bets);
-
-  //     const oddsPromises = bets.map(async (bet) => {
-  //       const oddsURL = `https://api.arena.markets/bets/odds/?uid=${bet.uuid}`;
-  //       const oddsResponse = await fetch(oddsURL, {
-  //         method: 'GET',
-  //         headers: headers,
-  //       });
-  //       const oddsData = await oddsResponse.json();
-  //       const computedOdds = (oddsData.odds[0].odds * 100).toFixed(0) + '%';
-  //       return {
-  //         id: bet._id.$oid, // MongoDB's ObjectID
-  //         uuid: bet.uuid, // The UUID needed for detail view
-  //         question: bet.title,
-  //         percentage: computedOdds,
-  //       };
-  //     });
-  //     const oddsResults = await Promise.all(oddsPromises);
-  //     setFeedData(oddsResults);
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //   }
-  // };
-
-
-  // useEffect(() => {
-  //   fetchBets();
-  // }, []);
+    fetchBets();
+  }, []);
 
   const onRefresh = async () => {
     setRefreshing(true);
