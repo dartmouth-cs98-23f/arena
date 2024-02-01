@@ -103,11 +103,9 @@ function HomeScreen({ navigation }) {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Image source={logo} style={styles.headerLogo} />
           <Text style={styles.headerText}>ARENA</Text>
           <TouchableOpacity onPress={() => navigation.navigate('BuyTokens')} style={styles.coinButton}>
-            <Image source={coinIcon} style={styles.coinIcon} />
-            {/* <Text>{myTokens}</Text> */}
+            <Text style={styles.coinBalance}>💰{myTokens}</Text>
           </TouchableOpacity>
         </View>
 
@@ -165,6 +163,11 @@ const styles = StyleSheet.create({
   },
   coinButton: {
     // Styles for the coin icon button
+  },
+  coinBalance: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   coinIcon: {
     width: 25,
