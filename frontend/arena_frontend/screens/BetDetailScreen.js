@@ -153,10 +153,7 @@ function BetDetailScreen({ route, navigation }) {
       },
       body: JSON.stringify({ amount: 10, yes: false, bet_uuid: betUuid })
     });
-    console.log('bet_uuid', betUuid);
-    console.log('response', response);
     const result = await response.json();
-    console.log("test", result)
     fetchBalance();
     getOddsForBet();
     getHoldings();
