@@ -7,47 +7,46 @@ import profileIcon from '../logos/profileIcon.png';
 import coinIcon from '../logos/coinIcon.png';
 import verifiersIcon from '../logos/verifiersIcon.png';
 
-
-function HomeScreen({ navigation }) {
-  const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
-  const [feedData, setFeedData] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
-
-  // Set the headers for the request
-  const headers = {
-    'access_token': apiToken,
-    'Content-Type': 'application/json',
-  };
-
-  const fetchBets = async () => {
-    try {
-      const response = await fetch('https://api.arena.markets/bets/get/', {
-        method: 'GET',
-        headers: headers,
-      });
-      const data = await response.json();
-      const bets = data.bets;
-      const oddsPromises = bets.map(async (bet) => {
-        const oddsURL = `https://api.arena.markets/bets/odds/?uid=${bet.uuid}`;
-        const oddsResponse = await fetch(oddsURL, {
+  function HomeScreen({ navigation }) {
+    const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+    const [feedData, setFeedData] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
+  
+    // Set the headers for the request
+    const headers = {
+      'access_token': apiToken,
+      'Content-Type': 'application/json',
+    };
+  
+    const fetchBets = async () => {
+      try {
+        const response = await fetch('https://api.arena.markets/bets/get/', {
           method: 'GET',
           headers: headers,
         });
-        const oddsData = await oddsResponse.json();
-        const computedOdds = (oddsData.odds[0].odds * 100).toFixed(0) + '%';
-        return {
-          id: bet._id.$oid, // MongoDB's ObjectID
-          uuid: bet.uuid, // The UUID needed for detail view
-          question: bet.title,
-          percentage: computedOdds,
-        };
-      });
-      const oddsResults = await Promise.all(oddsPromises);
-      setFeedData(oddsResults);
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
+        const data = await response.json();
+        const bets = data.bets;
+        const oddsPromises = bets.map(async (bet) => {
+          const oddsURL = `https://api.arena.markets/bets/odds/?uid=${bet.uuid}`;
+          const oddsResponse = await fetch(oddsURL, {
+            method: 'GET',
+            headers: headers,
+          });
+          const oddsData = await oddsResponse.json();
+          const computedOdds = (oddsData.odds[0].odds * 100).toFixed(0) + '%';
+          return {
+            id: bet._id.$oid, // MongoDB's ObjectID
+            uuid: bet.uuid, // The UUID needed for detail view
+            question: bet.title,
+            percentage: computedOdds,
+          };
+        });
+        const oddsResults = await Promise.all(oddsPromises);
+        setFeedData(oddsResults);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
 
 
   useEffect(() => {
