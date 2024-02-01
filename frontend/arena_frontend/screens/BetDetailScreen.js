@@ -1,7 +1,7 @@
 // BetDetailScreen.js
 
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image, SafeAreaView, Modal } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Dimensions, Image, SafeAreaView, Modal } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
@@ -273,6 +273,7 @@ function BetDetailScreen({ route, navigation }) {
         </TouchableOpacity>
       </View>
 
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
       <Text style={styles.questionTitle}>{betDetails?.title || 'Loading...'}</Text>
 
       <Text style={styles.oddsTitle}>Current odds</Text>
@@ -341,6 +342,7 @@ The current odds represent market-implied probability of the bet settling in a y
 
       <Text style={styles.descriptionText}>Description: {betDetails?.description || 'No description available'}</Text>
 
+      </ScrollView>
       {/* Footer Section */}
       <View style={styles.footer}>
         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
@@ -364,6 +366,10 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: 'black',
+  },
+  scrollViewContainer: {
+    flexGrow: 1, // Ensures the container can grow to accommodate its children
+    paddingBottom: 60, // Adjust this value to ensure nothing is hidden behind the footer
   },
   header: {
     flexDirection: 'row', // Align items horizontally
