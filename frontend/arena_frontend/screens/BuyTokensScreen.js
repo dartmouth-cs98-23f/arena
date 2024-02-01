@@ -2,10 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, FlatList, Image } from 'react-native';
-import addIcon from '../logos/addIcon.png';
-import homeIcon from '../logos/homeIcon.png';
-import profileIcon from '../logos/profileIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
+
 
 const tokenPackages = [
     { id: '1', tokens: 100, price: '$0.99' },
@@ -101,18 +99,6 @@ function BuyTokensScreen({ route, navigation }) {
                 numColumns={2}
                 contentContainerStyle={styles.tokenGrid}
             />
-            {/* Footer Section */}
-            <View style={styles.footer}>
-                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-                    <Image source={homeIcon} style={styles.footerIcon} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Question')}>
-                    <Image source={addIcon} style={styles.footerIcon} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-                    <Image source={profileIcon} style={styles.footerIcon} />
-                </TouchableOpacity>
-            </View>
         </SafeAreaView>
     );
 }

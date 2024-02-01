@@ -9,6 +9,8 @@ import profileIcon from '../logos/profileIcon.png';
 import coinIcon from '../logos/coinIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
 import informationLogo from '../logos/informationLogo.png'; // Make sure to import your icon
+import verifiersIcon from '../logos/verifiersIcon.png';
+
 
 function BetDetailScreen({ route, navigation }) {
 
@@ -349,6 +351,9 @@ The current odds represent market-implied probability of the bet settling in a y
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
           <Image source={profileIcon} style={styles.footerIcon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Verifiers')}>
+            <Image source={verifiersIcon} style={styles.footerIcon} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>

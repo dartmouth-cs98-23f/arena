@@ -12,6 +12,8 @@ import {
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
+import verifiersIcon from '../logos/verifiersIcon.png';
+
 
 function ProfileScreen({ route, navigation }) {
   const [myTokens, setMyTokens] = useState(50);
@@ -146,6 +148,9 @@ function ProfileScreen({ route, navigation }) {
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
           <Image source={profileIcon} style={styles.footerIcon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Verifiers')}>
+            <Image source={verifiersIcon} style={styles.footerIcon} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
