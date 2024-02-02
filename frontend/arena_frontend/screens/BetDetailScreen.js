@@ -334,15 +334,15 @@ The current odds represent market-implied probability of the bet settling in a y
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
           <TouchableOpacity onPress={purchaseYes} style={styles.choiceButton}>
-            <Text style={styles.buttonText}>Yes {betCost}</Text>
+            <Text style={styles.buttonText}>Yes 💰{betCost}</Text>
           </TouchableOpacity>
-          <Text style={styles.ownedText}>Owned: {holdingsData.yes}</Text>
+          <Text style={styles.ownedText}>Owned: 💰{holdingsData.yes}</Text>
         </View>
         <View style={styles.buttonWrapper}>
           <TouchableOpacity onPress={purchaseNo} style={styles.choiceButton}>
-            <Text style={styles.buttonText}>No {betCost}</Text>
+            <Text style={styles.buttonText}>No 💰{betCost}</Text>
           </TouchableOpacity>
-          <Text style={styles.ownedText}>Owned: {holdingsData.no}</Text>
+          <Text style={styles.ownedText}>Owned: 💰{holdingsData.no}</Text>
         </View>
       </View>
 
