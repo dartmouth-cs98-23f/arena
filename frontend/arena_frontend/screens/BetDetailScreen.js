@@ -1,7 +1,7 @@
 // BetDetailScreen.js
 
 import React, { useState, useEffect, useRef } from 'react';
-import { RefreshControl, ScrollView, View, Text, StyleSheet, TouchableOpacity, Dimensions, Image, SafeAreaView, Modal } from 'react-native';
+import { ActivityIndicator, RefreshControl, ScrollView, View, Text, StyleSheet, TouchableOpacity, Dimensions, Image, SafeAreaView, Modal } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
@@ -17,8 +17,8 @@ function BetDetailScreen({ route, navigation }) {
   // const itemId = route.params?.itemId || 'default_bet_id'; 
   // console.log("Received item ID:", route.params?.itemId);
 
-  const [refreshing, setRefreshing] = useState(false); // Add this line
-
+  const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [tooltipVisible, setTooltipVisible] = useState(false); // State to control tooltip visibility
   const tooltipTimeoutRef = useRef(null);
@@ -28,10 +28,7 @@ function BetDetailScreen({ route, navigation }) {
 
   const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
   const [betDetails, setBetDetails] = useState(null);
-  const [ownedYes, setOwnedYes] = useState(0);
-  const [ownedNo, setOwnedNo] = useState(0);
   const [myTokens, setMyTokens] = useState(50);
-  const [betTitle, setBetTitle] = useState('');
   const [computedOdds, setComputedOdds] = useState('Loading...');
   const [holdingsData, setHoldingsData] = useState(0);
 
@@ -69,7 +66,6 @@ function BetDetailScreen({ route, navigation }) {
     'access_token': apiToken,
     'Content-Type': 'application/json',
   };
-  const apiEndpoint = 'https://api.arena.markets/user/balance';
 
   const fetchBetDetails = async () => {
     try {
@@ -131,38 +127,47 @@ function BetDetailScreen({ route, navigation }) {
   }
 
   const purchaseYes = async () => {
-    const url = 'https://api.arena.markets/bets/wager';
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'access_token': '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d'
-      },
-      body: JSON.stringify({ amount: 10, yes: true, bet_uuid: betUuid })
-    });
-    const result = await response.json();
-    console.log("test", result)
-    fetchBalance();
-    getOddsForBet();
-    getHoldings();
+    setIsLoading(true); // Start loading
+    try {
+      const url = 'https://api.arena.markets/bets/wager';
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'access_token': '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d'
+        },
+        body: JSON.stringify({ amount: 10, yes: true, bet_uuid: betUuid })
+      });
+      await fetchBalance();
+      await getOddsForBet();
+      await getHoldings();
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setIsLoading(false); // Stop loading regardless of success or error
+    }
   };
 
   const purchaseNo = async () => {
-    const url = 'https://api.arena.markets/bets/wager';
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'access_token': '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d'
-      },
-      body: JSON.stringify({ amount: 10, yes: false, bet_uuid: betUuid })
-    });
-    const result = await response.json();
-    console.log("test", result)
-    fetchBalance();
-    getOddsForBet();
-    getHoldings();
-
+    setIsLoading(true); // Start loading
+    try {
+      const url = 'https://api.arena.markets/bets/wager';
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'access_token': '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d'
+        },
+        body: JSON.stringify({ amount: 10, yes: false, bet_uuid: betUuid })
+      });
+      await fetchBalance();
+      await getOddsForBet();
+      await getHoldings();
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setIsLoading(false); // Stop loading regardless of success or error
+    }
   };
 
   const getFormattedLabels = (oddsArray) => {
@@ -173,7 +178,7 @@ function BetDetailScreen({ route, navigation }) {
     if (!betDetails) return; // Make sure betDetails is defined
 
     // Construct the URL with the bet UUID and limit
-    const oddsURL = `https://api.arena.markets/bets/odds/?uid=${betDetails.uuid}&limit=8`;
+    const oddsURL = `https://api.arena.markets/bets/odds/?uid=${betDetails.uuid}&limit=20`;
     try {
       // Fetch the odds data from the server
       const oddsResponse = await fetch(oddsURL, {
@@ -184,7 +189,7 @@ function BetDetailScreen({ route, navigation }) {
       const oddsData = await oddsResponse.json();
       if (oddsData.odds && oddsData.odds.length > 0) {
         // Reverse the odds array to have the most recent odds at the end
-        const reversedOddsData = [...oddsData.odds].reverse();
+        const reversedOddsData = [...oddsData.odds].reverse().slice(0, 20);
 
         // Map the reversed odds data to percentage values for the graph
         const oddsValues = reversedOddsData.map(odds => odds.odds * 100);
@@ -235,18 +240,15 @@ function BetDetailScreen({ route, navigation }) {
   }, [betUuid]); // Add dependencies here if needed
 
   useEffect(() => {
-
     if (betUuid) {
       fetchBetDetails();
     }
-
     fetchBalance();
-
   }, [betUuid]);
 
-  useEffect(() => {
-    getOddsForBet(); // Call this when betDetails changes
-  }, [betDetails]);
+  // useEffect(() => {
+  //   getOddsForBet(); // Call this when betDetails changes
+  // }, [betDetails]);
 
   useEffect(() => {
     if (betDetails) {
@@ -260,11 +262,11 @@ function BetDetailScreen({ route, navigation }) {
     backgroundColor: '#000000',
     color: (opacity = 1) => `rgba(52, 211, 153, ${opacity})`,
     strokeWidth: 2,
-    propsForDots: {
-      r: "6",
-      strokeWidth: "2",
-      stroke: "#ffa726"
-    }
+    // propsForDots: {
+    //   r: "6",
+    //   strokeWidth: "2",
+    //   stroke: "#ffa726"
+    // }
   };
 
   return (
@@ -322,6 +324,12 @@ The current odds represent market-implied probability of the bet settling in a y
         </View>
       </Modal> */}
 
+      {isLoading && (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#ffffff" />
+            </View>
+          )}
+
       {/* Buttons Section */}
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
@@ -350,8 +358,7 @@ The current odds represent market-implied probability of the bet settling in a y
             height={220}
             chartConfig={chartConfig}
             bezier
-          // Uncomment the line below if 'formatXLabel' is supported in your library version
-          // formatXLabel={() => ''}
+            formatXLabel={() => ''}
           />
         )}
       </View>
@@ -421,6 +428,17 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    position: 'absolute', // Overlay on top of your screen
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
   },
   questionTitle: {
     color: 'white',
