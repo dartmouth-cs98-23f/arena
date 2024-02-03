@@ -17,7 +17,7 @@ function LoginScreen({ navigation }) {
       console.log("Auth Succeeded");
     }
 
-    navigation.navigate("Home")
+    navigation.replace("Home")
   }
   /*
   const handleLogin = async () => {
