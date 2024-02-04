@@ -131,7 +131,7 @@ function BetDetailScreen({ route, navigation }) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'access_token': '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d'
+        'access_token': apiToken
       },
       body: JSON.stringify({ amount: 10, yes: true, bet_uuid: betUuid })
     });
@@ -143,17 +143,17 @@ function BetDetailScreen({ route, navigation }) {
   };
 
   const purchaseNo = async () => {
+    console.log('here');
     const url = 'https://api.arena.markets/bets/wager';
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'access_token': '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d'
+        'access_token': apiToken
       },
       body: JSON.stringify({ amount: 10, yes: false, bet_uuid: betUuid })
     });
     const result = await response.json();
-    console.log("test", result)
     fetchBalance();
     getOddsForBet();
     getHoldings();
