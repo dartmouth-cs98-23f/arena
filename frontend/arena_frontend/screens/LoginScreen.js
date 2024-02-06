@@ -5,7 +5,6 @@ import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
 import logo from '../logos/ArenaLogo.png';
 
 function LoginScreen({ navigation }) {
-  const url = Linking.useURL();
   const handleLogin = async () => {
     const redirect = "http://api.arena.markets/auth" // await Linking.getInitialURL("/")
     //const redirect = await Linking.getInitialURL("/")
@@ -17,18 +16,15 @@ function LoginScreen({ navigation }) {
     console.log("RESULT TYPE: " + result.type);
     if(result.type === "success"){
       console.log("Auth Succeeded");
-      console.log(url);
+      console.log(result.url);
 
-      if (url) {
-        const { hostname, path, queryParams } = Linking.parse(url);
+      const params = Linking.parse(result.url);
 
-        console.log(
-          `Linked to app with hostname: ${hostname}, path: ${path} and data: ${JSON.stringify(
-            queryParams
-          )}`
-        );
-      }
-      navigation.replace("Home");
+      const { api_key } = params.queryParams;
+
+      console.log(api_key);
+      
+      navigation.replace("Home", { api_key });
     }
     else {
       WebBrowser.dismissAuthSession();
