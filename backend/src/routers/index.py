@@ -106,5 +106,6 @@ async def auth(request: Request):
     # Assuming you want to redirect to a page that uses the API key
     #response = RedirectResponse(url=f'/auth?api_key={api_key}')
     #response = RedirectResponse(url=f"/{api_key}")
-    response = JSONResponse(content=f"<script>window.location.replace(\"exp://?api_key={api_key}\")</script>")
+    #response = JSONResponse(content=f"<script>window.location.replace(\"exp://?api_key={api_key}\")</script>")
+    response = RedirectResponse(url="exp://10.135.170.111:8081")
     return response
