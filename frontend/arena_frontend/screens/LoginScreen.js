@@ -1,10 +1,11 @@
-import { Linking } from 'react-native';
+import * as Linking from 'expo-linking';
 import React from 'react';
 import * as WebBrowser from "expo-web-browser";
 import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
 import logo from '../logos/ArenaLogo.png';
 
 function LoginScreen({ navigation }) {
+  const url = Linking.useURL();
   const handleLogin = async () => {
     const redirect = "http://api.arena.markets/auth" // await Linking.getInitialURL("/")
     //const redirect = await Linking.getInitialURL("/")
@@ -16,6 +17,17 @@ function LoginScreen({ navigation }) {
     console.log("RESULT TYPE: " + result.type);
     if(result.type === "success"){
       console.log("Auth Succeeded");
+      console.log(url);
+
+      if (url) {
+        const { hostname, path, queryParams } = Linking.parse(url);
+
+        console.log(
+          `Linked to app with hostname: ${hostname}, path: ${path} and data: ${JSON.stringify(
+            queryParams
+          )}`
+        );
+      }
       navigation.replace("Home");
     }
     else {
