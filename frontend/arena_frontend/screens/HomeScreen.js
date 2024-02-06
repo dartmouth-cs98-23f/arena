@@ -7,8 +7,10 @@ import profileIcon from '../logos/profileIcon.png';
 import coinIcon from '../logos/coinIcon.png';
 import verifiersIcon from '../logos/verifiersIcon.png';
 
-  function HomeScreen({ navigation }) {
-    const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+  function HomeScreen({ route, navigation }) {
+    const apiToken = route.params?.apiToken;
+    console.log(`API Token: ${apiToken}`);
+    //const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
     const [feedData, setFeedData] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
   
@@ -44,17 +46,12 @@ import verifiersIcon from '../logos/verifiersIcon.png';
         const oddsResults = await Promise.all(oddsPromises);
         setFeedData(oddsResults);
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Fetch bets error:', error);
       }
     };
 
   const fetchBalance = async () => {
     try {
-      const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
-      const headers = {
-        'access_token': apiToken,
-        'Content-Type': 'application/json',
-      };
       const apiEndpoint = 'https://api.arena.markets/user/balance';
       const requestOptions = {
         method: 'GET',
@@ -62,14 +59,14 @@ import verifiersIcon from '../logos/verifiersIcon.png';
       };
       const response = await fetch(apiEndpoint, requestOptions);
       if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
+        throw new Error(`Balance request failed with status ${response.status}`);
       }
       const data = await response.json();
       // console.log('Balance fetched successfully!');
       setMyTokens(data.balance); // Update the myTokens state with the fetched balance
       // console.log('myTokens', myTokens);
     } catch (error) {
-      console.error('An error occurred:', error);
+      console.error('Fetch balance error:', error);
     }
   }
 
@@ -119,7 +116,7 @@ import verifiersIcon from '../logos/verifiersIcon.png';
 
     <TouchableOpacity
       style={styles.itemContainer}
-      onPress={() => navigation.navigate('BetDetail', { betUuid: item.uuid })}>
+      onPress={() => navigation.navigate('BetDetail', { betUuid: item.uuid, apiToken: apiToken })}>
       <View style={styles.textContainer}>
         <Text style={styles.questionText}>{item.question}</Text>
       </View>

@@ -24,7 +24,7 @@ function LoginScreen({ navigation }) {
 
       console.log(api_key);
       
-      navigation.replace("Home", { api_key });
+      navigation.replace("Home", { apiToken: api_key });
     }
     else {
       WebBrowser.dismissAuthSession();
