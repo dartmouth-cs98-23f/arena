@@ -9,6 +9,7 @@ py_library(
             "index.py",
             "bets.py",
             "users.py",
+            "stripe.py"
             "verifiers.py"],
     deps = [requirement("fastapi"),
         requirement("pydantic"),
