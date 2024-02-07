@@ -89,7 +89,7 @@ function VerifiersScreen({ navigation }) {
                 <TouchableOpacity onPress={() => navigation.navigate('Home')}>
                     <Image source={homeIcon} style={styles.footerIcon} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Add')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Question')}>
                     <Image source={addIcon} style={styles.footerIcon} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('Profile')}>

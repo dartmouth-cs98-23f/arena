@@ -7,8 +7,10 @@ import profileIcon from '../logos/profileIcon.png';
 import coinIcon from '../logos/coinIcon.png';
 import verifiersIcon from '../logos/verifiersIcon.png';
 
-  function HomeScreen({ navigation }) {
-    const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+  function HomeScreen({ route, navigation }) {
+    const apiToken = route.params?.apiToken;
+    console.log(`API Token: ${apiToken}`);
+    //const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
     const [feedData, setFeedData] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
   
@@ -44,18 +46,44 @@ import verifiersIcon from '../logos/verifiersIcon.png';
         const oddsResults = await Promise.all(oddsPromises);
         setFeedData(oddsResults);
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Fetch bets error:', error);
       }
     };
+
+  const fetchBalance = async () => {
+    try {
+      const apiEndpoint = 'https://api.arena.markets/user/balance';
+      const requestOptions = {
+        method: 'GET',
+        headers: headers,
+      };
+      const response = await fetch(apiEndpoint, requestOptions);
+      if (!response.ok) {
+        throw new Error(`Balance request failed with status ${response.status}`);
+      }
+      const data = await response.json();
+      // console.log('Balance fetched successfully!');
+      setMyTokens(data.balance); // Update the myTokens state with the fetched balance
+      // console.log('myTokens', myTokens);
+    } catch (error) {
+      console.error('Fetch balance error:', error);
+    }
+  }
 
 
   useEffect(() => {
     fetchBets();
+    fetchBalance();
   }, []);
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await fetchBets();
+    try {
+      await fetchBets();
+      await fetchBalance(); // This ensures the token balance is updated on pull to refresh
+    } catch (error) {
+      console.error('Error on refreshing:', error);
+    }
     setRefreshing(false);
   };
 
@@ -88,7 +116,7 @@ import verifiersIcon from '../logos/verifiersIcon.png';
 
     <TouchableOpacity
       style={styles.itemContainer}
-      onPress={() => navigation.navigate('BetDetail', { betUuid: item.uuid })}>
+      onPress={() => navigation.navigate('BetDetail', { betUuid: item.uuid, apiToken: apiToken })}>
       <View style={styles.textContainer}>
         <Text style={styles.questionText}>{item.question}</Text>
       </View>
@@ -102,11 +130,9 @@ import verifiersIcon from '../logos/verifiersIcon.png';
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Image source={logo} style={styles.headerLogo} />
           <Text style={styles.headerText}>ARENA</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('BuyTokens')} style={styles.coinButton}>
-            <Image source={coinIcon} style={styles.coinIcon} />
-            {/* <Text>{myTokens}</Text> */}
+          <TouchableOpacity onPress={() => navigation.navigate('BuyTokens', {apiToken: apiToken})} style={styles.coinButton}>
+            <Text style={styles.coinBalance}>💰{myTokens}</Text>
           </TouchableOpacity>
         </View>
 
@@ -115,22 +141,22 @@ import verifiersIcon from '../logos/verifiersIcon.png';
           renderItem={renderItem}
           keyExtractor={item => item.id}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#fff"/>
           }
         />
 
         <View style={styles.footer}>
           {/* Add footer navigation icons here */}
-          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Home', {apiToken: apiToken})}>
             <Image source={homeIcon} style={styles.footerIcon} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Question')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Question', {apiToken: apiToken})}>
             <Image source={addIcon} style={styles.footerIcon} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Profile', {apiToken: apiToken})}>
             <Image source={profileIcon} style={styles.footerIcon} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Verifiers')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Verifiers', {apiToken: apiToken})}>
             <Image source={verifiersIcon} style={styles.footerIcon} />
           </TouchableOpacity>
         </View>
@@ -164,6 +190,11 @@ const styles = StyleSheet.create({
   },
   coinButton: {
     // Styles for the coin icon button
+  },
+  coinBalance: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   coinIcon: {
     width: 25,
