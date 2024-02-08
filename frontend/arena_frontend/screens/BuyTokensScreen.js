@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, FlatList, Image } from 'react-native';
 import backArrowIcon from '../logos/backArrowIcon.png';
-
+import { useStripe, PaymentSheet } from '@stripe/stripe-react-native';
 
 const tokenPackages = [
     { id: '1', tokens: 100, price: '$0.99' },
@@ -13,36 +13,88 @@ const tokenPackages = [
 ];
 
 function BuyTokensScreen({ route, navigation }) {
+    console.log(route.params)
     const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
+    const { initPaymentSheet, presentPaymentSheet } = useStripe(); // Moved inside the component
 
-
-    const handleTokenPurchase = async (tokens, price) => {
-        const apiToken = route.params?.apiToken;
-        const headers = {
-            'access_token': apiToken,
-            'Content-Type': 'application/json',
-        };
-        const apiEndpointPost = 'https://api.arena.markets/user/balance';
-
-        const payload = {
-            "additional_balance": tokens,
-        };
-
-        const requestOptions = {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(payload),
-        };
-
-        console.log(`Purchased ${tokens} tokens for ${price}.`);
-
-        try {
-            await fetch(apiEndpointPost, requestOptions);
-            navigation.navigate("Profile", { myTokens });
-        } catch (error) {
-            console.error('Error during token purchase:', error);
+    const loadPaymentSheet = async (paymentIntentClientSecret) => {
+        const { error } = await initPaymentSheet({
+            paymentIntentClientSecret,
+        });
+        if (error) {
+            console.error(`Error loading payment sheet: ${error.message}`);
         }
     };
+
+    const openPaymentSheet = async () => {
+        const { error } = await presentPaymentSheet();
+        if (error) {
+            console.error(`Error presenting payment sheet: ${error.message}`);
+        } else {
+            // Handle successful payment here
+            console.log('Payment successful');
+            // After successful payment, you may want to update the user's token balance
+        }
+    };
+
+    const handleTokenPurchase = async (tokens, price) => {
+        try {
+            // Step 1: Create the Payment Intent
+            const amountInCents = Math.round(parseFloat(price.replace('$', '')) * 100);
+            
+            // Update with your FastAPI backend endpoint for creating a payment intent
+            const createIntentResponse = await fetch('http://localhost:8000/stripe/create-payment-intent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${route.params?.apiToken}`, // Assume this is your authentication method
+                },
+                body: JSON.stringify({ amount: amountInCents }),
+            });
+    
+            if (!createIntentResponse.ok) {
+                throw new Error(`Failed to create payment intent, status: ${createIntentResponse.status}`);
+            }
+    
+            const { clientSecret } = await createIntentResponse.json();
+    
+            // Initialize and present the payment sheet with the client secret
+            const { error: initError } = await initPaymentSheet({ paymentIntentClientSecret: clientSecret });
+            if (initError) {
+                throw new Error(`Error initializing payment sheet: ${initError.message}`);
+            }
+    
+            const { error: presentError } = await presentPaymentSheet();
+            if (presentError) {
+                throw new Error(`Error presenting payment sheet: ${presentError.message}`);
+            }
+    
+            console.log('Payment successful, updating token balance...');
+    
+            // Step 2: Update User's Balance after successful payment
+            const updateBalanceResponse = await fetch('https://api.arena.markets/user/balance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${route.params?.apiToken}`,
+                },
+                body: JSON.stringify({ additional_balance: tokens }),
+            });
+    
+            if (!updateBalanceResponse.ok) {
+                throw new Error(`Balance update failed with status: ${updateBalanceResponse.status}`);
+            }
+    
+            // Assuming the balance is directly updated, you may want to fetch the new balance
+            // or simply navigate to a profile or balance screen where the updated balance will be displayed
+            navigation.navigate("Profile", { updatedBalance: true });
+    
+        } catch (error) {
+            console.error(`Error during token purchase and balance update: ${error.message}`);
+            // Handle errors, such as displaying an alert or notification to the user
+        }
+    };
+    
 
     async function fetchBalance() {
         try {
@@ -102,6 +154,7 @@ function BuyTokensScreen({ route, navigation }) {
         </SafeAreaView>
     );
 }
+
 
 const styles = StyleSheet.create({
     safeArea: {

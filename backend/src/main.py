@@ -11,6 +11,7 @@ from backend.src.routers import index
 from backend.src.routers import bets
 from backend.src.routers import users
 from backend.src.routers import verifiers
+from backend.src.routers import stripe
 from backend.src.models import database
 
 __version__ = "0.0.1"
@@ -66,6 +67,9 @@ app.include_router(users.router,
 app.include_router(verifiers.router,
                     prefix="/verifiers",
                     tags=["verifiers"])
+app.include_router(stripe.router,
+                    prefix="/stripe",
+                    tags=["stripe"])
 
 @app.on_event("startup")
 async def startup():

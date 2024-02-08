@@ -24,6 +24,7 @@ import homeIcon from './logos/homeIcon.png';
 import profileIcon from './logos/profileIcon.png';
 import verifiersIcon from './logos/verifiersIcon.png';
 
+import { StripeProvider } from '@stripe/stripe-react-native';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -49,43 +50,42 @@ function BottomTabNavigator() {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Add" component={AddScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen 
-        name="Verifiers" 
-        component={VerifiersScreen} 
-        
+      <Tab.Screen
+        name="Verifiers"
+        component={VerifiersScreen}
+
       />
       {/* Add more Tab.Screen components here for other tabs */}
     </Tab.Navigator>
   );
 }
-//options={{
-//   tabBarIcon: ({ focused, color, size }) => (
-//     <Image source={verifiersIcon} style={{ width: 30, height: 30 }} />
-//   ),
-// }}
 
 function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Login"
-        screenOptions={{ headerShown: false }} // Hide the header globally
-      >
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Verifiers" component={VerifiersScreen} />
-        <Stack.Screen name="Bets List" component={BetsListScreen} />
-        <Stack.Screen name="Settings" component={SettingsScreen} />
-        <Stack.Screen name="Wallet" component={WalletScreen} />
-        <Stack.Screen name="BetDetail" component={BetDetailScreen} />
-        <Stack.Screen name="Add" component={AddScreen} />
-        <Stack.Screen name="BuyTokens" component={BuyTokensScreen} />
-        <Stack.Screen name="Question" component={QuestionScreen} />
-        <Stack.Screen name="Description" component={DescriptionScreen} />
-        <Stack.Screen name="Odds" component={OddsScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <StripeProvider
+      publishableKey="pk_live_51OhIMFHzXKplkjmi6dgoVLZrlnVAhKNDeih51q4DkB3Edg6q0mrMKlKGUqZwgu1HcQMNqWH7WMOguVbTJ4n1PfyA00rFp5pKXG"
+    >
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Login"
+          screenOptions={{ headerShown: false }} // Hide the header globally
+        >
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="Verifiers" component={VerifiersScreen} />
+          <Stack.Screen name="Bets List" component={BetsListScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="Wallet" component={WalletScreen} />
+          <Stack.Screen name="BetDetail" component={BetDetailScreen} />
+          <Stack.Screen name="Add" component={AddScreen} />
+          <Stack.Screen name="BuyTokens" component={BuyTokensScreen} />
+          <Stack.Screen name="Question" component={QuestionScreen} />
+          <Stack.Screen name="Description" component={DescriptionScreen} />
+          <Stack.Screen name="Odds" component={OddsScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </StripeProvider>
   );
 }
 
