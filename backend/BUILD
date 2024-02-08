@@ -42,7 +42,8 @@ py3_image(
             requirement("authlib"),
             requirement("itsdangerous"),
             requirement("pydantic-core"),
-            requirement("fastapi_profiler")],
+            requirement("fastapi_profiler"),
+            requirement("stripe")],
     main = "main.py",
 )
 
