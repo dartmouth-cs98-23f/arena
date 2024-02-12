@@ -1,5 +1,3 @@
-// BuyTokensScreen.js
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, FlatList, Image } from 'react-native';
 import backArrowIcon from '../logos/backArrowIcon.png';
@@ -13,7 +11,7 @@ const tokenPackages = [
 ];
 
 function BuyTokensScreen({ route, navigation }) {
-    console.log(route.params)
+    // console.log(route.params)
     const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
     const { initPaymentSheet, presentPaymentSheet } = useStripe(); // Moved inside the component
 
@@ -40,10 +38,11 @@ function BuyTokensScreen({ route, navigation }) {
     const handleTokenPurchase = async (tokens, price) => {
         try {
             // Step 1: Create the Payment Intent
+
             const amountInCents = Math.round(parseFloat(price.replace('$', '')) * 100);
-            
+
             // Update with your FastAPI backend endpoint for creating a payment intent
-            const createIntentResponse = await fetch('http://localhost:8000/stripe/create-payment-intent', {
+            const createIntentResponse = await fetch('https://api.arena.markets/stripe/create-payment-intent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -72,22 +71,9 @@ function BuyTokensScreen({ route, navigation }) {
             console.log('Payment successful, updating token balance...');
     
             // Step 2: Update User's Balance after successful payment
-            const updateBalanceResponse = await fetch('https://api.arena.markets/user/balance', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${route.params?.apiToken}`,
-                },
-                body: JSON.stringify({ additional_balance: tokens }),
-            });
-    
-            if (!updateBalanceResponse.ok) {
-                throw new Error(`Balance update failed with status: ${updateBalanceResponse.status}`);
-            }
-    
-            // Assuming the balance is directly updated, you may want to fetch the new balance
-            // or simply navigate to a profile or balance screen where the updated balance will be displayed
-            navigation.navigate("Profile", { updatedBalance: true });
+            console.log(route.params?.apiToken)
+
+            fetchBalance();
     
         } catch (error) {
             console.error(`Error during token purchase and balance update: ${error.message}`);
@@ -103,6 +89,7 @@ function BuyTokensScreen({ route, navigation }) {
                 'access_token': apiToken,
                 'Content-Type': 'application/json',
             };
+            console.log("api token when fetch balance: " + apiToken)
             const apiEndpoint = 'https://api.arena.markets/user/balance';
             const requestOptions = {
                 method: 'GET',
