@@ -1,9 +1,10 @@
+import os
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 import stripe
 
 # Initialize your Stripe API with your secret key
-stripe.api_key = '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'
+stripe.api_key = os.getenv("STRIPE_SECRET_TEST_KEY")
 
 router = APIRouter()
 
