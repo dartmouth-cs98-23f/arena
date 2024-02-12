@@ -23,3 +23,28 @@ async def create_payment_intent(request: Request):
         return JSONResponse({"clientSecret": payment_intent.client_secret})
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+
+
+@app.post('/webhook')
+async def webhook(request: Request):
+    payload = await request.body()
+    sig_header = request.headers.get('stripe-signature')
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+        # Invalid payload
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid payload') from e
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid signature') from e
+
+    # Handle the event
+    print('Unhandled event type {}'.format(event['type']))
+
+    return JSONResponse(content={"success": True})
+
+

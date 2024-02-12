@@ -102,7 +102,9 @@ function BuyTokensScreen({ route, navigation }) {
             const data = await response.json();
             // console.log('Buy Tokens Screen Balance fetched successfully!', data.balance);
             setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-            // console.log('myTokens on token purchase screen', myTokens);
+            console.log('myTokens on token purchase screen', myTokens);
+            console.log('myTokens on data.balance purchase screen', myTokens);
+
         } catch (error) {
             console.error('An error occurred:', error);
         }
