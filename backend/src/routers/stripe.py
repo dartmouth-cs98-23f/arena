@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 import stripe
 from backend.src.models.database import get_db, User
 from backend.src.auth import get_api_key_from_state
+from sqlalchemy.orm import Session
 
 # Initialize your Stripe API with your secret key
 stripe.api_key = os.getenv("STRIPE_SECRET_TEST_KEY")
