@@ -2,7 +2,7 @@ import os
 from fastapi import APIRouter, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse
 import stripe
-from backend.src.models.database import get_db, User
+from backend.src.database import get_db, User
 from backend.src.auth import get_api_key_from_request
 
 # Initialize your Stripe API with your secret key
