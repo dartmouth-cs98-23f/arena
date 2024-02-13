@@ -80,6 +80,7 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
         new_tokens = amount_paid / 100  # Convert to dollars and assume each dollar buys 100 tokens
 
         user.balance += new_tokens
+        db.add(user)
         db.commit()
         print(f"Updated user {user_id} balance with {new_tokens} tokens.")
 
