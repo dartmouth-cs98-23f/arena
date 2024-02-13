@@ -2,8 +2,8 @@ import os
 from fastapi import APIRouter, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse
 import stripe
-from backend.src.models.database import get_db, User
-from backend.src.auth import get_api_key_from_request
+from backend.src.database import get_db, User
+from backend.src.auth import get_api_key_from_state
 
 # Initialize your Stripe API with your secret key
 stripe.api_key = os.getenv("STRIPE_SECRET_TEST_KEY")
@@ -14,7 +14,7 @@ router = APIRouter()
 async def create_payment_intent(request: Request, db: Session = Depends(get_db)):
     try:
         # Extract user's API key from the request and find the user in the database
-        api_key = get_api_key_from_request(request)
+        api_key = get_api_key_from_state(request)
         user = db.query(User).filter(User.api_key == api_key).first()
         
         if not user:
