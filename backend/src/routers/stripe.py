@@ -1,7 +1,9 @@
 import os
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse
 import stripe
+from .models.database import get_db, User
+from .auth import get_api_key_from_request
 
 # Initialize your Stripe API with your secret key
 stripe.api_key = os.getenv("STRIPE_SECRET_TEST_KEY")
@@ -9,19 +11,38 @@ stripe.api_key = os.getenv("STRIPE_SECRET_TEST_KEY")
 router = APIRouter()
 
 @router.post("/create-payment-intent")
-async def create_payment_intent(request: Request):
+async def create_payment_intent(request: Request, db: Session = Depends(get_db)):
     try:
-        data = await request.json()
-        # Ensure price is provided in the smallest currency unit (e.g., cents for USD)
-        amount = data.get('amount')  # Assuming `amount` is already in cents
+        # Extract user's API key from the request and find the user in the database
+        api_key = get_api_key_from_request(request)
+        user = db.query(User).filter(User.api_key == api_key).first()
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
 
-        payment_intent = stripe.PaymentIntent.create(
-            amount=amount,
-            currency="usd",
-            # You can add more Stripe parameters here as needed
+        data = await request.json()
+        amount = data.get('amount')
+
+        # Create a Stripe Checkout Session with the user's email in the metadata
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': 'Tokens',
+                    },
+                    'unit_amount': amount,
+                },
+                'quantity': 1,
+            }],
+            metadata={'user_email': user.email},  # Include user's email in metadata
+            mode='payment',
         )
-        return JSONResponse({"clientSecret": payment_intent.client_secret})
-    except Exception as e:
+
+        return JSONResponse({"sessionId": session.id})
+
+    except stripe.error.StripeError as e:
         raise HTTPException(status_code=400, detail=str(e))
     
 
