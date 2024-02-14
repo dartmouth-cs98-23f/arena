@@ -21,6 +21,7 @@ async def create_payment_intent(request: Request, db: Session = Depends(get_db))
         print(f"USER: {user}")
 
 
+
         # user = db.query(User).filter(User.api_key == api_key).first()
         
         if not user:
