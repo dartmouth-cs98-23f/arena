@@ -25,7 +25,10 @@ const mockData = {
     ],
 };
 
-function VerifiersScreen({ navigation }) {
+function VerifiersScreen({ route, navigation }) {
+
+    const apiToken = route.params?.apiToken;
+
     // Function to handle accept/decline for invitations
     const handleInvitationResponse = (question, accept) => {
         console.log(`Invitation to '${question}' was ${accept ? 'accepted' : 'declined'}.`);
@@ -86,16 +89,16 @@ function VerifiersScreen({ navigation }) {
                 </View>
             ))}
             <View style={styles.footer}>
-                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Home', { apiToken: apiToken })}>
                     <Image source={homeIcon} style={styles.footerIcon} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Question')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Question', { apiToken: apiToken })}>
                     <Image source={addIcon} style={styles.footerIcon} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Profile', { apiToken: apiToken })}>
                     <Image source={profileIcon} style={styles.footerIcon} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Verifiers')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Verifiers', { apiToken: apiToken })}>
                     <Image source={verifiersIcon} style={styles.footerIcon} />
                 </TouchableOpacity>
             </View>
@@ -185,18 +188,13 @@ const styles = StyleSheet.create({
     footer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        paddingVertical: 20, // Padding inside the footer
-        paddingHorizontal: 10, // Padding inside the footer
-        backgroundColor: 'black', // Footer background color
-    },
-    footerIcon: {
-        width: 30,
-        height: 30,
-    },
+        padding: 20,
+        backgroundColor: 'black', // Adjust the background color as needed
+      },
+      footerIcon: {
+        width: 30, // Adjust the width as needed
+        height: 30, // Adjust the height as needed
+      },
 });
 
 

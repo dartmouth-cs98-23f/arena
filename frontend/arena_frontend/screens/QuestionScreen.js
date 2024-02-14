@@ -7,7 +7,7 @@ import profileIcon from '../logos/profileIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
 
 
-function QuestionScreen({ navigation }) {
+function QuestionScreen({ route, navigation }) {
     const [question, setQuestion] = useState('');
 
     const goToNextStep = () => {

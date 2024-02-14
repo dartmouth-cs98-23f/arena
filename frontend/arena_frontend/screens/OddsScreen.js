@@ -2,9 +2,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import Slider from '@react-native-community/slider';
-import homeIcon from '../logos/homeIcon.png';
-import addIcon from '../logos/addIcon.png';
-import profileIcon from '../logos/profileIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
 
 
