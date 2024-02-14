@@ -42,11 +42,12 @@ function BuyTokensScreen({ route, navigation }) {
             const amountInCents = Math.round(parseFloat(price.replace('$', '')) * 100);
 
             // Update with your FastAPI backend endpoint for creating a payment intent
+            const apiToken = route.params?.apiToken;
             const createIntentResponse = await fetch('https://api.arena.markets/stripe/create-payment-intent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${route.params?.apiToken}`, // Assume this is your authentication method
+                    'access_token': apiToken, // Assume this is your authentication method
                 },
                 body: JSON.stringify({ amount: amountInCents }),
             });
