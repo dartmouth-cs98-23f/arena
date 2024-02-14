@@ -8,6 +8,8 @@ from sqlalchemy.orm import Session
 
 # Initialize your Stripe API with your secret key
 stripe.api_key = os.getenv("STRIPE_SECRET_TEST_KEY")
+endpoint_secret = os.getenv("ENDPOINT_SECRET")
+
 
 router = APIRouter()
 @router.post("/create-payment-intent")
