@@ -55,6 +55,8 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
     if event['type'] == 'payment_intent.succeeded':
         payment_intent = event['data']['object']
         user_id = payment_intent['metadata'].get('user_id')
+        amount_received = payment_intent['amount_received']
+        print(f"User ID from metadata: {user_id}, Amount received: {amount_received}")
 
         # Find the user based on user_id extracted from metadata
         user = db.query(User).filter(User.id == user_id).first()
@@ -65,8 +67,10 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
         # Logic to update user's balance
         # Assuming you have a function or logic to calculate the tokens based on amount paid
         # For simplicity, let's say 1 USD = 100 tokens
+        print(f"Current balance before update: {user.balance}")
         amount_paid = payment_intent['amount_received']  # amount_received is in cents
-        new_tokens = amount_paid / 100  # Convert to dollars and assume each dollar buys 100 tokens
+        new_tokens = 100  # Convert to dollars and assume each dollar buys 100 tokens
+        print(f"New balance after update: {user.balance}")
 
         user.balance += new_tokens
         db.add(user)
@@ -77,48 +81,3 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
 
     print('Unhandled event type {}'.format(event['type']))
     return JSONResponse(content={"success": True, "message": "Unhandled event type"})
-
-# @router.post("/create-payment-intent")
-# async def create_payment_intent(request: Request, db: Session = Depends(get_db)):
-#     try:
-#         # Extract user's API key from the request and find the user in the database
-#         uuid = await get_api_key_from_state(request)
-#         print(f"UUID: {uuid}")
-#         user = get_user_from_uuid(uuid, request.app.state.db)
-#         print(f"USER: {user}")
-
-
-#         # user = db.query(User).filter(User.api_key == api_key).first()
-        
-#         if not user:
-#             raise HTTPException(status_code=404, detail="User not found")
-
-#         data = await request.json()
-#         print(f"Received data: {data}")  # Debug log to see what data is received
-#         amount = data.get('amount')
-#         if not amount:
-#             raise HTTPException(status_code=400, detail="Amount is required")
-
-
-#         # Create a Stripe Checkout Session with the user's email in the metadata
-#         session = stripe.checkout.Session.create(
-#             payment_method_types=['card'],
-#             line_items=[{
-#                 'price_data': {
-#                     'currency': 'usd',
-#                     'product_data': {
-#                         'name': 'Tokens',
-#                     },
-#                     'unit_amount': amount,
-#                 },
-#                 'quantity': 1,
-#             }],
-#             metadata={'user_id': str(user.id)},  # Include user's email in metadata
-#             mode='payment',
-#         )
-
-#         return JSONResponse({"sessionId": session.id})
-
-#     except stripe.error.StripeError as e:
-#         raise HTTPException(status_code=400, detail=str(e))
-    

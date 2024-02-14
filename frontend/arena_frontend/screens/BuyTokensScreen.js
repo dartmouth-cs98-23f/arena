@@ -72,7 +72,6 @@ function BuyTokensScreen({ route, navigation }) {
             console.log('Payment successful, updating token balance...');
     
             // Step 2: Update User's Balance after successful payment
-            console.log(route.params?.apiToken)
 
             fetchBalance();
     
