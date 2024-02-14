@@ -10,6 +10,12 @@ from sqlalchemy.orm import Session
 stripe.api_key = os.getenv("STRIPE_SECRET_TEST_KEY")
 endpoint_secret = os.getenv("ENDPOINT_SECRET")
 
+price_to_tokens_map = {
+    99: 100,    # $0.99 for 100 tokens
+    499: 500,   # $4.99 for 500 tokens
+    999: 1200,  # $9.99 for 1200 tokens
+    4999: 6500, # $49.99 for 6500 tokens
+}
 
 router = APIRouter()
 @router.post("/create-payment-intent")
@@ -70,8 +76,8 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
         # Assuming you have a function or logic to calculate the tokens based on amount paid
         # For simplicity, let's say 1 USD = 100 tokens
         print(f"Current balance before update: {user.balance}")
-        amount_paid = payment_intent['amount_received']  # amount_received is in cents
-        new_tokens = 100  # Convert to dollars and assume each dollar buys 100 tokens
+        amount_received = payment_intent['amount_received']  # amount_received is in cents
+        new_tokens = price_to_tokens_map.get(amount_received // 100 * 100, 0) # Convert to dollars, find nearest key or default to 0
         print(f"New balance after update: {user.balance}")
 
         user.balance += new_tokens
