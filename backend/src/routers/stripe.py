@@ -18,6 +18,7 @@ async def create_payment_intent(request: Request, db: Session = Depends(get_db))
         uuid = await get_api_key_from_state(request)
         print(f"UUID: {uuid}")
         user = get_user_from_uuid(uuid, request.app.state.db)
+        print(f"USER: {user}")
 
 
         # user = db.query(User).filter(User.api_key == api_key).first()
@@ -26,7 +27,11 @@ async def create_payment_intent(request: Request, db: Session = Depends(get_db))
             raise HTTPException(status_code=404, detail="User not found")
 
         data = await request.json()
+        print(f"Received data: {data}")  # Debug log to see what data is received
         amount = data.get('amount')
+        if not amount:
+            raise HTTPException(status_code=400, detail="Amount is required")
+
 
         # Create a Stripe Checkout Session with the user's email in the metadata
         session = stripe.checkout.Session.create(
