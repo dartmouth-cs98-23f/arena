@@ -77,7 +77,7 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
         # For simplicity, let's say 1 USD = 100 tokens
         print(f"Current balance before update: {user.balance}")
         amount_received = payment_intent['amount_received']  # amount_received is in cents
-        new_tokens = price_to_tokens_map.get(amount_received // 100 * 100, 0) # Convert to dollars, find nearest key or default to 0
+        new_tokens = price_to_tokens_map.get(amount_received) 
         print(f"New balance after update: {user.balance}")
 
         user.balance += new_tokens
