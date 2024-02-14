@@ -10,51 +10,30 @@ from sqlalchemy.orm import Session
 stripe.api_key = os.getenv("STRIPE_SECRET_TEST_KEY")
 
 router = APIRouter()
-
 @router.post("/create-payment-intent")
 async def create_payment_intent(request: Request, db: Session = Depends(get_db)):
     try:
-        # Extract user's API key from the request and find the user in the database
-        uuid = await get_api_key_from_state(request)
-        print(f"UUID: {uuid}")
-        user = get_user_from_uuid(uuid, request.app.state.db)
-        print(f"USER: {user}")
-
-
-        # user = db.query(User).filter(User.api_key == api_key).first()
-        
+        api_key = await get_api_key_from_state(request)
+        user = get_user_from_uuid(api_key, db)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
 
         data = await request.json()
-        print(f"Received data: {data}")  # Debug log to see what data is received
         amount = data.get('amount')
         if not amount:
             raise HTTPException(status_code=400, detail="Amount is required")
 
-
-        # Create a Stripe Checkout Session with the user's email in the metadata
-        session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[{
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {
-                        'name': 'Tokens',
-                    },
-                    'unit_amount': amount,
-                },
-                'quantity': 1,
-            }],
-            metadata={'user_id': str(user.id)},  # Include user's email in metadata
-            mode='payment',
+        # Create a Payment Intent instead of a Checkout Session
+        payment_intent = stripe.PaymentIntent.create(
+            amount=amount,
+            currency='usd',
+            metadata={'user_id': str(user.id)},
         )
 
-        return JSONResponse({"sessionId": session.id})
-
+        return JSONResponse({"clientSecret": payment_intent.client_secret})
     except stripe.error.StripeError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    
+
 
 @router.post('/webhook')
 async def webhook(request: Request, db: Session = Depends(get_db)):
@@ -98,3 +77,48 @@ async def webhook(request: Request, db: Session = Depends(get_db)):
 
     print('Unhandled event type {}'.format(event['type']))
     return JSONResponse(content={"success": True, "message": "Unhandled event type"})
+
+# @router.post("/create-payment-intent")
+# async def create_payment_intent(request: Request, db: Session = Depends(get_db)):
+#     try:
+#         # Extract user's API key from the request and find the user in the database
+#         uuid = await get_api_key_from_state(request)
+#         print(f"UUID: {uuid}")
+#         user = get_user_from_uuid(uuid, request.app.state.db)
+#         print(f"USER: {user}")
+
+
+#         # user = db.query(User).filter(User.api_key == api_key).first()
+        
+#         if not user:
+#             raise HTTPException(status_code=404, detail="User not found")
+
+#         data = await request.json()
+#         print(f"Received data: {data}")  # Debug log to see what data is received
+#         amount = data.get('amount')
+#         if not amount:
+#             raise HTTPException(status_code=400, detail="Amount is required")
+
+
+#         # Create a Stripe Checkout Session with the user's email in the metadata
+#         session = stripe.checkout.Session.create(
+#             payment_method_types=['card'],
+#             line_items=[{
+#                 'price_data': {
+#                     'currency': 'usd',
+#                     'product_data': {
+#                         'name': 'Tokens',
+#                     },
+#                     'unit_amount': amount,
+#                 },
+#                 'quantity': 1,
+#             }],
+#             metadata={'user_id': str(user.id)},  # Include user's email in metadata
+#             mode='payment',
+#         )
+
+#         return JSONResponse({"sessionId": session.id})
+
+#     except stripe.error.StripeError as e:
+#         raise HTTPException(status_code=400, detail=str(e))
+    
