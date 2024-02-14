@@ -16,7 +16,9 @@ async def create_payment_intent(request: Request, db: Session = Depends(get_db))
     try:
         # Extract user's API key from the request and find the user in the database
         uuid = await get_api_key_from_state(request)
+        print(f"UUID: {uuid}")
         user = get_user_from_uuid(uuid, request.app.state.db)
+
 
         # user = db.query(User).filter(User.api_key == api_key).first()
         
@@ -39,7 +41,7 @@ async def create_payment_intent(request: Request, db: Session = Depends(get_db))
                 },
                 'quantity': 1,
             }],
-            metadata={'user_email': user.email},  # Include user's email in metadata
+            metadata={'user_id': str(user.id)},  # Include user's email in metadata
             mode='payment',
         )
 
