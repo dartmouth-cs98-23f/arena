@@ -2,7 +2,7 @@ import os
 from fastapi import APIRouter, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse
 import stripe
-from backend.src.models.database import get_db, User
+from backend.src.models.database import get_db, User, get_user_from_uuid
 from backend.src.auth import get_api_key_from_state
 from sqlalchemy.orm import Session
 
@@ -15,8 +15,10 @@ router = APIRouter()
 async def create_payment_intent(request: Request, db: Session = Depends(get_db)):
     try:
         # Extract user's API key from the request and find the user in the database
-        api_key = get_api_key_from_state(request)
-        user = db.query(User).filter(User.api_key == api_key).first()
+        uuid = await get_api_key_from_state(request)
+        user = get_user_from_uuid(uuid, request.app.state.db)
+
+        # user = db.query(User).filter(User.api_key == api_key).first()
         
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
