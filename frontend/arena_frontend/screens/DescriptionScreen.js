@@ -7,13 +7,13 @@ import profileIcon from '../logos/profileIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
 
 function DescriptionScreen({ route, navigation }) {
-  const { question } = route.params;
+  const question = route.params?.question;
   const [description, setDescription] = useState('');
   
 
   const goToNextStep = () => {
     // Pass the question state to the next screen
-    navigation.navigate('Odds', { question, description });
+    navigation.navigate('Odds', { question : question, description : description, apiToken : route.params?.apiToken });
 
   };
 

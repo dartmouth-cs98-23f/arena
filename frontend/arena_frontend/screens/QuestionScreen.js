@@ -7,12 +7,12 @@ import profileIcon from '../logos/profileIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
 
 
-function QuestionScreen({ navigation }) {
+function QuestionScreen({ route, navigation }) {
     const [question, setQuestion] = useState('');
 
     const goToNextStep = () => {
         // Pass the question state to the next screen
-        navigation.navigate('Description', { question });
+        navigation.navigate('Description', { question : question, apiToken : route.params?.apiToken });
     };
 
     return (

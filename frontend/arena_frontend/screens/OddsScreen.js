@@ -2,17 +2,15 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import Slider from '@react-native-community/slider';
-import homeIcon from '../logos/homeIcon.png';
-import addIcon from '../logos/addIcon.png';
-import profileIcon from '../logos/profileIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
 
 
 function DescriptionScreen({ route, navigation }) {
-    const { question, description } = route.params;
+    const question = route.params?.question;
+    const description = route.params?.description;
     const [odds, setOdds] = useState(50);
 
-    const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
+    const apiToken = route.params?.apiToken;
     const submitBet = () => {
         // Pass the question state to the next screen
         console.log('Bet Submitted:', { question, description, odds });
@@ -54,7 +52,7 @@ function DescriptionScreen({ route, navigation }) {
                 console.error('An error occurred:', error);
             });
 
-        navigation.navigate('Home');
+        navigation.navigate('Home', {apiToken : route.params?.apiToken});
     };
 
     return (
