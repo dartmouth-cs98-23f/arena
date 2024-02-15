@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, RefreshControl, SafeAreaView } from 'react-native';
 import logo from '../logos/ArenaLogo.png';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
-import coinIcon from '../logos/coinIcon.png';
 import verifiersIcon from '../logos/verifiersIcon.png';
-import informationLogo from '../logos/informationLogo.png';
+import backArrowIcon from '../logos/backArrowIcon.png';
 
-function HomeScreen({ route, navigation }) {
+function HelpScreen({ route, navigation }) {
   const apiToken = route.params?.apiToken;
   console.log(`API Token: ${apiToken}`);
   //const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
@@ -21,39 +20,7 @@ function HomeScreen({ route, navigation }) {
     'Content-Type': 'application/json',
   };
 
-  const fetchBets = async () => {
-    try {
-      const response = await fetch('https://api.arena.markets/bets/get/', {
-        method: 'GET',
-        headers: headers,
-      });
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-
-      data = await response.json();
-      const bets = data.bets;
-      const oddsPromises = bets.map(async (bet) => {
-        const oddsURL = `https://api.arena.markets/bets/odds/?uid=${bet.uuid}`;
-        const oddsResponse = await fetch(oddsURL, {
-          method: 'GET',
-          headers: headers,
-        });
-        const oddsData = await oddsResponse.json();
-        const computedOdds = (oddsData.odds[0].odds * 100).toFixed(0) + '%';
-        return {
-          id: bet._id.$oid, // MongoDB's ObjectID
-          uuid: bet.uuid, // The UUID needed for detail view
-          question: bet.title,
-          percentage: computedOdds,
-        };
-      });
-      const oddsResults = await Promise.all(oddsPromises);
-      setFeedData(oddsResults);
-    } catch (error) {
-      console.error('Fetch bets error:', error);
-    }
-  };
+  const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
 
   const fetchBalance = async () => {
     try {
@@ -76,14 +43,13 @@ function HomeScreen({ route, navigation }) {
   }
 
   useEffect(() => {
-    fetchBets();
     fetchBalance();
   }, []);
+
 
   const onRefresh = async () => {
     setRefreshing(true);
     try {
-      await fetchBets();
       await fetchBalance(); // This ensures the token balance is updated on pull to refresh
     } catch (error) {
       console.error('Error on refreshing:', error);
@@ -91,66 +57,18 @@ function HomeScreen({ route, navigation }) {
     setRefreshing(false);
   };
 
-  const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
-
-  useEffect(() => {
-    const requestOptions = {
-      method: 'GET',
-      headers: headers,
-    };
-    const apiEndpoint = 'https://api.arena.markets/user/balance';
-
-    fetch(apiEndpoint, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Balance fetched successfully!');
-        setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-      })
-      .catch(error => {
-        console.error('An error occurred:', error);
-      });
-  }, []); // The empty dependency array ensures this effect runs only once after the initial render
-
-  const renderItem = ({ item }) => (
-
-    <TouchableOpacity
-      style={styles.itemContainer}
-      onPress={() => navigation.navigate('BetDetail', { betUuid: item.uuid, apiToken: apiToken })}>
-      <View style={styles.textContainer}>
-        <Text style={styles.questionText}>{item.question}</Text>
-      </View>
-      <View style={styles.percentageContainer}>
-        <Text style={styles.percentageText}>{item.percentage}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('Help', { apiToken: apiToken })} style={styles.backButton}>
-                    <Image source={informationLogo} style={styles.backIcon} />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Image source={backArrowIcon} style={styles.backIcon} />
           </TouchableOpacity>
-          <Text style={styles.headerText}>ARENA</Text>
+          <Text style={styles.headerText}>Help</Text>
           <TouchableOpacity onPress={() => navigation.navigate('BuyTokens', { apiToken: apiToken })} style={styles.coinButton}>
             <Text style={styles.coinBalance}>💰{myTokens}</Text>
           </TouchableOpacity>
         </View>
-
-        <FlatList
-          data={feedData}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#fff" />
-          }
-        />
 
         <View style={styles.footer}>
           {/* Add footer navigation icons here */}
@@ -217,30 +135,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold', // made the text bold
   },
-  itemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 20,
-    borderBottomColor: 'grey',
-    borderBottomWidth: 1,
-  },
-  textContainer: {
-    flex: 0.8, // takes up 80% of the item container
-  },
-  percentageContainer: {
-    flex: 0.2, // takes up 20% of the item container
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  questionText: {
-    color: 'white',
-    fontSize: 18,
-  },
-  percentageText: {
-    color: '#34D399',
-    fontSize: 27,
-    fontWeight: 'bold',
-  },
   buyTokensButton: {
     // You may not need additional styling if your layout is already as desired.
     // Add padding if you want the touchable area to be larger:
@@ -258,14 +152,8 @@ const styles = StyleSheet.create({
     width: 30, // Adjust the width as needed
     height: 30, // Adjust the height as needed
   },
-  backButton: {
-    padding: 10,
-  },
-  backIcon: {
-      width: 25, // Adjust the size as needed
-      height: 25, // Adjust the size as needed
-      resizeMode: 'contain',
-  },
 });
 
-export default HomeScreen;
+
+
+export default HelpScreen;

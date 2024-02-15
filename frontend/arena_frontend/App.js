@@ -18,6 +18,7 @@ import QuestionScreen from './screens/QuestionScreen';
 import DescriptionScreen from './screens/DescriptionScreen';
 import OddsScreen from './screens/OddsScreen';
 import VerifiersScreen from './screens/VerifiersScreen';
+import HelpScreen from './screens/HelpScreen';
 
 import addIcon from './logos/addIcon.png';
 import homeIcon from './logos/homeIcon.png';
@@ -83,6 +84,7 @@ function App() {
           <Stack.Screen name="Question" component={QuestionScreen} />
           <Stack.Screen name="Description" component={DescriptionScreen} />
           <Stack.Screen name="Odds" component={OddsScreen} />
+          <Stack.Screen name="Help" component={HelpScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </StripeProvider>

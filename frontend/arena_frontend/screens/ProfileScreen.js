@@ -19,10 +19,11 @@ function ProfileScreen({ route, navigation }) {
   const [myTokens, setMyTokens] = useState(50);
   const [positionsData, setFeedData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const apiToken = route.params?.apiToken;
+  const apiToken = route.params.apiToken;
 
   async function fetchBalance() {
     try {
+      console.log('profile page', apiToken);
       const headers = {
         'access_token': apiToken,
         'Content-Type': 'application/json',
