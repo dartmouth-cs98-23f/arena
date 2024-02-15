@@ -76,7 +76,7 @@ async def accept_invite(request:Request,
     else:
         update_data = {
             "$set": {
-                "verifier_uuid": "",
+                "verifierUuid": "",
             }
         }
 
