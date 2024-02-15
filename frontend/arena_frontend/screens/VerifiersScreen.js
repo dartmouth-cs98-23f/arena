@@ -69,6 +69,26 @@ function VerifiersScreen({ route, navigation }) {
         }
     };
 
+    const updateBalances = async (betUuid, resolve) => {
+        try {
+            const response = await fetch('https://api.arena.markets/bets/settle', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    bet_uuid: betUuid,
+                    outcome: resolve
+                })
+            });
+            const data = await response.json();
+            console.log(data);
+            if (!data.success.ok) {
+                Alert.alert("Error", data.success.error || "Failed to update balances");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     // Function to handle accept/decline for invitations
     const handleInvitationResponse = async (betUuid, accept) => {
         try {
@@ -110,6 +130,7 @@ function VerifiersScreen({ route, navigation }) {
             const data = await response.json();
             console.log(data);
             if (data.ok) {
+                await updateBalances(betUuid, resolve);
                 Alert.alert("Success", "Bet resolved successfully");
                 fetchVerifications();
             }
