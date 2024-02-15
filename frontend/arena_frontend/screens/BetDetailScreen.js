@@ -366,6 +366,8 @@ The current odds represent market-implied probability of the bet settling in a y
 
       <Text style={styles.descriptionText}>Description: {betDetails?.description || 'No description available'}</Text>
 
+      <Text style={styles.verifierText}>Verifier: {betDetails?.verifierUuid || 'No verifier available'}</Text>
+
       </ScrollView>
       {/* Footer Section */}
       <View style={styles.footer}>
@@ -520,6 +522,13 @@ const styles = StyleSheet.create({
     marginTop: 5, // Space between the bet amount and the owned count
   },
   descriptionText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'normal', // or 'bold' if you prefer
+    padding: 10, // Adjust the padding as needed
+    textAlign: 'center', // Center the text if you like
+  },
+  verifierText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'normal', // or 'bold' if you prefer

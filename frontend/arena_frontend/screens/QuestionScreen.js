@@ -1,18 +1,23 @@
 // QuestionScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, SafeAreaView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, SafeAreaView, Alert } from 'react-native';
 import homeIcon from '../logos/homeIcon.png';
 import addIcon from '../logos/addIcon.png';
 import profileIcon from '../logos/profileIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
 
 
-function QuestionScreen({ navigation }) {
+function QuestionScreen({ route, navigation }) {
     const [question, setQuestion] = useState('');
 
     const goToNextStep = () => {
-        // Pass the question state to the next screen
-        navigation.navigate('Description', { question });
+        if (question.trim() === '') {
+            // If the question is empty, show an alert and do not navigate
+            Alert.alert('Blank Question', 'Please enter a question before proceeding.');
+        } else {
+            // If the question is not empty, proceed with navigation
+            navigation.navigate('Description', { question: question, apiToken: route.params?.apiToken });
+        }
     };
 
     return (
@@ -35,9 +40,6 @@ function QuestionScreen({ navigation }) {
                     placeholder="What's the question?"
                     placeholderTextColor="#999"
                 />
-                <TouchableOpacity onPress={goToNextStep} style={styles.button}>
-                    <Text style={styles.buttonText}>Next</Text>
-                </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
