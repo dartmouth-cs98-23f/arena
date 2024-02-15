@@ -51,10 +51,11 @@ async def get_verifications(request: Request,
 
 @router.post("/accept")
 async def accept_invite(request:Request,
-                        bet_uuid:str,
-                        accept:bool,
+                        accept_invitation_context: AcceptInvitationsContext = Depends(),
                         mongo=Depends(get_mongo)) -> Success:
     user_uuid = await get_api_key_from_state(request)
+    bet_uuid = accept_invitation_context.bet_uuid
+    accept = accept_invitation_context.accept
     cursor = mongo[DB_BETS].find({
         "uuid": bet_uuid, 
         "verifierUuid": user_uuid,
@@ -80,8 +81,8 @@ async def accept_invite(request:Request,
         }
 
     result = await mongo[DB_BETS].update_one({"_id": ObjectId(document["_id"])}, update_data)
-    if not result:
-        return Success(ok=False, error="Cannot update verifier updated state", message="")
+    if result.modified_count == 0:
+        return Success(ok=False, error="No changes made - the bet might already have been accepted or does not exist", message="")
     
     return Success(ok=True, error=None, message="Accepted the verifiers request")
 
