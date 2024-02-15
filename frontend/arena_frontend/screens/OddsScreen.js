@@ -8,53 +8,16 @@ import profileIcon from '../logos/profileIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
 
 
-function DescriptionScreen({ route, navigation }) {
-    const { question, description } = route.params;
+function OddsScreen({ route, navigation }) {
+    const question = route.params?.question;
+    const description = route.params?.description;
     const [odds, setOdds] = useState(50);
 
-    const apiToken = '4UMqJxFfCWtgsVnoLgydl_UUGUNe_N7d';
-    const submitBet = () => {
+    const apiToken = route.params?.apiToken;
+
+    const goToNextStep = () => {
         // Pass the question state to the next screen
-        console.log('Bet Submitted:', { question, description, odds });
-        payload = {
-            "title": question.toString(),
-            "description": description.toString(),
-            "win_justification": "...",
-            "verifier_uuid": "...",
-            "odds": odds / 100
-        };
-
-        // Set the headers for the request
-        const headers = {
-            'access_token': apiToken,
-            'Content-Type': 'application/json',
-        };
-
-        const requestOptions = {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(payload),
-        };
-
-        const apiEndpoint = 'https://api.arena.markets/bets/create';
-
-        fetch(apiEndpoint, requestOptions)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Request failed with status ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log('POST request successful!');
-                // Handle the response data here if needed
-                console.log(data);
-            })
-            .catch((error) => {
-                console.error('An error occurred:', error);
-            });
-
-        navigation.navigate('Home');
+        navigation.navigate('AssignVerifier', { question : question, description: description, odds : odds, apiToken : apiToken });
     };
 
     return (
@@ -65,8 +28,8 @@ function DescriptionScreen({ route, navigation }) {
                         <Image source={backArrowIcon} style={styles.backIcon} />
                     </TouchableOpacity>
                     <Text style={styles.header}>Create Bet</Text>
-                    <TouchableOpacity style={styles.submitButton} onPress={submitBet}>
-                        <Text style={styles.submitButtonText}>Submit</Text>
+                    <TouchableOpacity style={styles.nextButton} onPress={goToNextStep}>
+                        <Text style={styles.submitButtonText}>Next</Text>
                     </TouchableOpacity>
                 </View>
                 <Text style={styles.label}>Initial Odds</Text>
@@ -82,9 +45,6 @@ function DescriptionScreen({ route, navigation }) {
                     thumbTintColor='#34D399' // Slider thumb color
                 />
                 <Text style={styles.oddsValue}>{`${odds}%`}</Text>
-                <TouchableOpacity onPress={submitBet} style={styles.button}>
-                    <Text style={styles.buttonText}>Next</Text>
-                </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
@@ -123,13 +83,13 @@ const styles = StyleSheet.create({
         height: 25, // Adjust the size as needed
         resizeMode: 'contain',
     },
-    submitButton: {
+    nextButton: {
         backgroundColor: '#34D399', // Theme color for the button
         paddingVertical: 8,
         paddingHorizontal: 16,
         borderRadius: 20,
     },
-    submitButtonText: {
+    nextButtonText: {
         color: 'black',
         fontSize: 16,
         fontWeight: 'bold',
@@ -181,4 +141,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default DescriptionScreen;
+export default OddsScreen;

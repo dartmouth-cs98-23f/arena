@@ -38,9 +38,6 @@ function DescriptionScreen({ route, navigation }) {
           placeholder="Specify any definitions in your question, as well as how the bet will be settled."
           placeholderTextColor="#999" // Placeholder text color
         />
-        <TouchableOpacity onPress={goToNextStep} style={styles.button}>
-          <Text style={styles.buttonText}>Next</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
