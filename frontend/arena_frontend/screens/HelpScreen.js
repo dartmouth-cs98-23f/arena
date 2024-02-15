@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, RefreshControl, SafeAreaView } from 'react-native';
+import { Alert, View, Text, StyleSheet, TouchableOpacity, Image, RefreshControl, SafeAreaView } from 'react-native';
 import logo from '../logos/ArenaLogo.png';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
 import verifiersIcon from '../logos/verifiersIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
+import * as WebBrowser from "expo-web-browser";
 
 function HelpScreen({ route, navigation }) {
   const apiToken = route.params?.apiToken;
@@ -57,6 +58,22 @@ function HelpScreen({ route, navigation }) {
     setRefreshing(false);
   };
 
+  const handleRedirectToBlog = async () => {
+    try {
+      const result = await WebBrowser.openBrowserAsync(
+        'https://arena-markets.blogspot.com/'
+      );
+      console.log("Redirect Succeeded");
+      // It's important to note that result.url may not be available depending on the API's response structure.
+      // If you need to log the redirected URL, ensure that the API actually returns it in the result object.
+      if(result.url) {
+        console.log(result.url);
+      }
+    } catch (error) {
+      console.error('Problem opening the blog: ', error);
+    }
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -69,8 +86,13 @@ function HelpScreen({ route, navigation }) {
             <Text style={styles.coinBalance}>💰{myTokens}</Text>
           </TouchableOpacity>
         </View>
-
-        <View style={styles.footer}>
+        <View>
+          <TouchableOpacity onPress={handleRedirectToBlog} style={styles.choiceButton}>
+              <Text style={styles.buttonText}>Visit Arena Markets Blog</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={styles.footer}>
           {/* Add footer navigation icons here */}
           <TouchableOpacity onPress={() => navigation.navigate('Home', { apiToken: apiToken })}>
             <Image source={homeIcon} style={styles.footerIcon} />
@@ -85,7 +107,6 @@ function HelpScreen({ route, navigation }) {
             <Image source={verifiersIcon} style={styles.footerIcon} />
           </TouchableOpacity>
         </View>
-      </View>
     </SafeAreaView>
   );
 }
@@ -151,6 +172,20 @@ const styles = StyleSheet.create({
   footerIcon: {
     width: 30, // Adjust the width as needed
     height: 30, // Adjust the height as needed
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  choiceButton: {
+    backgroundColor: '#34D399', // Your button background color
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 5,
   },
 });
 

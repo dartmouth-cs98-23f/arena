@@ -14,11 +14,8 @@ import QuestionScreen from './screens/QuestionScreen';
 import DescriptionScreen from './screens/DescriptionScreen';
 import OddsScreen from './screens/OddsScreen';
 import VerifiersScreen from './screens/VerifiersScreen';
-<<<<<<< HEAD
 import HelpScreen from './screens/HelpScreen';
-=======
 import AssignVerifierScreen from './screens/AssignVerifierScreen';
->>>>>>> main
 
 import addIcon from './logos/addIcon.png';
 import homeIcon from './logos/homeIcon.png';
