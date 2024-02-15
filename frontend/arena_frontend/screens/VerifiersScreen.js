@@ -82,7 +82,7 @@ function VerifiersScreen({ route, navigation }) {
             const data = await response.json();
             console.log(data);
             if (!data.success.ok) {
-                Alert.alert("Error", data.success.error || "Failed to update balances");
+                console.log(data.success.error);
             }
         } catch (error) {
             console.log(error);
@@ -130,9 +130,9 @@ function VerifiersScreen({ route, navigation }) {
             const data = await response.json();
             console.log(data);
             if (data.ok) {
-                await updateBalances(betUuid, resolve);
                 Alert.alert("Success", "Bet resolved successfully");
                 fetchVerifications();
+                updateBalances(betUuid, resolve);
             }
             else {
                 Alert.alert("Error", data.error || "Failed to resolve bet");
