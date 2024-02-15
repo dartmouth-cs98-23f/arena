@@ -1,12 +1,15 @@
 // VerifiersScreen.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, SafeAreaView, Alert, ScrollView } from 'react-native';
+import { RefreshControl, View, Text, TouchableOpacity, StyleSheet, Image, SafeAreaView, Alert, ScrollView } from 'react-native';
 import verifiersIcon from '../logos/verifiersIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
 import addIcon from '../logos/addIcon.png';
 
 function VerifiersScreen({ route, navigation }) {
+
+    const [refreshing, setRefreshing] = useState(false);
+
     const [invitations, setInvitations] = useState([]);
     const [inProcess, setInProcess] = useState([]);
 
@@ -21,6 +24,13 @@ function VerifiersScreen({ route, navigation }) {
     useEffect(() => {
         fetchInvitations();
         fetchVerifications();
+    }, []);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        fetchInvitations();
+        fetchVerifications();
+        setRefreshing(false);
     }, []);
 
     const fetchInvitations = async () => {
@@ -59,6 +69,26 @@ function VerifiersScreen({ route, navigation }) {
         }
     };
 
+    const updateBalances = async (betUuid, resolve) => {
+        try {
+            const response = await fetch('https://api.arena.markets/bets/settle', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    bet_uuid: betUuid,
+                    outcome: resolve
+                })
+            });
+            const data = await response.json();
+            console.log(data);
+            if (!data.success.ok) {
+                console.log(data.success.error);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     // Function to handle accept/decline for invitations
     const handleInvitationResponse = async (betUuid, accept) => {
         try {
@@ -75,6 +105,7 @@ function VerifiersScreen({ route, navigation }) {
             if (data.ok) {
                 Alert.alert("Success", "Invitation response updated successfully");
                 fetchInvitations();
+                fetchVerifications();
             }
             else {
                 Alert.alert("Error", data.error || "Failed to update invitation response");
@@ -101,6 +132,7 @@ function VerifiersScreen({ route, navigation }) {
             if (data.ok) {
                 Alert.alert("Success", "Bet resolved successfully");
                 fetchVerifications();
+                updateBalances(betUuid, resolve);
             }
             else {
                 Alert.alert("Error", data.error || "Failed to resolve bet");
@@ -116,7 +148,16 @@ function VerifiersScreen({ route, navigation }) {
 
             <Text style={styles.headerText}>My Verifications</Text>
 
-            <ScrollView contentContainerStyle={styles.scrollView}>
+            <ScrollView
+                contentContainerStyle={styles.scrollViewContainer}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor="#fff"
+                    />
+                }>
+
             <Text style={styles.subheader}>Invitations</Text>
             {invitations.map((invitation, index) => (
                 <View key={index} style={styles.invitationItem}>
@@ -182,6 +223,10 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'black', // Background color of the entire screen
     },
+    scrollViewContainer: {
+        flexGrow: 1, // Ensures the container can grow to accommodate its children
+        paddingBottom: 60, // Adjust this value to ensure nothing is hidden behind the footer
+      },
     headerText: {
         color: 'white', // Text color for the header
         fontSize: 24, // Size of the header text
@@ -195,6 +240,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 16, // Space below the header for the subheader
         marginBottom: 10, // Space above the content
+        marginHorizontal: 16,
     },
     invitationItem: {
         marginBottom: 10,

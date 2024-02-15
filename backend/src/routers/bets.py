@@ -305,7 +305,7 @@ async def get_bets(
     # Query the MongoDB collection with sorting
     cursor = (
         mongo[DB_BETS]
-        .find({"timestamp": {"$gt": timestamp}, "resolved": False})
+        .find({"timestamp": {"$gt": timestamp}, "resolved": False, "verifier_accepted": True})
         .sort("timestamp", DESCENDING)
         .skip(skip)
         .limit(limit)
