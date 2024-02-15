@@ -89,10 +89,11 @@ async def accept_invite(request:Request,
 
 @router.post("/resolve")
 async def resolve_bet(request:Request,
-                      bet_uuid:str,
-                      resolve:bool,
+                      context: ResolveBetContext,
                       mongo=Depends(get_mongo)) -> Success:
     user_uuid = await get_api_key_from_state(request)
+    bet_uuid = context.bet_uuid
+    resolve = context.resolve
     cursor = mongo[DB_BETS].find({
         "uuid": bet_uuid, 
         "verifierUuid": user_uuid,
