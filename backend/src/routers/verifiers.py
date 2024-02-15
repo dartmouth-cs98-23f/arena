@@ -51,11 +51,11 @@ async def get_verifications(request: Request,
 
 @router.post("/accept")
 async def accept_invite(request:Request,
-                        accept_invitation_context: AcceptInvitationsContext = Depends(),
+                        context: AcceptInvitationsContext,
                         mongo=Depends(get_mongo)) -> Success:
     user_uuid = await get_api_key_from_state(request)
-    bet_uuid = accept_invitation_context.bet_uuid
-    accept = accept_invitation_context.accept
+    bet_uuid = context.bet_uuid
+    accept = context.accept
     cursor = mongo[DB_BETS].find({
         "uuid": bet_uuid, 
         "verifierUuid": user_uuid,

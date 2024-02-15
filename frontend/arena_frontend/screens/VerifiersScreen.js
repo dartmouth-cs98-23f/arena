@@ -1,63 +1,136 @@
 // VerifiersScreen.js
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, SafeAreaView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image, SafeAreaView, Alert, ScrollView } from 'react-native';
 import verifiersIcon from '../logos/verifiersIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
 import addIcon from '../logos/addIcon.png';
 
-// Mock data for the invitations and in-process items
-const mockData = {
-    invitations: [
-        {
-            question: 'Will Hanover, NH get more than 12 inches of snow before January 4, 2024?',
-        },
-    ],
-    inProcess: [
-        {
-            question: 'Will Psi Upsilon get suspended before January 4, 2024?',
-            response: null, // null for unanswered, true for yes, false for no
-        },
-        {
-            question: 'Will any students fail COSC 98 in Fall 2023?',
-            response: null,
-        },
-    ],
-};
+function VerifiersScreen({ route, navigation }) {
+    const [invitations, setInvitations] = useState([]);
+    const [inProcess, setInProcess] = useState([]);
 
-function VerifiersScreen({ navigation }) {
-    // Function to handle accept/decline for invitations
-    const handleInvitationResponse = (question, accept) => {
-        console.log(`Invitation to '${question}' was ${accept ? 'accepted' : 'declined'}.`);
-        // Here you would typically update the state or call an API to register the response
+    const apiToken = route.params?.apiToken;
+
+    const headers = {
+        'access_token': apiToken,
+        'Content-Type': 'application/json',
+    };
+    
+    // Fetch invitations and verifications
+    useEffect(() => {
+        fetchInvitations();
+        fetchVerifications();
+    }, []);
+
+    const fetchInvitations = async () => {
+        try {
+            const response = await fetch('https://api.arena.markets/verifiers/invites/', {
+                method: 'GET',
+                headers: headers,
+            });
+            const data = await response.json();
+            console.log(data);
+            if (data.success.ok) {
+                setInvitations(data.bets);
+            } else {
+                Alert.alert("Error", data.success.error || "Failed to fetch invitations");
+            }
+        } catch (error) {
+            console.log(error);
+        }
     };
 
+    const fetchVerifications = async () => {
+        try {
+            const response = await fetch('https://api.arena.markets/verifiers/verifications/', {
+                method: 'GET',
+                headers: headers,
+            });
+            const data = await response.json();
+            console.log(data);
+            if (data.success.ok) {
+                setInProcess(data.bets);
+            } else {
+                Alert.alert("Error", data.success.error || "Failed to fetch verifications");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // Function to handle accept/decline for invitations
+    const handleInvitationResponse = async (betUuid, accept) => {
+        try {
+            const response = await fetch('https://api.arena.markets/verifiers/accept', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    bet_uuid: betUuid.toString(),
+                    accept: accept,
+                }),
+            });
+            const data = await response.json();
+            console.log(data);
+            if (data.ok) {
+                Alert.alert("Success", "Invitation response updated successfully");
+                fetchInvitations();
+            }
+            else {
+                Alert.alert("Error", data.error || "Failed to update invitation response");
+            }
+        } catch (error) {
+            console.log(error);
+            Alert.alert("Error", "Could not update invitation response");
+        }
+      };
+
     // Function to handle yes/no for in-process verifications
-    const handleInProcessResponse = (question, yes) => {
-        console.log(`Response to '${question}' was ${yes ? 'Yes' : 'No'}.`);
-        // Similar to invitations, update the state or call an API to register the response
+    const handleInProcessResponse = async (betUuid, resolve) => {
+        try {
+            const response = await fetch('https://api.arena.markets/verifiers/resolve', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    bet_uuid: betUuid.toString(),
+                    resolve: resolve,
+                }),
+            });
+            const data = await response.json();
+            console.log(data);
+            if (data.ok) {
+                Alert.alert("Success", "Bet resolved successfully");
+                fetchVerifications();
+            }
+            else {
+                Alert.alert("Error", data.error || "Failed to resolve bet");
+            }
+        } catch (error) {
+            console.log(error);
+            Alert.alert("Error", "Could not resolve bet");
+        }
     };
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            {/* <View style={styles.container}></View> */}
 
             <Text style={styles.headerText}>My Verifications</Text>
 
+            <ScrollView contentContainerStyle={styles.scrollView}>
             <Text style={styles.subheader}>Invitations</Text>
-            {mockData.invitations.map((invitation, index) => (
+            {invitations.map((invitation, index) => (
                 <View key={index} style={styles.invitationItem}>
-                    <Text style={styles.question}>{invitation.question}</Text>
+                    <Text style={styles.question}>{invitation.title}</Text>
                     <View style={styles.buttonGroup}>
                         <TouchableOpacity
                             style={[styles.button, styles.acceptButton]}
-                            onPress={() => handleInvitationResponse(invitation.question, true)}
+                            onPress={() => handleInvitationResponse(invitation.uuid, true)}
                         >
                             <Text style={styles.buttonTextBlack}>Accept</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[styles.button, styles.declineButton]}
-                            onPress={() => handleInvitationResponse(invitation.question, false)}
+                            onPress={() => handleInvitationResponse(invitation.uuid, false)}
                         >
                             <Text style={styles.buttonTextBlack}>Decline</Text>
                         </TouchableOpacity>
@@ -66,36 +139,37 @@ function VerifiersScreen({ navigation }) {
             ))}
 
             <Text style={styles.subheader}>In process</Text>
-            {mockData.inProcess.map((processItem, index) => (
+            {inProcess.map((processItem, index) => (
                 <View key={index} style={styles.processItem}>
-                    <Text style={styles.question}>{processItem.question}</Text>
+                    <Text style={styles.question}>{processItem.title}</Text>
                     <View style={styles.buttonGroup}>
                         <TouchableOpacity
                             style={[styles.button, styles.yesButton]}
-                            onPress={() => handleInProcessResponse(processItem.question, true)}
+                            onPress={() => handleInProcessResponse(processItem.uuid, true)}
                         >
                             <Text style={styles.buttonText}>Yes</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[styles.button, styles.noButton]}
-                            onPress={() => handleInProcessResponse(processItem.question, false)}
+                            onPress={() => handleInProcessResponse(processItem.uuid, false)}
                         >
                             <Text style={styles.buttonText}>No</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             ))}
+            </ScrollView>
             <View style={styles.footer}>
-                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Home', { apiToken: apiToken })}>
                     <Image source={homeIcon} style={styles.footerIcon} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Question')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Question', { apiToken: apiToken })}>
                     <Image source={addIcon} style={styles.footerIcon} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Profile', { apiToken: apiToken })}>
                     <Image source={profileIcon} style={styles.footerIcon} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Verifiers')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Verifiers', { apiToken: apiToken })}>
                     <Image source={verifiersIcon} style={styles.footerIcon} />
                 </TouchableOpacity>
             </View>
@@ -185,18 +259,13 @@ const styles = StyleSheet.create({
     footer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        paddingVertical: 20, // Padding inside the footer
-        paddingHorizontal: 10, // Padding inside the footer
-        backgroundColor: 'black', // Footer background color
-    },
-    footerIcon: {
-        width: 30,
-        height: 30,
-    },
+        padding: 20,
+        backgroundColor: 'black', // Adjust the background color as needed
+      },
+      footerIcon: {
+        width: 30, // Adjust the width as needed
+        height: 30, // Adjust the height as needed
+      },
 });
 
 
