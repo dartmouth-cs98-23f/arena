@@ -91,56 +91,89 @@ function VerifiersScreen({ route, navigation }) {
 
     // Function to handle accept/decline for invitations
     const handleInvitationResponse = async (betUuid, accept) => {
-        try {
-            const response = await fetch('https://api.arena.markets/verifiers/accept', {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify({
-                    bet_uuid: betUuid.toString(),
-                    accept: accept,
-                }),
-            });
-            const data = await response.json();
-            console.log(data);
-            if (data.ok) {
-                Alert.alert("Success", "Invitation response updated successfully");
-                fetchInvitations();
-                fetchVerifications();
-            }
-            else {
-                Alert.alert("Error", data.error || "Failed to update invitation response");
-            }
-        } catch (error) {
-            console.log(error);
-            Alert.alert("Error", "Could not update invitation response");
-        }
-      };
+        Alert.alert(
+            "Confirm Action",
+            `Are you sure you want to ${accept ? 'accept' : 'decline'} this invitation?`,
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Proceed",
+                    onPress: async () => {
+                        try {
+                            const response = await fetch('https://api.arena.markets/verifiers/accept', {
+                                method: 'POST',
+                                headers: headers,
+                                body: JSON.stringify({
+                                    bet_uuid: betUuid.toString(),
+                                    accept: accept,
+                                }),
+                            });
+                            const data = await response.json();
+                            console.log(data);
+                            if (data.ok) {
+                                Alert.alert("Success", "Invitation response updated successfully");
+                                fetchInvitations();
+                                fetchVerifications();
+                            }
+                            else {
+                                Alert.alert("Error", data.error || "Failed to update invitation response");
+                            }
+                        } catch (error) {
+                            console.log(error);
+                            Alert.alert("Error", "Could not update invitation response");
+                        }
+                    }
+                }
+            ],
+            { cancelable: false }
+        );
+    };
+    
 
     // Function to handle yes/no for in-process verifications
     const handleInProcessResponse = async (betUuid, resolve) => {
-        try {
-            const response = await fetch('https://api.arena.markets/verifiers/resolve', {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify({
-                    bet_uuid: betUuid.toString(),
-                    resolve: resolve,
-                }),
-            });
-            const data = await response.json();
-            console.log(data);
-            if (data.ok) {
-                Alert.alert("Success", "Bet resolved successfully");
-                fetchVerifications();
-                updateBalances(betUuid, resolve);
-            }
-            else {
-                Alert.alert("Error", data.error || "Failed to resolve bet");
-            }
-        } catch (error) {
-            console.log(error);
-            Alert.alert("Error", "Could not resolve bet");
-        }
+        Alert.alert(
+            "Confirm Resolution",
+            `Are you sure the result is ${resolve ? 'Yes' : 'No'}?`,
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Proceed",
+                    onPress: async () => {
+                        try {
+                            const response = await fetch('https://api.arena.markets/verifiers/resolve', {
+                                method: 'POST',
+                                headers: headers,
+                                body: JSON.stringify({
+                                    bet_uuid: betUuid.toString(),
+                                    resolve: resolve,
+                                }),
+                            });
+                            const data = await response.json();
+                            console.log(data);
+                            if (data.ok) {
+                                Alert.alert("Success", "Bet resolved successfully");
+                                fetchVerifications();
+                                updateBalances(betUuid, resolve);
+                            }
+                            else {
+                                Alert.alert("Error", data.error || "Failed to resolve bet");
+                            }
+                        } catch (error) {
+                            console.log(error);
+                            Alert.alert("Error", "Could not resolve bet");
+                        }
+                    }
+                }
+            ],
+            { cancelable: false }
+        );
     };
 
     return (
