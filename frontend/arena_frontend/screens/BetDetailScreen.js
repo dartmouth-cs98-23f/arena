@@ -311,8 +311,8 @@ function BetDetailScreen({ route, navigation }) {
       <Text style={styles.oddsTitle}>Current odds</Text>
       <View style={styles.oddsContainer}>
         <Text style={styles.percentage}>{computedOdds}</Text>
-        <TouchableOpacity onPress={showTooltip} style={styles.infoIcon}>
-          <Image source={informationLogo} />
+        <TouchableOpacity onPress={showTooltip} style={styles.infoIconTouchable}>
+          <Image source={informationLogo} style={styles.infoIcon} />
           {tooltipVisible && (
             <View style={styles.tooltip}>
               <Text style={styles.tooltipText}>
@@ -614,10 +614,16 @@ const styles = StyleSheet.create({
     fontSize: 13, // Adjust font size as needed
   },
   infoIcon: {
-    marginLeft: 5,
-    position: 'relative', // Position relative to allow absolute positioning of the tooltip
+    marginLeft: 1, // Adjust if needed to increase/decrease space between text and icon
+    width: 20, // Smaller width for the icon
+    height: 20, // Smaller height for the icon
+    resizeMode: 'contain', // Ensure the icon scales correctly within the new dimensions
   },
-  // ... (additional styles if needed)
+  infoIconTouchable: {
+    padding: 5, // Adds more area around the icon for easier tapping
+    justifyContent: 'center', // Centers the icon within the touchable area
+    alignItems: 'center', // Ensures the icon is in the center of the touchable area
+  },
 });
 
 export default BetDetailScreen;
