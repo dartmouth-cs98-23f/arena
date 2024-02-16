@@ -269,6 +269,19 @@ function BetDetailScreen({ route, navigation }) {
     // }
   };
 
+  const formatDate = (unixTimestamp) => {
+    const date = new Date(unixTimestamp * 1000); // Convert to milliseconds
+    // Format the date as you prefer. For example, "Month day, year, hours:minutes:seconds"
+    return date.toLocaleDateString("en-US", {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true // or false if you prefer 24-hour time
+    });
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
@@ -367,6 +380,12 @@ The current odds represent market-implied probability of the bet settling in a y
       <Text style={styles.descriptionText}>Description: {betDetails?.description || 'No description available'}</Text>
 
       <Text style={styles.verifierText}>Verifier: {betDetails?.verifierUuid || 'No verifier available'}</Text>
+
+      <View style={{ borderBottomColor: 'rgba(128, 128, 128, 1)', borderBottomWidth: 1, marginTop: 20, marginBottom: 20, marginHorizontal: 20 }} />
+
+      <Text style={styles.bottomText}>Views: {betDetails?.timesViewed || '0'}</Text>
+
+      <Text style={styles.bottomText}>Date created: {betDetails?.timestamp ? formatDate(betDetails.timestamp) : 'No timestamp available'}</Text>
 
       </ScrollView>
       {/* Footer Section */}
@@ -530,6 +549,13 @@ const styles = StyleSheet.create({
   },
   verifierText: {
     color: 'white',
+    fontSize: 16,
+    fontWeight: 'normal', // or 'bold' if you prefer
+    padding: 10, // Adjust the padding as needed
+    textAlign: 'center', // Center the text if you like
+  },
+  bottomText: {
+    color: 'rgba(128, 128, 128, 1)',
     fontSize: 16,
     fontWeight: 'normal', // or 'bold' if you prefer
     padding: 10, // Adjust the padding as needed
