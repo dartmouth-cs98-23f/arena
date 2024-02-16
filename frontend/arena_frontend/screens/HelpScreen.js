@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, View, Text, StyleSheet, TouchableOpacity, Image, RefreshControl, SafeAreaView } from 'react-native';
+import { Alert, View, Text, StyleSheet, TouchableOpacity, Image, RefreshControl, SafeAreaView, Linking } from 'react-native';
 import logo from '../logos/ArenaLogo.png';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
@@ -74,6 +74,25 @@ function HelpScreen({ route, navigation }) {
     }
   }
 
+  const handleContactUs = () => {
+    const email = "arenaroyale98@gmail.com";
+    const subject = encodeURIComponent("Inquiry from App User");
+    const body = encodeURIComponent("Write your query to the developer here,\n\n");
+  
+    const url = `mailto:${email}?subject=${subject}&body=${body}`;
+  
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (!supported) {
+          Alert.alert('No Email Client Available', 'Please set up a mail account to send an email.');
+        } else {
+          return Linking.openURL(url);
+        }
+      })
+      .catch((err) => console.error('An error occurred', err));
+  }
+    
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -86,11 +105,18 @@ function HelpScreen({ route, navigation }) {
             <Text style={styles.coinBalance}>💰{myTokens}</Text>
           </TouchableOpacity>
         </View>
-        <View>
-          <TouchableOpacity onPress={handleRedirectToBlog} style={styles.choiceButton}>
-              <Text style={styles.buttonText}>Visit Arena Markets Blog</Text>
-          </TouchableOpacity>
-        </View>
+        <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={handleRedirectToBlog} style={styles.choiceButton}>
+          <Text style={styles.buttonText}>Visit Arena Markets Blog</Text>
+        </TouchableOpacity>
+
+        <View style={styles.separator} />
+
+        <TouchableOpacity onPress={handleContactUs} style={styles.choiceButton}>
+          <Text style={styles.buttonText}>Contact Us</Text>
+        </TouchableOpacity>
+      </View>
+
       </View>
       <View style={styles.footer}>
           {/* Add footer navigation icons here */}
@@ -183,14 +209,25 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
+  buttonContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
   choiceButton: {
-    backgroundColor: '#34D399', // Your button background color
+    backgroundColor: '#34D399',
     paddingVertical: 10,
     paddingHorizontal: 30,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 5,
+    marginVertical: 10, // Added vertical margin
+    width: '80%', // Set a width percentage
+  },
+  separator: {
+    height: 1,
+    backgroundColor: 'white',
+    width: '80%',
+    marginVertical: 10,
   },
 });
 
