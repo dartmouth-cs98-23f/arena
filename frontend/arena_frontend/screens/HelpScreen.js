@@ -92,21 +92,6 @@ function HelpScreen({ route, navigation }) {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.footer}>
-          {/* Add footer navigation icons here */}
-          <TouchableOpacity onPress={() => navigation.navigate('Home', { apiToken: apiToken })}>
-            <Image source={homeIcon} style={styles.footerIcon} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Question', { apiToken: apiToken })}>
-            <Image source={addIcon} style={styles.footerIcon} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Profile', { apiToken: apiToken })}>
-            <Image source={profileIcon} style={styles.footerIcon} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Verifiers', { apiToken: apiToken })}>
-            <Image source={verifiersIcon} style={styles.footerIcon} />
-          </TouchableOpacity>
-        </View>
     </SafeAreaView>
   );
 }
@@ -125,18 +110,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', // This ensures the logo and the coin icon are on opposite sides
     padding: 15,
   },
-  headerLogo: {
-    width: 40,
-    height: 40,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  coinButton: {
-    // Styles for the coin icon button
-  },
   coinBalance: {
     color: 'white',
     fontSize: 18,
@@ -146,14 +119,9 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
   },
-  headerLogo: {
-    width: 30,
-    height: 30,
-    marginRight: 10, // added some margin to separate the logo and the text
-  },
   headerText: {
     color: 'white',
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: 'bold', // made the text bold
   },
   buyTokensButton: {
@@ -174,7 +142,7 @@ const styles = StyleSheet.create({
     height: 30, // Adjust the height as needed
   },
   buttonText: {
-    color: 'white',
+    color: 'black',
     fontSize: 18,
     fontWeight: '600',
   },
@@ -186,6 +154,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 5,
+  },
+  backButton: {
+    padding: 10,
+  },
+  backIcon: {
+    width: 25, // Adjust the size as needed
+    height: 25, // Adjust the size as needed
+    resizeMode: 'contain',
   },
 });
 
