@@ -134,6 +134,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
+  backIcon: {
+    width: 25, // Adjust the size as needed
+    height: 25, // Adjust the size as needed
+    resizeMode: 'contain',
+  },
   coinButton: {
     // Styles for the coin icon button
   },
