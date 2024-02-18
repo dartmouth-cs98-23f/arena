@@ -20,7 +20,7 @@ router = APIRouter()
 
 
 @router.get("/get_with_uuid")
-async def get_with_uuid(request: request, uuid_query: str) -> UserResponse:
+async def get_with_uuid(request: Request, uuid_query: str) -> UserResponse:
     _ = get_api_key_from_state(request)
 
     user = (
