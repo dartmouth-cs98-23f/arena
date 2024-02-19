@@ -177,22 +177,10 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
   },
-  headerLogo: {
-    width: 30,
-    height: 30,
-    marginRight: 10, // added some margin to separate the logo and the text
-  },
   headerText: {
     color: 'white',
-    fontSize: 30,
-    fontWeight: 'bold', // made the text bold
-  },
-  buyTokensButton: {
-    // You may not need additional styling if your layout is already as desired.
-    // Add padding if you want the touchable area to be larger:
-    justifyContent: 'right',
-    alignItems: 'right',
-    padding: 8,
+    fontSize: 24,
+    fontWeight: 'bold',
   },
   footer: {
     flexDirection: 'row',
@@ -210,8 +198,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   buttonContainer: {
-    padding: 20,
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
+    padding: 30,
   },
   choiceButton: {
     backgroundColor: '#34D399',
