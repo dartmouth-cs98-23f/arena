@@ -45,7 +45,10 @@ function AssignVerifierScreen({ route, navigation }) {
             const data = await response.json();
             console.log('POST request successful!', data);
             console.log('Bet Submitted:', { question, description, odds, verifierEmail, verifierUuid });
-            navigation.replace('Home', { apiToken : apiToken });
+            navigation.reset({
+                index: 0, // Resets the stack to have only the new route
+                routes: [{ name: 'Home', params: { apiToken: apiToken } }],
+            });
         } catch (error) {
             console.log('An error occurred:', error);
             // If the error was thrown from searchForUser, it will be handled here
