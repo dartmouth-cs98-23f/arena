@@ -270,6 +270,19 @@ function BetDetailScreen({ route, navigation }) {
     // }
   };
 
+  const formatDate = (unixTimestamp) => {
+    const date = new Date(unixTimestamp * 1000); // Convert to milliseconds
+    // Format the date as you prefer. For example, "Month day, year, hours:minutes:seconds"
+    return date.toLocaleDateString("en-US", {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true // or false if you prefer 24-hour time
+    });
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
@@ -299,8 +312,8 @@ function BetDetailScreen({ route, navigation }) {
       <Text style={styles.oddsTitle}>Current odds</Text>
       <View style={styles.oddsContainer}>
         <Text style={styles.percentage}>{computedOdds}</Text>
-        <TouchableOpacity onPress={showTooltip} style={styles.infoIcon}>
-          <Image source={informationLogo} />
+        <TouchableOpacity onPress={showTooltip} style={styles.infoIconTouchable}>
+          <Image source={informationLogo} style={styles.infoIcon} />
           {tooltipVisible && (
             <View style={styles.tooltip}>
               <Text style={styles.tooltipText}>
@@ -367,6 +380,12 @@ The current odds represent market-implied probability of the bet settling in a y
 
       <Text style={styles.descriptionText}>Description: {betDetails?.description || 'No description available'}</Text>
       <Text style={styles.verifierText}>Verifier: {creator}</Text>
+
+      <View style={{ borderBottomColor: 'rgba(128, 128, 128, 1)', borderBottomWidth: 1, marginTop: 20, marginBottom: 20, marginHorizontal: 20 }} />
+
+      <Text style={styles.bottomText}>Views: {betDetails?.timesViewed || '0'}</Text>
+
+      <Text style={styles.bottomText}>Date created: {betDetails?.timestamp ? formatDate(betDetails.timestamp) : 'No timestamp available'}</Text>
 
       </ScrollView>
       {/* Footer Section */}
@@ -535,6 +554,13 @@ const styles = StyleSheet.create({
     padding: 10, // Adjust the padding as needed
     textAlign: 'center', // Center the text if you like
   },
+  bottomText: {
+    color: 'rgba(128, 128, 128, 1)',
+    fontSize: 16,
+    fontWeight: 'normal', // or 'bold' if you prefer
+    padding: 10, // Adjust the padding as needed
+    textAlign: 'center', // Center the text if you like
+  },
   oddsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -588,10 +614,16 @@ const styles = StyleSheet.create({
     fontSize: 13, // Adjust font size as needed
   },
   infoIcon: {
-    marginLeft: 5,
-    position: 'relative', // Position relative to allow absolute positioning of the tooltip
+    marginLeft: 1, // Adjust if needed to increase/decrease space between text and icon
+    width: 20, // Smaller width for the icon
+    height: 20, // Smaller height for the icon
+    resizeMode: 'contain', // Ensure the icon scales correctly within the new dimensions
   },
-  // ... (additional styles if needed)
+  infoIconTouchable: {
+    padding: 5, // Adds more area around the icon for easier tapping
+    justifyContent: 'center', // Centers the icon within the touchable area
+    alignItems: 'center', // Ensures the icon is in the center of the touchable area
+  },
 });
 
 export default BetDetailScreen;

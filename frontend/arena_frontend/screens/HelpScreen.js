@@ -118,21 +118,6 @@ function HelpScreen({ route, navigation }) {
       </View>
 
       </View>
-      <View style={styles.footer}>
-          {/* Add footer navigation icons here */}
-          <TouchableOpacity onPress={() => navigation.navigate('Home', { apiToken: apiToken })}>
-            <Image source={homeIcon} style={styles.footerIcon} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Question', { apiToken: apiToken })}>
-            <Image source={addIcon} style={styles.footerIcon} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Profile', { apiToken: apiToken })}>
-            <Image source={profileIcon} style={styles.footerIcon} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Verifiers', { apiToken: apiToken })}>
-            <Image source={verifiersIcon} style={styles.footerIcon} />
-          </TouchableOpacity>
-        </View>
     </SafeAreaView>
   );
 }
@@ -193,7 +178,7 @@ const styles = StyleSheet.create({
     height: 30, // Adjust the height as needed
   },
   buttonText: {
-    color: 'white',
+    color: 'black',
     fontSize: 18,
     fontWeight: '600',
   },
@@ -218,6 +203,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width: '80%',
     marginVertical: 10,
+  },
+  backButton: {
+    padding: 10,
+  },
+  backIcon: {
+    width: 25, // Adjust the size as needed
+    height: 25, // Adjust the size as needed
+    resizeMode: 'contain',
   },
 });
 
