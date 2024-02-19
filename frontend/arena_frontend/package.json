@@ -22,7 +22,7 @@
     "expo-web-browser": "~12.3.2",
     "firebase": "^10.4.0",
     "react": "18.2.0",
-    "react-native": "0.72.6",
+    "react-native": "0.73.4",
     "react-native-chart-kit": "^6.12.0",
     "react-native-svg": "13.9.0",
     "stripe": "^14.15.0"
