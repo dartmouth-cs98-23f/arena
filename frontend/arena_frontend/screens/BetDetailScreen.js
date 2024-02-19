@@ -91,6 +91,7 @@ function BetDetailScreen({ route, navigation }) {
 
       if (data.success && data.success.ok) {
         // console.log("Bet details fetched successfully:", data.bet);
+        console.log('data.bet', data.bet);
         setBetDetails(data.bet); // Set the betDetails state to the bet object
       } else {
         console.error('Failed to fetch bet details:', data.success?.error);
