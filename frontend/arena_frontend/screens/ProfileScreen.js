@@ -140,16 +140,16 @@ function ProfileScreen({ route, navigation }) {
         }
       />
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home', {apiToken : apiToken})}>
+        <TouchableOpacity onPress={() => navigation.replace('Home', {apiToken : apiToken})}>
           <Image source={homeIcon} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Question', {apiToken : apiToken})}>
           <Image source={addIcon} style={styles.footerIcon} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile', {apiToken : apiToken})}>
+        <TouchableOpacity onPress={() => navigation.replace('Profile', {apiToken : apiToken})}>
           <Image source={profileIcon} style={styles.footerIcon} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Verifiers', {apiToken : apiToken})}>
+        <TouchableOpacity onPress={() => navigation.replace('Verifiers', {apiToken : apiToken})}>
             <Image source={verifiersIcon} style={styles.footerIcon} />
         </TouchableOpacity>
       </View>

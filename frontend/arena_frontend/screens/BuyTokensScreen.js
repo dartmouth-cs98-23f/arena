@@ -74,6 +74,7 @@ function BuyTokensScreen({ route, navigation }) {
             // Step 2: Update User's Balance after successful payment
 
             fetchBalance();
+            navigation.navigate("Home", {apiToken : apiToken});
     
         } catch (error) {
             console.error(`Error during token purchase and balance update: ${error.message}`);
