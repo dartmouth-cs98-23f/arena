@@ -24,6 +24,7 @@ function BetDetailScreen({ route, navigation }) {
   const apiToken = route.params?.apiToken;
   const [betDetails, setBetDetails] = useState(null);
   const [creator, setCreator] = useState(null);
+  const [verifier, setVerifier] = useState(null);
   const [myTokens, setMyTokens] = useState(50);
   const [computedOdds, setComputedOdds] = useState('Loading...');
   const [holdingsData, setHoldingsData] = useState(0);
@@ -223,7 +224,7 @@ function BetDetailScreen({ route, navigation }) {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     Promise.all([fetchBetDetails(), fetchBalance()]).then(() => setRefreshing(false));
-  }, [betUuid]); // Add dependencies here if needed
+  }, [betUuid]);
 
   useEffect(() => {
     if (betUuid) {
@@ -238,13 +239,20 @@ function BetDetailScreen({ route, navigation }) {
         'access_token': apiToken,
         'Content-Type': 'application/json',
       };
-      const response = await fetch(`https://api.arena.markets/user/get_with_uuid?uuid_query=${betDetails.verifierUuid}`, {
+      const response_verifier = await fetch(`https://api.arena.markets/user/get_with_uuid?uuid_query=${betDetails.verifierUuid}`, {
         method: 'GET',
         headers: headers,
       });
-      const data = await response.json();
-      const user = data.user.email;
-      setCreator(user);
+      const response_creator = await fetch(`https://api.arena.markets/user/get_with_uuid?uuid_query=${betDetails.creatorUuid}`, {
+        method: 'GET',
+        headers: headers,
+      });
+      const data_verifier = await response_verifier.json();
+      const data_creator = await response_creator.json();
+      const user_verifier = data_verifier.user.email;
+      const user_creator = data_creator.user.email;
+      setVerifier(user_verifier);
+      setCreator(user_creator);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -379,7 +387,8 @@ The current odds represent market-implied probability of the bet settling in a y
       {/* Add this Text component for the bet description */}
 
       <Text style={styles.descriptionText}>Description: {betDetails?.description || 'No description available'}</Text>
-      <Text style={styles.verifierText}>Verifier: {creator}</Text>
+      <Text style={styles.userText}>Creator: {creator}</Text>
+      <Text style={styles.userText}>Verifier: {verifier}</Text>
 
       <View style={{ borderBottomColor: 'rgba(128, 128, 128, 1)', borderBottomWidth: 1, marginTop: 20, marginBottom: 20, marginHorizontal: 20 }} />
 
@@ -547,7 +556,7 @@ const styles = StyleSheet.create({
     padding: 10, // Adjust the padding as needed
     textAlign: 'center', // Center the text if you like
   },
-  verifierText: {
+  userText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'normal', // or 'bold' if you prefer
