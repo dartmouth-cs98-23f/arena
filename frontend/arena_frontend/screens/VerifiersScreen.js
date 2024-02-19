@@ -220,6 +220,7 @@ function VerifiersScreen({ route, navigation }) {
                     inProcess.map((processItem, index) => (
                         <View key={index} style={styles.processItem}>
                             <Text style={styles.question}>{processItem.title}</Text>
+                            <Text style={styles.description}>Description: {processItem.description}</Text>
                             <View style={styles.buttonGroup}>
                                 <TouchableOpacity
                                     style={[styles.button, styles.yesButton]}
@@ -296,6 +297,11 @@ const styles = StyleSheet.create({
     },
     question: {
         color: '#FFF',
+        fontSize: 16,
+        marginBottom: 10,
+    },
+    description: {
+        color: 'rgba(128, 128, 128, 1)',
         fontSize: 16,
         marginBottom: 10,
     },
