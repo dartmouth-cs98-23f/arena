@@ -190,48 +190,55 @@ function VerifiersScreen({ route, navigation }) {
                         tintColor="#fff"
                     />
                 }>
+                <Text style={styles.subheader}>Invitations</Text>
+                {invitations.length > 0 ? (
+                    invitations.map((invitation, index) => (
+                        <View key={index} style={styles.invitationItem}>
+                            <Text style={styles.question}>{invitation.title}</Text>
+                            <View style={styles.buttonGroup}>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.acceptButton]}
+                                    onPress={() => handleInvitationResponse(invitation.uuid, true)}
+                                >
+                                    <Text style={styles.buttonTextBlack}>Accept</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.declineButton]}
+                                    onPress={() => handleInvitationResponse(invitation.uuid, false)}
+                                >
+                                    <Text style={styles.buttonTextBlack}>Decline</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    ))
+                ) : (
+                    <Text style={styles.noItemsText}>You'll see the bets where you're invited to be the verifier here.</Text> // Add appropriate styling for this text
+                )}
 
-            <Text style={styles.subheader}>Invitations</Text>
-            {invitations.map((invitation, index) => (
-                <View key={index} style={styles.invitationItem}>
-                    <Text style={styles.question}>{invitation.title}</Text>
-                    <View style={styles.buttonGroup}>
-                        <TouchableOpacity
-                            style={[styles.button, styles.acceptButton]}
-                            onPress={() => handleInvitationResponse(invitation.uuid, true)}
-                        >
-                            <Text style={styles.buttonTextBlack}>Accept</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.button, styles.declineButton]}
-                            onPress={() => handleInvitationResponse(invitation.uuid, false)}
-                        >
-                            <Text style={styles.buttonTextBlack}>Decline</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            ))}
-
-            <Text style={styles.subheader}>In process</Text>
-            {inProcess.map((processItem, index) => (
-                <View key={index} style={styles.processItem}>
-                    <Text style={styles.question}>{processItem.title}</Text>
-                    <View style={styles.buttonGroup}>
-                        <TouchableOpacity
-                            style={[styles.button, styles.yesButton]}
-                            onPress={() => handleInProcessResponse(processItem.uuid, true)}
-                        >
-                            <Text style={styles.buttonText}>Yes</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.button, styles.noButton]}
-                            onPress={() => handleInProcessResponse(processItem.uuid, false)}
-                        >
-                            <Text style={styles.buttonText}>No</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            ))}
+                <Text style={styles.subheader}>In process</Text>
+                {inProcess.length > 0 ? (
+                    inProcess.map((processItem, index) => (
+                        <View key={index} style={styles.processItem}>
+                            <Text style={styles.question}>{processItem.title}</Text>
+                            <View style={styles.buttonGroup}>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.yesButton]}
+                                    onPress={() => handleInProcessResponse(processItem.uuid, true)}
+                                >
+                                    <Text style={styles.buttonText}>Yes</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.noButton]}
+                                    onPress={() => handleInProcessResponse(processItem.uuid, false)}
+                                >
+                                    <Text style={styles.buttonText}>No</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    ))
+                ) : (
+                    <Text style={styles.noItemsText}>You'll see the bets where you're the verifier here.</Text> // Add appropriate styling for this text
+                )}
             </ScrollView>
             <View style={styles.footer}>
                 <TouchableOpacity onPress={() => navigation.replace('Home', { apiToken: apiToken })}>
@@ -340,11 +347,19 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         padding: 20,
         backgroundColor: 'black', // Adjust the background color as needed
-      },
-      footerIcon: {
+    },
+    footerIcon: {
         width: 30, // Adjust the width as needed
         height: 30, // Adjust the height as needed
-      },
+    },
+    noItemsText: {
+        color: 'rgba(128, 128, 128, 1)', // Adjust color to match your design
+        textAlign: 'center', // Center the text
+        fontSize: 16, // Adjust font size as needed
+        marginTop: 16, // Space below the header for the subheader
+        marginBottom: 10, // Space above the content
+        marginHorizontal: 16,
+    },
 });
 
 
