@@ -14,9 +14,6 @@ import verifiersIcon from '../logos/verifiersIcon.png';
 
 function BetDetailScreen({ route, navigation }) {
 
-  // const itemId = route.params?.itemId || 'default_bet_id'; 
-  // console.log("Received item ID:", route.params?.itemId);
-
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,10 +21,9 @@ function BetDetailScreen({ route, navigation }) {
   const tooltipTimeoutRef = useRef(null);
 
   const betUuid = route.params?.betUuid;
-  console.log("Received bet UUID-:", route.params?.betUuid);
-
   const apiToken = route.params?.apiToken;
   const [betDetails, setBetDetails] = useState(null);
+  const [creator, setCreator] = useState(null);
   const [myTokens, setMyTokens] = useState(50);
   const [computedOdds, setComputedOdds] = useState('Loading...');
   const [holdingsData, setHoldingsData] = useState(0);
@@ -83,15 +79,11 @@ function BetDetailScreen({ route, navigation }) {
       const data = await response.json();
       console.log("Response received:", data);
 
-      // console.log("Data received:", data);
-
       if (!response.ok) {
         throw new Error(data?.detail || 'Failed to fetch bet details');
       }
 
       if (data.success && data.success.ok) {
-        // console.log("Bet details fetched successfully:", data.bet);
-        console.log('data.bet', data.bet);
         setBetDetails(data.bet); // Set the betDetails state to the bet object
       } else {
         console.error('Failed to fetch bet details:', data.success?.error);
@@ -119,9 +111,7 @@ function BetDetailScreen({ route, navigation }) {
         throw new Error(`Request failed with status ${response.status}`);
       }
       const data = await response.json();
-      // console.log('Balance fetched successfully!');
       setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-      // console.log('myTokens', myTokens);
     } catch (error) {
       console.error('An error occurred:', error);
     }
@@ -171,10 +161,6 @@ function BetDetailScreen({ route, navigation }) {
     }
   };
 
-  const getFormattedLabels = (oddsArray) => {
-    return oddsArray.map(() => 'Previous odds');
-  };
-
   const getOddsForBet = async () => {
     if (!betDetails) return; // Make sure betDetails is defined
 
@@ -222,7 +208,6 @@ function BetDetailScreen({ route, navigation }) {
   const getHoldings = async () => {
 
     if (!betDetails) return; // Make sure betDetails is available
-    console.log("testing holdings call")
     const oddsURL = `https://api.arena.markets/bets/holdings?betUuid=${betDetails.uuid}`;
     const holdingsResponse = await fetch(oddsURL, {
       method: 'GET',
@@ -247,14 +232,29 @@ function BetDetailScreen({ route, navigation }) {
     fetchBalance();
   }, [betUuid]);
 
-  // useEffect(() => {
-  //   getOddsForBet(); // Call this when betDetails changes
-  // }, [betDetails]);
+  const findUser = async () => {
+    try {
+      const headers = {
+        'access_token': apiToken,
+        'Content-Type': 'application/json',
+      };
+      const response = await fetch(`https://api.arena.markets/user/get_with_uuid?uuid_query=${betDetails.verifierUuid}`, {
+        method: 'GET',
+        headers: headers,
+      });
+      const data = await response.json();
+      const user = data.user.email;
+      setCreator(user);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
 
   useEffect(() => {
     if (betDetails) {
       getOddsForBet();
       getHoldings();
+      findUser();
     }
   }, [betDetails]);
 
@@ -366,8 +366,7 @@ The current odds represent market-implied probability of the bet settling in a y
       {/* Add this Text component for the bet description */}
 
       <Text style={styles.descriptionText}>Description: {betDetails?.description || 'No description available'}</Text>
-
-      <Text style={styles.verifierText}>Verifier: {betDetails?.verifierUuid || 'No verifier available'}</Text>
+      <Text style={styles.verifierText}>Verifier: {creator}</Text>
 
       </ScrollView>
       {/* Footer Section */}
