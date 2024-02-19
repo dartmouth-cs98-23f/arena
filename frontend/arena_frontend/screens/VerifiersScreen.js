@@ -195,6 +195,7 @@ function VerifiersScreen({ route, navigation }) {
                     invitations.map((invitation, index) => (
                         <View key={index} style={styles.invitationItem}>
                             <Text style={styles.question}>{invitation.title}</Text>
+                            <Text style={styles.description}>Description: {invitation.description}</Text>
                             <View style={styles.buttonGroup}>
                                 <TouchableOpacity
                                     style={[styles.button, styles.acceptButton]}
