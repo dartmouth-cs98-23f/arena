@@ -45,7 +45,7 @@ function AssignVerifierScreen({ route, navigation }) {
             const data = await response.json();
             console.log('POST request successful!', data);
             console.log('Bet Submitted:', { question, description, odds, verifierEmail, verifierUuid });
-            navigation.navigate('Home', { apiToken : apiToken });
+            navigation.replace('Home', { apiToken : apiToken });
         } catch (error) {
             console.log('An error occurred:', error);
             // If the error was thrown from searchForUser, it will be handled here
