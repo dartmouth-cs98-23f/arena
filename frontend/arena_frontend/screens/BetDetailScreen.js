@@ -24,6 +24,7 @@ function BetDetailScreen({ route, navigation }) {
   const apiToken = route.params?.apiToken;
   const [betDetails, setBetDetails] = useState(null);
   const [creator, setCreator] = useState(null);
+  const [verifier, setVerifier] = useState(null);
   const [myTokens, setMyTokens] = useState(50);
   const [computedOdds, setComputedOdds] = useState('Loading...');
   const [holdingsData, setHoldingsData] = useState(0);
@@ -223,7 +224,7 @@ function BetDetailScreen({ route, navigation }) {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     Promise.all([fetchBetDetails(), fetchBalance()]).then(() => setRefreshing(false));
-  }, [betUuid]); // Add dependencies here if needed
+  }, [betUuid]);
 
   useEffect(() => {
     if (betUuid) {
@@ -238,13 +239,20 @@ function BetDetailScreen({ route, navigation }) {
         'access_token': apiToken,
         'Content-Type': 'application/json',
       };
-      const response = await fetch(`https://api.arena.markets/user/get_with_uuid?uuid_query=${betDetails.verifierUuid}`, {
+      const response_verifier = await fetch(`https://api.arena.markets/user/get_with_uuid?uuid_query=${betDetails.verifierUuid}`, {
         method: 'GET',
         headers: headers,
       });
-      const data = await response.json();
-      const user = data.user.email;
-      setCreator(user);
+      const response_creator = await fetch(`https://api.arena.markets/user/get_with_uuid?uuid_query=${betDetails.creatorUuid}`, {
+        method: 'GET',
+        headers: headers,
+      });
+      const data_verifier = await response_verifier.json();
+      const data_creator = await response_creator.json();
+      const user_verifier = data_verifier.user.email;
+      const user_creator = data_creator.user.email;
+      setVerifier(user_verifier);
+      setCreator(user_creator);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -350,13 +358,13 @@ The current odds represent market-implied probability of the bet settling in a y
           <TouchableOpacity onPress={purchaseYes} style={styles.choiceButton}>
             <Text style={styles.buttonText}>Yes 💰{betCost}</Text>
           </TouchableOpacity>
-          <Text style={styles.ownedText}>Owned: 💰{holdingsData.yes}</Text>
+          <Text style={styles.ownedText}>You own: 💰{holdingsData.yes}</Text>
         </View>
         <View style={styles.buttonWrapper}>
           <TouchableOpacity onPress={purchaseNo} style={styles.choiceButton}>
             <Text style={styles.buttonText}>No 💰{betCost}</Text>
           </TouchableOpacity>
-          <Text style={styles.ownedText}>Owned: 💰{holdingsData.no}</Text>
+          <Text style={styles.ownedText}>You own: 💰{holdingsData.no}</Text>
         </View>
       </View>
 
@@ -379,7 +387,8 @@ The current odds represent market-implied probability of the bet settling in a y
       {/* Add this Text component for the bet description */}
 
       <Text style={styles.descriptionText}>Description: {betDetails?.description || 'No description available'}</Text>
-      <Text style={styles.verifierText}>Verifier: {creator}</Text>
+      <Text style={styles.userText}>Creator: {creator}</Text>
+      <Text style={styles.userText}>Verifier: {verifier}</Text>
 
       <View style={{ borderBottomColor: 'rgba(128, 128, 128, 1)', borderBottomWidth: 1, marginTop: 20, marginBottom: 20, marginHorizontal: 20 }} />
 
@@ -390,16 +399,16 @@ The current odds represent market-implied probability of the bet settling in a y
       </ScrollView>
       {/* Footer Section */}
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home', {apiToken : apiToken})}>
+        <TouchableOpacity onPress={() => navigation.replace('Home', {apiToken : apiToken})}>
           <Image source={homeIcon} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Question', {apiToken : apiToken})}>
           <Image source={addIcon} style={styles.footerIcon} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile', {apiToken : apiToken})}>
+        <TouchableOpacity onPress={() => navigation.replace('Profile', {apiToken : apiToken})}>
           <Image source={profileIcon} style={styles.footerIcon} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Verifiers', {apiToken : apiToken})}>
+        <TouchableOpacity onPress={() => navigation.replace('Verifiers', {apiToken : apiToken})}>
             <Image source={verifiersIcon} style={styles.footerIcon} />
         </TouchableOpacity>
       </View>
@@ -547,7 +556,7 @@ const styles = StyleSheet.create({
     padding: 10, // Adjust the padding as needed
     textAlign: 'center', // Center the text if you like
   },
-  verifierText: {
+  userText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'normal', // or 'bold' if you prefer
