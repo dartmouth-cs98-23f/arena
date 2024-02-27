@@ -104,5 +104,5 @@ async def auth(request: Request):
         api_key = user.api_token
 
     #response = RedirectResponse(url=f"exp://?api_key={api_key}")
-    response = RedirectResponse(url=f"markets.arena://?api_key={api_key}")
+    response = RedirectResponse(url=f"markets98.arena.arena://?api_key={api_key}")
     return response
