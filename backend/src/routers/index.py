@@ -59,7 +59,7 @@ async def apple_app_site_association():
 async def login(request: Request):
     redirect_uri = request.url_for('auth')  # This creates the url for our /auth endpoint
     print("redirect URI from login: ", redirect_uri)
-    return await oauth.google.authorize_redirect(request, redirect_uri)
+    return await oauth.google.authorize_redirect(request, redirect_uri, prompt='select_account', login_hint='user@dartmouth.edu')
 
 @router.get("/auth")
 async def auth(request: Request):
