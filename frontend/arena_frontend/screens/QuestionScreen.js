@@ -1,9 +1,6 @@
 // QuestionScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, SafeAreaView, Alert } from 'react-native';
-import homeIcon from '../logos/homeIcon.png';
-import addIcon from '../logos/addIcon.png';
-import profileIcon from '../logos/profileIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
 
 

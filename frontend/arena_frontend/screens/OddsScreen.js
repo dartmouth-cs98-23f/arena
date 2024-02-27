@@ -1,6 +1,6 @@
 // DescriptionScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import Slider from '@react-native-community/slider';
 import backArrowIcon from '../logos/backArrowIcon.png';
 

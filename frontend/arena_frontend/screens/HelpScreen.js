@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, View, Text, StyleSheet, TouchableOpacity, Image, RefreshControl, SafeAreaView, Linking } from 'react-native';
-import logo from '../logos/ArenaLogo.png';
-import addIcon from '../logos/addIcon.png';
-import homeIcon from '../logos/homeIcon.png';
-import profileIcon from '../logos/profileIcon.png';
-import verifiersIcon from '../logos/verifiersIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
 import * as WebBrowser from "expo-web-browser";
 
