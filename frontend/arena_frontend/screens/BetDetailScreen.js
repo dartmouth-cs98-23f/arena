@@ -25,7 +25,7 @@ function BetDetailScreen({ route, navigation }) {
   const [betDetails, setBetDetails] = useState(null);
   const [creator, setCreator] = useState(null);
   const [verifier, setVerifier] = useState(null);
-  const [myTokens, setMyTokens] = useState(50);
+  const [myTokens, setMyTokens] = useState(null);
   const [computedOdds, setComputedOdds] = useState('Loading...');
   const [holdingsData, setHoldingsData] = useState(0);
 
