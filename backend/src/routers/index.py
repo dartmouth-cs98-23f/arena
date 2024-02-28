@@ -103,6 +103,6 @@ async def auth(request: Request):
         # If user exists, retrieve the API key
         api_key = user.api_token
     
-    response = RedirectResponse(url=f"exp://?api_key={api_key}")
-    #response = RedirectResponse(url=f"markets98.arena.arena://?api_key={api_key}")
+    #response = RedirectResponse(url=f"exp://?api_key={api_key}")
+    response = RedirectResponse(url=f"markets98.arena.arena://?api_key={api_key}")
     return response

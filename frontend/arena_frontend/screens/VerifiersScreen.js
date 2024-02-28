@@ -12,6 +12,7 @@ function VerifiersScreen({ route, navigation }) {
 
     const [invitations, setInvitations] = useState([]);
     const [inProcess, setInProcess] = useState([]);
+    const [creator, setCreator] = useState(null);
 
     const apiToken = route.params?.apiToken;
 
@@ -33,6 +34,23 @@ function VerifiersScreen({ route, navigation }) {
         setRefreshing(false);
     }, []);
 
+    const findUser = async (uuid) => {
+        try {
+          const headers = {
+            'access_token': apiToken,
+            'Content-Type': 'application/json',
+          };
+          const response_creator = await fetch(`https://api.arena.markets/user/get_with_uuid?uuid_query=${uuid}`, {
+            method: 'GET',
+            headers: headers,
+          });
+          const data_creator = await response_creator.json();
+          const user_creator = data_creator.user.email;
+          return user_creator;
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }
     const fetchInvitations = async () => {
         try {
             const response = await fetch('https://api.arena.markets/verifiers/invites/', {
@@ -40,17 +58,21 @@ function VerifiersScreen({ route, navigation }) {
                 headers: headers,
             });
             const data = await response.json();
-            console.log(data);
-            if (data.success.ok) {
-                setInvitations(data.bets);
+            if (data.success.ok && data.bets) {
+                // Fetch user details for each invitation
+                const invitationsWithUserDetails = await Promise.all(data.bets.map(async (invitation) => {
+                    const user = await findUser(invitation.creatorUuid);
+                    return { ...invitation, creator: user };
+                }));
+                setInvitations(invitationsWithUserDetails);
             } else {
                 Alert.alert("Error", data.success.error || "Failed to fetch invitations");
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     };
-
+    
     const fetchVerifications = async () => {
         try {
             const response = await fetch('https://api.arena.markets/verifiers/verifications/', {
@@ -58,16 +80,22 @@ function VerifiersScreen({ route, navigation }) {
                 headers: headers,
             });
             const data = await response.json();
-            console.log(data);
-            if (data.success.ok) {
-                setInProcess(data.bets);
+            if (data.success.ok && data.bets) {
+                // Fetch user details for each verification
+                const verificationsWithUserDetails = await Promise.all(data.bets.map(async (verification) => {
+                    // Assuming there's a verifierUuid field to identify the user
+                    const user = await findUser(verification.verifierUuid);
+                    return { ...verification, creator: user };
+                }));
+                setInProcess(verificationsWithUserDetails);
             } else {
                 Alert.alert("Error", data.success.error || "Failed to fetch verifications");
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     };
+    
 
     const updateBalances = async (betUuid, resolve) => {
         try {
@@ -196,7 +224,9 @@ function VerifiersScreen({ route, navigation }) {
                         <View key={index} style={styles.invitationItem}>
                             <Text style={styles.question}>{invitation.title}</Text>
                             <Text style={styles.description}>Description: {invitation.description}</Text>
-                            <Text style={styles.description}>Creator: {invitation.description}</Text>
+
+                            <Text style={styles.description}>Creator: {invitation.creator}</Text>
+
                             <View style={styles.buttonGroup}>
                                 <TouchableOpacity
                                     style={[styles.button, styles.acceptButton]}
@@ -223,7 +253,9 @@ function VerifiersScreen({ route, navigation }) {
                         <View key={index} style={styles.processItem}>
                             <Text style={styles.question}>{processItem.title}</Text>
                             <Text style={styles.description}>Description: {processItem.description}</Text>
-                            <Text style={styles.description}>Description: {processItem.description}</Text>
+
+                            <Text style={styles.description}>Creator: {processItem.creator}</Text>
+
                             <View style={styles.buttonGroup}>
                                 <TouchableOpacity
                                     style={[styles.button, styles.yesButton]}
