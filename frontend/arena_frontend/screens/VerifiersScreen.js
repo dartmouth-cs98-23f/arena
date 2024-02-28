@@ -93,7 +93,7 @@ function VerifiersScreen({ route, navigation }) {
     const handleInvitationResponse = async (betUuid, accept) => {
         Alert.alert(
             "Confirm Action",
-            `Are you sure you want to ${accept ? 'accept' : 'decline'} this invitation?`,
+            `Are you sure you want to ${accept ? 'accept' : 'decline'} this invitation good sir?`,
             [
                 {
                     text: "Cancel",
@@ -196,6 +196,7 @@ function VerifiersScreen({ route, navigation }) {
                         <View key={index} style={styles.invitationItem}>
                             <Text style={styles.question}>{invitation.title}</Text>
                             <Text style={styles.description}>Description: {invitation.description}</Text>
+                            <Text style={styles.description}>Creator: {invitation.description}</Text>
                             <View style={styles.buttonGroup}>
                                 <TouchableOpacity
                                     style={[styles.button, styles.acceptButton]}
@@ -221,6 +222,7 @@ function VerifiersScreen({ route, navigation }) {
                     inProcess.map((processItem, index) => (
                         <View key={index} style={styles.processItem}>
                             <Text style={styles.question}>{processItem.title}</Text>
+                            <Text style={styles.description}>Description: {processItem.description}</Text>
                             <Text style={styles.description}>Description: {processItem.description}</Text>
                             <View style={styles.buttonGroup}>
                                 <TouchableOpacity
