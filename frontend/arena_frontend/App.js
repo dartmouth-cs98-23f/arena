@@ -61,7 +61,7 @@ function BottomTabNavigator() {
 function App() {
   return (
     <StripeProvider
-      publishableKey="pk_test_51OhIMFHzXKplkjmi3FzsLjSOEi0LvunJJ52F72LI1Op2EbaDuNYRQ88BQFgVReNT3xpj330Y4cWJgg8qjwOh1Zol00G6ZDw1JS"
+      publishableKey="pk_live_51OhIMFHzXKplkjmi6dgoVLZrlnVAhKNDeih51q4DkB3Edg6q0mrMKlKGUqZwgu1HcQMNqWH7WMOguVbTJ4n1PfyA00rFp5pKXG"
     >
       <NavigationContainer>
         <Stack.Navigator
