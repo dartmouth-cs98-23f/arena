@@ -7,8 +7,8 @@ from backend.src.auth import get_api_key_from_state
 from sqlalchemy.orm import Session
 
 # Initialize your Stripe API with your secret key
-stripe.api_key = os.getenv("STRIPE_SECRET_TEST_KEY")
-endpoint_secret = os.getenv("ENDPOINT_SECRET")
+stripe.api_key = os.getenv("STRIPE_SECRET_PUBLUC_KEY")
+endpoint_secret = os.getenv("ENDPOINT_PUBLIC")
 
 price_to_tokens_map = {
     99: 100,    # $0.99 for 100 tokens
