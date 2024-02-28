@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, RefreshControl, SafeAreaView } from 'react-native';
-import logo from '../logos/ArenaLogo.png';
 import addIcon from '../logos/addIcon.png';
 import homeIcon from '../logos/homeIcon.png';
 import profileIcon from '../logos/profileIcon.png';
-import coinIcon from '../logos/coinIcon.png';
 import verifiersIcon from '../logos/verifiersIcon.png';
+import informationLogo from '../logos/informationLogo.png';
 
 function HomeScreen({ route, navigation }) {
   const apiToken = route.params?.apiToken;
@@ -90,7 +89,7 @@ function HomeScreen({ route, navigation }) {
     setRefreshing(false);
   };
 
-  const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
+  const [myTokens, setMyTokens] = useState(null); // Initialize myTokens state
 
   useEffect(() => {
     const requestOptions = {
@@ -133,6 +132,9 @@ function HomeScreen({ route, navigation }) {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.navigate('Help', { apiToken: apiToken })} style={styles.backButton}>
+                    <Image source={informationLogo} style={styles.backIcon} />
+          </TouchableOpacity>
           <Text style={styles.headerText}>ARENA</Text>
           <TouchableOpacity onPress={() => navigation.navigate('BuyTokens', { apiToken: apiToken })} style={styles.coinButton}>
             <Text style={styles.coinBalance}>💰{myTokens}</Text>
@@ -150,16 +152,16 @@ function HomeScreen({ route, navigation }) {
 
         <View style={styles.footer}>
           {/* Add footer navigation icons here */}
-          <TouchableOpacity onPress={() => navigation.navigate('Home', { apiToken: apiToken })}>
+          <TouchableOpacity onPress={() => navigation.replace('Home', { apiToken: apiToken })}>
             <Image source={homeIcon} style={styles.footerIcon} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('Question', { apiToken: apiToken })}>
             <Image source={addIcon} style={styles.footerIcon} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Profile', { apiToken: apiToken })}>
+          <TouchableOpacity onPress={() => navigation.replace('Profile', { apiToken: apiToken })}>
             <Image source={profileIcon} style={styles.footerIcon} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Verifiers', { apiToken: apiToken })}>
+          <TouchableOpacity onPress={() => navigation.replace('Verifiers', { apiToken: apiToken })}>
             <Image source={verifiersIcon} style={styles.footerIcon} />
           </TouchableOpacity>
         </View>
@@ -253,6 +255,14 @@ const styles = StyleSheet.create({
   footerIcon: {
     width: 30, // Adjust the width as needed
     height: 30, // Adjust the height as needed
+  },
+  backButton: {
+    padding: 10,
+  },
+  backIcon: {
+      width: 25, // Adjust the size as needed
+      height: 25, // Adjust the size as needed
+      resizeMode: 'contain',
   },
 });
 

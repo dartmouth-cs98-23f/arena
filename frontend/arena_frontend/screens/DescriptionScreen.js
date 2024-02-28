@@ -7,14 +7,13 @@ import profileIcon from '../logos/profileIcon.png';
 import backArrowIcon from '../logos/backArrowIcon.png';
 
 function DescriptionScreen({ route, navigation }) {
-  const { question } = route.params;
+  const question = route.params?.question;
   const [description, setDescription] = useState('');
   
 
   const goToNextStep = () => {
     // Pass the question state to the next screen
-    navigation.navigate('Odds', { question, description });
-
+    navigation.navigate('Odds', { question : question, description : description, apiToken : route.params?.apiToken });
   };
 
   return (
@@ -38,9 +37,6 @@ function DescriptionScreen({ route, navigation }) {
           placeholder="Specify any definitions in your question, as well as how the bet will be settled."
           placeholderTextColor="#999" // Placeholder text color
         />
-        <TouchableOpacity onPress={goToNextStep} style={styles.button}>
-          <Text style={styles.buttonText}>Next</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -99,7 +95,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   input: {
-    backgroundColor: 'black',
+    backgroundColor: '#1A1A1A',
     color: 'white',
     borderRadius: 5,
     fontSize: 16,

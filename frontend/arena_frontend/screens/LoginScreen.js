@@ -6,11 +6,8 @@ import logo from '../logos/ArenaLogo.png';
 
 function LoginScreen({ navigation }) {
   const handleLogin = async () => {
-    const redirect = "http://api.arena.markets/auth" // await Linking.getInitialURL("/")
-    //const redirect = await Linking.getInitialURL("/")
     const result = await WebBrowser.openAuthSessionAsync(
       'https://api.arena.markets/login'
-      //`https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=988417806604-ggnkhrhere0el8b4r3ehko3ncmt8181r.apps.googleusercontent.com&redirect_uri=${redirect}&scope=https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile&access_type=offline&state=1234_purpleGoogle&prompt=consent`
     )
 
     console.log("RESULT TYPE: " + result.type);
@@ -30,22 +27,6 @@ function LoginScreen({ navigation }) {
       WebBrowser.dismissAuthSession();
     }
   }
-  /*
-  const handleLogin = async () => {
-    const result = await WebBrowser.openAuthSessionAsync(
-      `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=988417806604-ggnkhrhere0el8b4r3ehko3ncmt8181r.apps.googleusercontent.com&redirect_uri=https://api.arena.markets/auth&scope=https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile&access_type=offline&state=1234_purpleGoogle&prompt=consent`,
-      "https://api.arena.markets/auth"
-    )
-
-    console.log("RESULT TYPE: " + result.type);
-    if(result.type === "success") {
-      console.log("AUTH SUCCEEDED");
-    }
-    // Here you can add any login logic.
-    // After successful login, navigate to BetsListScreen:
-    navigation.navigate('Home');
-  };
-  */
   
   return (
     <View style={styles.container}>

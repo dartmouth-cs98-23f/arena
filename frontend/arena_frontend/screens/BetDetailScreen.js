@@ -14,9 +14,6 @@ import verifiersIcon from '../logos/verifiersIcon.png';
 
 function BetDetailScreen({ route, navigation }) {
 
-  // const itemId = route.params?.itemId || 'default_bet_id'; 
-  // console.log("Received item ID:", route.params?.itemId);
-
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,11 +21,11 @@ function BetDetailScreen({ route, navigation }) {
   const tooltipTimeoutRef = useRef(null);
 
   const betUuid = route.params?.betUuid;
-  console.log("Received bet UUID-:", route.params?.betUuid);
-
   const apiToken = route.params?.apiToken;
   const [betDetails, setBetDetails] = useState(null);
-  const [myTokens, setMyTokens] = useState(50);
+  const [creator, setCreator] = useState(null);
+  const [verifier, setVerifier] = useState(null);
+  const [myTokens, setMyTokens] = useState(null);
   const [computedOdds, setComputedOdds] = useState('Loading...');
   const [holdingsData, setHoldingsData] = useState(0);
 
@@ -83,14 +80,11 @@ function BetDetailScreen({ route, navigation }) {
       const data = await response.json();
       console.log("Response received:", data);
 
-      // console.log("Data received:", data);
-
       if (!response.ok) {
         throw new Error(data?.detail || 'Failed to fetch bet details');
       }
 
       if (data.success && data.success.ok) {
-        // console.log("Bet details fetched successfully:", data.bet);
         setBetDetails(data.bet); // Set the betDetails state to the bet object
       } else {
         console.error('Failed to fetch bet details:', data.success?.error);
@@ -118,9 +112,7 @@ function BetDetailScreen({ route, navigation }) {
         throw new Error(`Request failed with status ${response.status}`);
       }
       const data = await response.json();
-      // console.log('Balance fetched successfully!');
       setMyTokens(data.balance); // Update the myTokens state with the fetched balance
-      // console.log('myTokens', myTokens);
     } catch (error) {
       console.error('An error occurred:', error);
     }
@@ -170,10 +162,6 @@ function BetDetailScreen({ route, navigation }) {
     }
   };
 
-  const getFormattedLabels = (oddsArray) => {
-    return oddsArray.map(() => 'Previous odds');
-  };
-
   const getOddsForBet = async () => {
     if (!betDetails) return; // Make sure betDetails is defined
 
@@ -221,7 +209,6 @@ function BetDetailScreen({ route, navigation }) {
   const getHoldings = async () => {
 
     if (!betDetails) return; // Make sure betDetails is available
-    console.log("testing holdings call")
     const oddsURL = `https://api.arena.markets/bets/holdings?betUuid=${betDetails.uuid}`;
     const holdingsResponse = await fetch(oddsURL, {
       method: 'GET',
@@ -237,7 +224,7 @@ function BetDetailScreen({ route, navigation }) {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     Promise.all([fetchBetDetails(), fetchBalance()]).then(() => setRefreshing(false));
-  }, [betUuid]); // Add dependencies here if needed
+  }, [betUuid]);
 
   useEffect(() => {
     if (betUuid) {
@@ -246,14 +233,36 @@ function BetDetailScreen({ route, navigation }) {
     fetchBalance();
   }, [betUuid]);
 
-  // useEffect(() => {
-  //   getOddsForBet(); // Call this when betDetails changes
-  // }, [betDetails]);
+  const findUser = async () => {
+    try {
+      const headers = {
+        'access_token': apiToken,
+        'Content-Type': 'application/json',
+      };
+      const response_verifier = await fetch(`https://api.arena.markets/user/get_with_uuid?uuid_query=${betDetails.verifierUuid}`, {
+        method: 'GET',
+        headers: headers,
+      });
+      const response_creator = await fetch(`https://api.arena.markets/user/get_with_uuid?uuid_query=${betDetails.creatorUuid}`, {
+        method: 'GET',
+        headers: headers,
+      });
+      const data_verifier = await response_verifier.json();
+      const data_creator = await response_creator.json();
+      const user_verifier = data_verifier.user.email;
+      const user_creator = data_creator.user.email;
+      setVerifier(user_verifier);
+      setCreator(user_creator);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
 
   useEffect(() => {
     if (betDetails) {
       getOddsForBet();
       getHoldings();
+      findUser();
     }
   }, [betDetails]);
 
@@ -267,6 +276,19 @@ function BetDetailScreen({ route, navigation }) {
     //   strokeWidth: "2",
     //   stroke: "#ffa726"
     // }
+  };
+
+  const formatDate = (unixTimestamp) => {
+    const date = new Date(unixTimestamp * 1000); // Convert to milliseconds
+    // Format the date as you prefer. For example, "Month day, year, hours:minutes:seconds"
+    return date.toLocaleDateString("en-US", {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true // or false if you prefer 24-hour time
+    });
   };
 
   return (
@@ -298,8 +320,8 @@ function BetDetailScreen({ route, navigation }) {
       <Text style={styles.oddsTitle}>Current odds</Text>
       <View style={styles.oddsContainer}>
         <Text style={styles.percentage}>{computedOdds}</Text>
-        <TouchableOpacity onPress={showTooltip} style={styles.infoIcon}>
-          <Image source={informationLogo} />
+        <TouchableOpacity onPress={showTooltip} style={styles.infoIconTouchable}>
+          <Image source={informationLogo} style={styles.infoIcon} />
           {tooltipVisible && (
             <View style={styles.tooltip}>
               <Text style={styles.tooltipText}>
@@ -336,13 +358,13 @@ The current odds represent market-implied probability of the bet settling in a y
           <TouchableOpacity onPress={purchaseYes} style={styles.choiceButton}>
             <Text style={styles.buttonText}>Yes 💰{betCost}</Text>
           </TouchableOpacity>
-          <Text style={styles.ownedText}>Owned: 💰{holdingsData.yes}</Text>
+          <Text style={styles.ownedText}>You own: 💰{holdingsData.yes}</Text>
         </View>
         <View style={styles.buttonWrapper}>
           <TouchableOpacity onPress={purchaseNo} style={styles.choiceButton}>
             <Text style={styles.buttonText}>No 💰{betCost}</Text>
           </TouchableOpacity>
-          <Text style={styles.ownedText}>Owned: 💰{holdingsData.no}</Text>
+          <Text style={styles.ownedText}>You own: 💰{holdingsData.no}</Text>
         </View>
       </View>
 
@@ -365,20 +387,28 @@ The current odds represent market-implied probability of the bet settling in a y
       {/* Add this Text component for the bet description */}
 
       <Text style={styles.descriptionText}>Description: {betDetails?.description || 'No description available'}</Text>
+      <Text style={styles.userText}>Creator: {creator}</Text>
+      <Text style={styles.userText}>Verifier: {verifier}</Text>
+
+      <View style={{ borderBottomColor: 'rgba(128, 128, 128, 1)', borderBottomWidth: 1, marginTop: 20, marginBottom: 20, marginHorizontal: 20 }} />
+
+      <Text style={styles.bottomText}>Views: {betDetails?.timesViewed || '0'}</Text>
+
+      <Text style={styles.bottomText}>Date created: {betDetails?.timestamp ? formatDate(betDetails.timestamp) : 'No timestamp available'}</Text>
 
       </ScrollView>
       {/* Footer Section */}
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home', {apiToken : apiToken})}>
+        <TouchableOpacity onPress={() => navigation.replace('Home', {apiToken : apiToken})}>
           <Image source={homeIcon} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Question', {apiToken : apiToken})}>
           <Image source={addIcon} style={styles.footerIcon} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile', {apiToken : apiToken})}>
+        <TouchableOpacity onPress={() => navigation.replace('Profile', {apiToken : apiToken})}>
           <Image source={profileIcon} style={styles.footerIcon} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Verifiers', {apiToken : apiToken})}>
+        <TouchableOpacity onPress={() => navigation.replace('Verifiers', {apiToken : apiToken})}>
             <Image source={verifiersIcon} style={styles.footerIcon} />
         </TouchableOpacity>
       </View>
@@ -526,6 +556,20 @@ const styles = StyleSheet.create({
     padding: 10, // Adjust the padding as needed
     textAlign: 'center', // Center the text if you like
   },
+  userText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'normal', // or 'bold' if you prefer
+    padding: 10, // Adjust the padding as needed
+    textAlign: 'center', // Center the text if you like
+  },
+  bottomText: {
+    color: 'rgba(128, 128, 128, 1)',
+    fontSize: 16,
+    fontWeight: 'normal', // or 'bold' if you prefer
+    padding: 10, // Adjust the padding as needed
+    textAlign: 'center', // Center the text if you like
+  },
   oddsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -579,10 +623,16 @@ const styles = StyleSheet.create({
     fontSize: 13, // Adjust font size as needed
   },
   infoIcon: {
-    marginLeft: 5,
-    position: 'relative', // Position relative to allow absolute positioning of the tooltip
+    marginLeft: 1, // Adjust if needed to increase/decrease space between text and icon
+    width: 20, // Smaller width for the icon
+    height: 20, // Smaller height for the icon
+    resizeMode: 'contain', // Ensure the icon scales correctly within the new dimensions
   },
-  // ... (additional styles if needed)
+  infoIconTouchable: {
+    padding: 5, // Adds more area around the icon for easier tapping
+    justifyContent: 'center', // Centers the icon within the touchable area
+    alignItems: 'center', // Ensures the icon is in the center of the touchable area
+  },
 });
 
 export default BetDetailScreen;

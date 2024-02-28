@@ -15,26 +15,6 @@ function BuyTokensScreen({ route, navigation }) {
     const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
     const { initPaymentSheet, presentPaymentSheet } = useStripe(); // Moved inside the component
 
-    const loadPaymentSheet = async (paymentIntentClientSecret) => {
-        const { error } = await initPaymentSheet({
-            paymentIntentClientSecret,
-        });
-        if (error) {
-            console.error(`Error loading payment sheet: ${error.message}`);
-        }
-    };
-
-    const openPaymentSheet = async () => {
-        const { error } = await presentPaymentSheet();
-        if (error) {
-            console.error(`Error presenting payment sheet: ${error.message}`);
-        } else {
-            // Handle successful payment here
-            console.log('Payment successful');
-            // After successful payment, you may want to update the user's token balance
-        }
-    };
-
     const handleTokenPurchase = async (tokens, price) => {
         try {
             // Step 1: Create the Payment Intent
@@ -74,10 +54,13 @@ function BuyTokensScreen({ route, navigation }) {
             // Step 2: Update User's Balance after successful payment
 
             fetchBalance();
+            navigation.reset({
+                index: 0, // Resets the stack to have only the new route
+                routes: [{ name: 'Home', params: { apiToken: apiToken } }],
+            });
     
         } catch (error) {
-            console.error(`Error during token purchase and balance update: ${error.message}`);
-            // Handle errors, such as displaying an alert or notification to the user
+            console.log(`Error during token purchase and balance update: ${error.message}`);
         }
     };
     
@@ -140,6 +123,7 @@ function BuyTokensScreen({ route, navigation }) {
                 numColumns={2}
                 contentContainerStyle={styles.tokenGrid}
             />
+            <Text style={styles.descriptionText}>There's no cash out available. Any proceeds will be donated to charity. Look at the help section to see our blog with more details about donating.</Text>
         </SafeAreaView>
     );
 }
@@ -217,6 +201,13 @@ const styles = StyleSheet.create({
         height: 25, // Adjust the size as needed
         resizeMode: 'contain',
     },
+    descriptionText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'normal', // or 'bold' if you prefer
+        padding: 75, // Adjust the padding as needed
+        textAlign: 'center', // Center the text if you like
+      },
 });
 
 export default BuyTokensScreen;

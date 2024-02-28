@@ -6,18 +6,16 @@ import { Image } from 'react-native';
 import 'react-native-gesture-handler';
 
 import LoginScreen from './screens/LoginScreen';
-import BetsListScreen from './screens/BetsListScreen';
 import ProfileScreen from './screens/ProfileScreen';
-import SettingsScreen from './screens/SettingsScreen';
-import WalletScreen from './screens/WalletScreen';
 import HomeScreen from './screens/HomeScreen';
 import BetDetailScreen from './screens/BetDetailScreen';
-import AddScreen from './screens/AddScreen';
 import BuyTokensScreen from './screens/BuyTokensScreen';
 import QuestionScreen from './screens/QuestionScreen';
 import DescriptionScreen from './screens/DescriptionScreen';
 import OddsScreen from './screens/OddsScreen';
 import VerifiersScreen from './screens/VerifiersScreen';
+import HelpScreen from './screens/HelpScreen';
+import AssignVerifierScreen from './screens/AssignVerifierScreen';
 
 import addIcon from './logos/addIcon.png';
 import homeIcon from './logos/homeIcon.png';
@@ -48,7 +46,7 @@ function BottomTabNavigator() {
       }}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Add" component={AddScreen} />
+      <Tab.Screen name="Add" component={QuestionScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
       <Tab.Screen
         name="Verifiers"
@@ -74,15 +72,13 @@ function App() {
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="Verifiers" component={VerifiersScreen} />
-          <Stack.Screen name="Bets List" component={BetsListScreen} />
-          <Stack.Screen name="Settings" component={SettingsScreen} />
-          <Stack.Screen name="Wallet" component={WalletScreen} />
           <Stack.Screen name="BetDetail" component={BetDetailScreen} />
-          <Stack.Screen name="Add" component={AddScreen} />
           <Stack.Screen name="BuyTokens" component={BuyTokensScreen} />
           <Stack.Screen name="Question" component={QuestionScreen} />
           <Stack.Screen name="Description" component={DescriptionScreen} />
           <Stack.Screen name="Odds" component={OddsScreen} />
+          <Stack.Screen name="Help" component={HelpScreen} />
+          <Stack.Screen name="AssignVerifier" component={AssignVerifierScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </StripeProvider>

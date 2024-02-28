@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "scheme": "markets.arena",
+    "scheme": "markets98.arena.arena",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",

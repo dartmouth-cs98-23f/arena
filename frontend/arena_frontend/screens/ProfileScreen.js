@@ -16,13 +16,14 @@ import verifiersIcon from '../logos/verifiersIcon.png';
 
 
 function ProfileScreen({ route, navigation }) {
-  const [myTokens, setMyTokens] = useState(50);
+  const [myTokens, setMyTokens] = useState(null);
   const [positionsData, setFeedData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const apiToken = route.params?.apiToken;
+  const apiToken = route.params.apiToken;
 
   async function fetchBalance() {
     try {
+      console.log('profile page', apiToken);
       const headers = {
         'access_token': apiToken,
         'Content-Type': 'application/json',
@@ -139,16 +140,16 @@ function ProfileScreen({ route, navigation }) {
         }
       />
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home', {apiToken : apiToken})}>
+        <TouchableOpacity onPress={() => navigation.replace('Home', {apiToken : apiToken})}>
           <Image source={homeIcon} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Question', {apiToken : apiToken})}>
           <Image source={addIcon} style={styles.footerIcon} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile', {apiToken : apiToken})}>
+        <TouchableOpacity onPress={() => navigation.replace('Profile', {apiToken : apiToken})}>
           <Image source={profileIcon} style={styles.footerIcon} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Verifiers', {apiToken : apiToken})}>
+        <TouchableOpacity onPress={() => navigation.replace('Verifiers', {apiToken : apiToken})}>
             <Image source={verifiersIcon} style={styles.footerIcon} />
         </TouchableOpacity>
       </View>
