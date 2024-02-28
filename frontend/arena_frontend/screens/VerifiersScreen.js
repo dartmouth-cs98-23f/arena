@@ -224,7 +224,9 @@ function VerifiersScreen({ route, navigation }) {
                         <View key={index} style={styles.invitationItem}>
                             <Text style={styles.question}>{invitation.title}</Text>
                             <Text style={styles.description}>Description: {invitation.description}</Text>
+
                             <Text style={styles.description}>Creator: {invitation.creator}</Text>
+
                             <View style={styles.buttonGroup}>
                                 <TouchableOpacity
                                     style={[styles.button, styles.acceptButton]}
@@ -251,7 +253,9 @@ function VerifiersScreen({ route, navigation }) {
                         <View key={index} style={styles.processItem}>
                             <Text style={styles.question}>{processItem.title}</Text>
                             <Text style={styles.description}>Description: {processItem.description}</Text>
+
                             <Text style={styles.description}>Creator: {processItem.creator}</Text>
+
                             <View style={styles.buttonGroup}>
                                 <TouchableOpacity
                                     style={[styles.button, styles.yesButton]}
