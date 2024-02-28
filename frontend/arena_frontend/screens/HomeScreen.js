@@ -89,7 +89,7 @@ function HomeScreen({ route, navigation }) {
     setRefreshing(false);
   };
 
-  const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
+  const [myTokens, setMyTokens] = useState(null); // Initialize myTokens state
 
   useEffect(() => {
     const requestOptions = {

@@ -95,13 +95,13 @@ const styles = StyleSheet.create({
         fontSize: 24,
     },
     input: {
-        backgroundColor: 'black',
         color: 'white',
         borderRadius: 5,
         fontSize: 16,
         padding: 10,
         marginHorizontal: 15,
         marginBottom: 15,
+        backgroundColor: '#1A1A1A',
     },
     inputMultiline: {
         height: 100, // Adjust the height for multiline input

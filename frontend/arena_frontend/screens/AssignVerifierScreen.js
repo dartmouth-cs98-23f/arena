@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
     },
     input: {
-        backgroundColor: 'black',
+        backgroundColor: '#1A1A1A',
         color: 'white',
         borderRadius: 5,
         fontSize: 16,

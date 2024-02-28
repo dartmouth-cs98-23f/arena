@@ -14,7 +14,6 @@ function DescriptionScreen({ route, navigation }) {
   const goToNextStep = () => {
     // Pass the question state to the next screen
     navigation.navigate('Odds', { question : question, description : description, apiToken : route.params?.apiToken });
-
   };
 
   return (
@@ -96,7 +95,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   input: {
-    backgroundColor: 'black',
+    backgroundColor: '#1A1A1A',
     color: 'white',
     borderRadius: 5,
     fontSize: 16,

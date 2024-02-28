@@ -123,7 +123,7 @@ function BuyTokensScreen({ route, navigation }) {
                 numColumns={2}
                 contentContainerStyle={styles.tokenGrid}
             />
-            <Text style={styles.descriptionText}>There's no cash out available. Any proceeds will be donated to charity. Look at the help section to see our blog with more details.</Text>
+            <Text style={styles.descriptionText}>There's no cash out available. Any proceeds will be donated to charity. Look at the help section to see our blog with more details about donating.</Text>
         </SafeAreaView>
     );
 }

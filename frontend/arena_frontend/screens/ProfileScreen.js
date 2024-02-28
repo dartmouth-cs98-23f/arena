@@ -16,7 +16,7 @@ import verifiersIcon from '../logos/verifiersIcon.png';
 
 
 function ProfileScreen({ route, navigation }) {
-  const [myTokens, setMyTokens] = useState(50);
+  const [myTokens, setMyTokens] = useState(null);
   const [positionsData, setFeedData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const apiToken = route.params.apiToken;
