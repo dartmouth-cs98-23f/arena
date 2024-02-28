@@ -16,7 +16,7 @@ function HelpScreen({ route, navigation }) {
     'Content-Type': 'application/json',
   };
 
-  const [myTokens, setMyTokens] = useState(50); // Initialize myTokens state
+  const [myTokens, setMyTokens] = useState(null); // Initialize myTokens state
 
   const fetchBalance = async () => {
     try {
