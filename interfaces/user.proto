@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+message User {
+    string uuid = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+    string google_id = 5;
+    string api_token = 6;
+    int32 tokens = 7;
+}

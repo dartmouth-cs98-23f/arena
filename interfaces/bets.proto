@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+message Bet {
+  string uuid = 1;
+  string creator_uuid = 2;
+  string title = 3;
+  string description = 4;
+  string win_justification = 5;
+  string verifier_uuid = 6;
+  int64 timestamp = 7;
+  int64 times_viewed = 8;
+  bool resolved = 9;
+  bool verifier_accepted = 10;
+  bool result = 11;
+}
+
+message Odds {
+  string uuid = 1;
+  string bet_uuid = 2;
+  double odds = 3;
+  int64 timestamp = 4;
+}
+
+message Comment{
+  string uuid = 1;
+  string bet_uuid = 2;
+  string parent_uuid = 3;
+  string comment_text = 4;
+  string user_uuid = 5;
+  int64 timestamp = 6;
+}
+
+message Wager {
+  string uuid = 1;
+  string bet_uuid = 2;
+  bool yes = 3;
+  string user_uuid = 4;
+  int32 tokens = 5;
+  int64 timestamp = 6;
+  double odds = 7;
+}
